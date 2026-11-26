@@ -146,10 +146,11 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  // 3c. dono de rancho anuncia; só aparece depois de aprovado
  {const c=P[3].pg;await c.goto(`http://localhost:${PORT}/#explorar`);await c.waitForTimeout(400);await c.click('[data-act=anunciar]');
   await c.fill('#fa-nome','Rancho do Carlão');await c.fill('#fa-local','Barra Bonita, SP');await c.fill('#fa-preco','550');await c.fill('#fa-sub','Rancho inteiro, até 6 pessoas');await c.fill('#fa-feat','Píer, Freezer, Churrasqueira');await c.fill('#fa-peixes','Tucunaré e corvina');
-  await c.fill('#fa-txt','Fica em -22.4912, -48.5583');await c.fill('#fa-wa','(14) 99876-5432');await c.check('#fa-ok');await c.click('[data-act=enviarad]');await c.waitForTimeout(300);
+  await c.fill('#fa-txt','Fica em -22.4912, -48.5583');await c.fill('#fa-wa','(14) 99876-5432');await c.setInputFiles('#fa-fotos',[__dirname+'/peixe-teste.jpg',__dirname+'/peixe-teste.jpg']);await c.waitForTimeout(900);ok((await c.$$('.fthumbs img')).length===2,'Dono escolhe 2 fotos e vê as miniaturas');await (await c.$('.fthumbs')).screenshot({path:__dirname+'/saida/form-fotos.png'});await c.check('#fa-ok');await c.click('[data-act=enviarad]');await c.waitForTimeout(300);
   ok(DB.ads.length===0,'Anúncio com coordenada no texto é barrado');
   await c.fill('#fa-txt','Casa com varanda para a represa.');await c.click('[data-act=enviarad]');await c.waitForTimeout(500);
   ok(DB.ads.length===1&&DB.ads[0].status==='pendente','Dono envia anúncio e ele fica esperando aprovação');
+  ok((DB.ads[0].dados.fotos||[]).length===2&&DB.ads[0].dados.fotos.every(f=>f.startsWith(P[3].email+'/anuncio-')&&FOTOS[f]),'Fotos do anúncio enviadas para a pasta do dono');
   ok((await t(c)).includes('Esperando aprovação'),'Dono vê o status "Esperando aprovação" em Meus anúncios');
   const z=P[2].pg;await z.goto(`http://localhost:${PORT}/#explorar`);await z.waitForTimeout(500);ok(!(await t(z)).includes('Rancho do Carlão'),'Antes de aprovar, ninguém vê o anúncio');
   ok(!(await t(z)).includes('Aprovar anúncios'),'Quem não é administrador não vê a tela de aprovação');
@@ -174,6 +175,8 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   ok(tx.includes('Previsão do tempo')&&tx.includes('Sol com nuvens')&&tx.includes('atenção no barco'),'Pescaria próxima mostra a previsão do tempo e avisa chuva forte');
   await pg0.screenshot({path:__dirname+'/saida/clima.png'});
   await pg0.click('[data-act=close]');await pg0.goto(`http://localhost:${PORT}/#explorar`);await pg0.waitForTimeout(400);await pg0.click('[data-act=ad][data-v=a1]');await pg0.waitForTimeout(600);tx=await t(pg0);
+  ok((await pg0.$$('.gal .slide')).length===4&&(await pg0.textContent('.galn'))==='1 de 4','Anúncio de exemplo tem galeria com 4 fotos');
+  await pg0.click('[data-act=gal][data-v="1"]');await pg0.waitForTimeout(700);ok((await pg0.textContent('.galn'))==='2 de 4','Seta passa para a próxima foto e a contagem acompanha');
   ok(tx.includes('Pontos de pesca')&&tx.includes('Galhadas no braço')&&tx.includes('Tempo agora em Barra Bonita'),'Anúncio mostra pontos de pesca (sem localização) e o tempo agora');
   // diário com foto que tem GPS no arquivo
   await pg0.goto(`http://localhost:${PORT}/#perfil`);await pg0.waitForTimeout(400);await pg0.click('[data-act=novodiario]');await pg0.waitForTimeout(200);
@@ -183,7 +186,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   ok(!(await pg0.isVisible('#d-ponto')),'Ponto de pesca vem escondido: só mostra se a pessoa quiser');
   await pg0.check('#d-tponto');await pg0.fill('#d-ponto','Galhada');await pg0.click('[data-act=salvadiario]');await pg0.waitForTimeout(800);
   ok(DB.diario.length===1&&DB.diario[0].lugar==='a1'&&DB.diario[0].dados.peso===2.5&&DB.diario[0].dados.ponto==='Galhada','Registro do diário salvo com espécie, peso, isca, ponto e lugar');
-  const fk=Object.keys(FOTOS)[0];const bin=fk?Buffer.from(FOTOS[fk].split(',')[1],'base64'):Buffer.alloc(0);
+  const fk=Object.keys(FOTOS).find(k=>k.startsWith(org.email+'/'));const bin=fk?Buffer.from(FOTOS[fk].split(',')[1],'base64'):Buffer.alloc(0);
   ok(fk&&fk.startsWith(org.email+'/')&&bin.length<350000,'Foto enviada reduzida ('+Math.round(bin.length/1024)+' KB) na pasta do próprio usuário');
   ok(bin.length&&!bin.includes('CameraTeste')&&!bin.includes(Buffer.from('Exif')),'Foto enviada sem os dados escondidos do celular (localização)');
   tx=await t(pg0);ok(tx.includes('Tucunaré · 2,5 kg')&&tx.includes('1 peixe registrado'),'Registro aparece no diário do perfil');
