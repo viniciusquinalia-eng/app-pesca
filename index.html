@@ -6,6 +6,7 @@
 <title>App de Pesca</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0F5A50">
+<meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
@@ -14,11 +15,11 @@
    PICTURE: cenas planas de rio, rancho e barco nos cards
    COLOUR and TYPE: branco, verde-rio #0F5A50 dominante, amarelo-tucunaré só em detalhes; Inter
    LAYOUT: coluna de celular, menu de 3 abas embaixo, um assunto por tela */
-:root{color-scheme:light dark;
+:root{color-scheme:light;
 --bg:light-dark(#ffffff,#0d1715);--card:light-dark(#ffffff,#15221f);--soft:light-dark(#f2f1ec,#1d2c29);
 --ink:light-dark(#0b2e33,#e9f1ef);--mute:light-dark(#5f6b69,#9fb2ae);--line:light-dark(#ecebe5,#26352f);
 --brand:light-dark(#0f5a50,#3fae9c);--onbrand:light-dark(#ffffff,#06201c);--sun:#f2b035;--warn:light-dark(#a9470f,#f0a070);--warnbg:light-dark(#fbe6d3,#3a2618)}
-:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
 #app{max-width:520px;margin:0 auto;min-height:100vh;padding:0 18px 110px}
@@ -136,8 +137,8 @@ const local={
 const queue={};
 const cloud={
  async list(){if(!user)return;loading=!P.length;render();
-  const {data,error}=await sb.from('pescarias').select('id,dados,versao,convite').order('criado',{ascending:false});
-  loading=false;if(error){loadNote='Não deu para carregar as pescarias. Confira a internet.';render();return}
+  const {data,error}=await sb.rpc('minhas_pescarias');
+  loading=false;if(error){console.error('minhas_pescarias',error);loadNote='Não deu para carregar as pescarias. Confira a internet.';render();return}
   loadNote='';P=data.map(r=>({...r.dados,id:r.id,_v:r.versao,_convite:r.convite}));render()},
  async create(p){const {id,_v,_convite,...dados}=p;const {data,error}=await sb.rpc('criar_pescaria',{p_dados:dados});
   if(error||!data||!data.length){flash('Não deu para criar agora. Tente de novo.');return null}
@@ -151,8 +152,8 @@ const cloud={
    if(error)throw error;
    if(data>0){cur._v=data;return}
    /* outra pessoa mexeu ao mesmo tempo: busca a versão nova e refaz a mudança em cima dela */
-   const r=await sb.from('pescarias').select('id,dados,versao,convite').eq('id',id).single();
-   if(r.error)throw r.error;const fresh={...r.data.dados,id,_v:r.data.versao,_convite:r.data.convite};fn(fresh);putLocal(fresh);render()}
+   const r=await sb.rpc('minhas_pescarias',{p_id:id});
+   if(r.error||!r.data||!r.data.length)throw r.error||new Error('sumiu');const row=r.data[0];const fresh={...row.dados,id,_v:row.versao,_convite:row.convite};fn(fresh);putLocal(fresh);render()}
   throw new Error('conflito')},
  async del(id){P=P.filter(x=>x.id!==id);render();const {error}=await sb.rpc('apagar_pescaria',{p_id:id});if(error)flash('Não apagou agora.')},
  async join(convite){const {data,error}=await sb.rpc('entrar_pescaria',{p_convite:convite});if(error||!data){flash('Convite não encontrado. Peça o link de novo para quem organizou.');return null}await cloud.list();return data}};
