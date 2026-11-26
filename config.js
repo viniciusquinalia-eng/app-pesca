@@ -5,5 +5,5 @@ window.BORA_CONFIG = {
   supabaseUrl: 'https://dmumfsjmfwjndzgndsjp.supabase.co',
   supabaseAnonKey: 'sb_publishable_F-tCWy7W5x4_11w9i2OF8A_nkmskjzv',
   google: false,  // true depois de configurar o login com Google no Supabase
-  codigo: false   // true quando tiver SMTP próprio e o modelo de e-mail com {{ .Token }}; até lá, entra pelo link do e-mail
+  codigo: true    // SMTP próprio (Brevo) ligado: e-mail traz código {{ .Token }} e link; false = só link
 };

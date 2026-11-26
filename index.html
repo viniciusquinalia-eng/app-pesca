@@ -16,9 +16,9 @@
    COLOUR and TYPE: branco, verde-rio #0F5A50 dominante, amarelo-tucunaré só em detalhes; Inter
    LAYOUT: coluna de celular, menu de 3 abas embaixo, um assunto por tela */
 :root{color-scheme:light;
---bg:light-dark(#ffffff,#0d1715);--card:light-dark(#ffffff,#15221f);--soft:light-dark(#f2f1ec,#1d2c29);
---ink:light-dark(#0b2e33,#e9f1ef);--mute:light-dark(#5f6b69,#9fb2ae);--line:light-dark(#ecebe5,#26352f);
---brand:light-dark(#0f5a50,#3fae9c);--onbrand:light-dark(#ffffff,#06201c);--sun:#f2b035;--warn:light-dark(#a9470f,#f0a070);--warnbg:light-dark(#fbe6d3,#3a2618)}
+--bg:#ffffff;--card:#ffffff;--soft:#f2f1ec;
+--ink:#0b2e33;--mute:#5f6b69;--line:#ecebe5;
+--brand:#0f5a50;--onbrand:#ffffff;--sun:#f2b035;--warn:#a9470f;--warnbg:#fbe6d3}
 
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
@@ -79,6 +79,12 @@ textarea.code{width:100%;height:110px;border-radius:12px;border:1px solid var(--
 <div id="app"></div>
 <nav class="nav" id="nav"></nav>
 <div id="modal"></div>
+<script>
+if(!Array.prototype.at){Array.prototype.at=function(i){i=Math.trunc(i)||0;if(i<0)i+=this.length;return this[i]}}
+window.__falhou=function(msg){var a=document.getElementById('app');if(!a||a.getAttribute('data-ok'))return;a.innerHTML='<h1 style="margin-top:40px">Ops, o app não abriu</h1><p style="font-size:18px">Tente estas coisas, uma de cada vez:</p><ol style="font-size:18px;line-height:1.6"><li>Toque no botão abaixo para abrir de novo.</li><li>Se abriu pelo WhatsApp, toque nos três pontinhos ou no ícone de compartilhar e escolha <b>Abrir no Safari</b> (ou Chrome).</li><li>Atualize o sistema do celular (Ajustes › Geral › Atualização de Software).</li></ol><button onclick="location.reload()" style="width:100%;height:56px;border:0;border-radius:14px;background:#0F5A50;color:#fff;font:700 18px Inter,system-ui,sans-serif;margin-top:12px">Abrir de novo</button><p style="font-size:13px;color:#5f6b69;margin-top:18px">Detalhe para o suporte: '+String(msg||'').replace(/[<>&]/g,'').slice(0,160)+'</p>';};
+window.addEventListener('error',function(e){window.__falhou(e.message)});
+setTimeout(function(){var a=document.getElementById('app');if(a&&!a.innerHTML.trim())window.__falhou('tela vazia')},6000);
+</script>
 <script src="config.js"></script>
 <script src="vendor/supabase-2.79.0.js"></script>
 <script>
@@ -90,13 +96,13 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const uid=()=>Math.random().toString(36).slice(2,10);
 const brl=n=>'R$ '+(Math.round(n*100)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const today=()=>new Date().toISOString().slice(0,10);
-const fmtD=d=>{if(!d)return '';const [y,m,dd]=d.split('-');return Number(dd)+' '+['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'].at(Number(m)-1)};
+const fmtD=d=>{if(!d)return '';const [y,m,dd]=d.split('-');return Number(dd)+' '+['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][Number(m)-1]};
 const daysTo=d=>Math.round((Date.parse(d)-Date.parse(today()))/864e5);
 const ls={get(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch(e){return f}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 
 /* ---------- cenas ---------- */
 const PAL=[['#F4C46E','#4E8A6B','#145A52','#FBE2A6'],['#8DBFA8','#3F7A5C','#1B6C73','#E8F3EC'],['#E9B76A','#245E4A','#0F5A50','#FCE7B8'],['#B9D6E3','#5D8F7A','#1E5F74','#F3F8FB']];
-const scene=(i,kind)=>{const [sky,hill,water,sun]=PAL.at(i%4);
+const scene=(i,kind)=>{const [sky,hill,water,sun]=PAL[i%4];
 const house=kind==='Rancho'||kind==='Pousada'?`<path d="M50 104 l52 -27 l52 27z" fill="#A9470F"/><rect x="60" y="104" width="84" height="32" fill="#F3EFE6"/><rect x="72" y="112" width="16" height="11" fill="#0B2E33"/><rect x="114" y="112" width="16" height="24" fill="#0B2E33"/><rect x="0" y="134" width="180" height="8" fill="#6B4A2B"/>`:'';
 const boat=kind==='Piloteiro'||kind==='Roteiro'?`<path d="M200 150 h70 l-9 12 h-52z" fill="#0B2E33"/><circle cx="228" cy="140" r="6" fill="#0B2E33"/><rect x="223" y="145" width="10" height="7" rx="2" fill="#0B2E33"/><path d="M232 146 L270 104" stroke="#0B2E33" stroke-width="2.5"/>`:'';
 const fish=kind==='Pesqueiro'||kind==='Ponto'?`<path d="M150 170c10-12 24-18 38-18 10 0 17 6 23 12l7-7v26l-7-7c-6 7-13 13-23 13-14 0-28-6-38-19z" fill="#F2B035"/>`:'';
@@ -247,7 +253,7 @@ const list=[...P].sort((a,b)=>(a.inicio||'').localeCompare(b.inicio||''));
 return `<h1>Pescarias</h1>
 ${loading?'<div class="box">Carregando as pescarias…</div>':''}${loadNote?`<div class="warnbox">${esc(loadNote)}</div>`:''}
 ${list.map(p=>{const d=p.inicio?daysTo(p.inicio):null;return `<button class="card" data-act="open" data-v="${esc(p.id)}" style="margin:12px 0"><div class="hero" style="margin:0"><div style="opacity:.85;font-size:15px">${esc(p.nome)}</div><div class="big" style="font-size:30px">${d===null?'Sem data':d>1?'Faltam '+d+' dias':d===1?'É amanhã':d===0?'É hoje!':'Já foi'}</div><div>${esc(fmtD(p.inicio))}${p.fim&&p.fim!==p.inicio?' a '+esc(fmtD(p.fim)):''}${p.local?' · '+esc(p.local):''}</div><div style="margin-top:10px;font-size:15px">${(p.pessoas||[]).length} na turma</div></div></button>`}).join('')}
-${!list.length&&!loading?'<div class="box">Nenhuma pescaria ainda. Crie a primeira e chame a turma.</div>':''}
+${!list.length&&!loading?'<div class="box">Nenhuma pescaria ainda. Crie a primeira e chame a turma.</div><div class="box"><b>Recebeu um convite?</b> Volte no WhatsApp e toque de novo no link do convite. Agora que você entrou, ele abre direto.</div>':''}
 <button class="btn full" data-act="nova" style="margin-top:14px">+ Nova pescaria</button>
 <p class="status">${mode==='cloud'?'Só quem você convidar vê cada pescaria.':'Modo de teste: salvo só neste aparelho.'}</p>${vRodape()}`}
 
@@ -297,7 +303,7 @@ return `<div class="box" style="background:var(--brand);color:var(--onbrand)"><d
 
 function vContas(){
 if(!P.length)return `<h1>Contas</h1><div class="box">Crie uma pescaria para começar a dividir os gastos.</div><button class="btn full" data-act="nova">+ Nova pescaria</button>`;
-const cid=S.cid&&getP(S.cid)?S.cid:[...P].sort((a,b)=>(b.inicio||'').localeCompare(a.inicio||'')).at(0).id;const p=getP(cid);
+const cid=S.cid&&getP(S.cid)?S.cid:[...P].sort((a,b)=>(b.inicio||'').localeCompare(a.inicio||''))[0].id;const p=getP(cid);
 return `<h1>Contas</h1><select data-act="cid" aria-label="Pescaria">${P.map(x=>`<option value="${esc(x.id)}" ${x.id===cid?'selected':''}>${esc(x.nome)}</option>`).join('')}</select>
 ${!me(p.id)?`<div class="warnbox">Para ver quanto você deve ou recebe, diga quem você é na aba Turma da pescaria.</div>`:''}
 <div style="margin-top:8px">${vContasBody(p)}</div>${(p.pessoas||[]).length>1?`<button class="btn wa full" data-act="wa" data-v="contas" style="margin-top:22px">Mandar acerto no WhatsApp</button>`:''}`}
@@ -317,9 +323,10 @@ const conv=S.convidado||ls.get('bp_convite','');
 return `<div style="padding-top:30px"><div class="pic" style="aspect-ratio:16/9">${scene(0,'Piloteiro')}</div>
 <h1>${esc(APP)}</h1>
 <p style="font-size:18px;margin-top:-6px">${conv?'Você foi convidado para uma pescaria. Entre para ver.':'Organize a pescaria com a turma e acerte as contas no Pix.'}</p>
-${S.email?(CFG.codigo?`<h2>Digite o código</h2><p class="m" style="margin-top:0">Mandamos um código de 6 números para <b>${esc(S.email)}</b>. Olhe também no lixo eletrônico.</p>
-<input id="cod" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" style="font-size:24px;letter-spacing:6px;text-align:center;height:60px">
-<button class="btn full" data-act="confereCodigo" style="margin-top:12px">Entrar</button>`:`<h2>Agora abra seu e-mail</h2>
+${S.email?(CFG.codigo?`<h2>Agora olhe seu e-mail</h2><p style="margin-top:0">Mandamos um e-mail para <b>${esc(S.email)}</b> (olhe também no lixo eletrônico). Nele tem um <b>código de números</b>. Digite aqui:</p>
+<input id="cod" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Código" style="font-size:26px;letter-spacing:6px;text-align:center;height:64px">
+<button class="btn full" data-act="confereCodigo" style="margin-top:12px;height:58px">Entrar</button>
+<p class="m">Ou toque no botão <b>Entrar no app</b> do e-mail, abrindo neste mesmo celular.</p>`:`<h2>Agora abra seu e-mail</h2>
 <div class="box" style="font-size:18px">1. Abra o e-mail <b>${esc(S.email)}</b> <b>neste mesmo celular</b>.<br>2. Procure o e-mail com o link de entrada (olhe também no lixo eletrônico).<br>3. Toque em <b>Entrar no app</b> (ou <b>Sign in</b>). O app abre já com você dentro.</div>
 <p class="m">O link vale por pouco tempo e só funciona uma vez. Se não chegar em 2 minutos, peça de novo.</p>`)+`<button class="btn alt full" data-act="outroEmail" style="margin-top:8px">Pedir de novo ou usar outro e-mail</button>`
 :`${CFG.google?`<button class="btn full" data-act="google" style="margin-top:10px;height:58px">Entrar com Google</button>
@@ -332,12 +339,13 @@ ${mode==='cloud'&&user?`<p class="m" style="margin:0;text-align:center">Entrou c
 <a href="privacidade.html" class="btn alt full" style="text-decoration:none">Privacidade</a>
 ${mode==='cloud'&&user?`<button class="btn alt full" data-act="apagarConta" style="color:var(--warn)">Apagar minha conta</button>`:''}</div>`}
 let pending=null;
-function render(){
+function render(){try{renderInner()}catch(e){console.error(e);const a=$('#app');if(a)a.removeAttribute('data-ok');window.__falhou&&window.__falhou(e.message)}}
+function renderInner(){
 const app=$('#app');if(!app)return;
 const fx=document.activeElement&&document.activeElement.id;
 let h=!authReady?'<h1>'+esc(APP)+'</h1><div class="box">Abrindo…</div>':(mode==='cloud'&&!user)?vLogin():S.tab==='explorar'?vExplorar():S.tab==='pescarias'?vPescarias():vContas();
 if(flashMsg)h+=`<div class="warnbox" role="status" style="position:fixed;left:18px;right:18px;bottom:96px;max-width:484px;margin:0 auto;z-index:8">${esc(flashMsg)}</div>`;
-app.innerHTML=h;
+app.innerHTML=h;app.setAttribute('data-ok','1');
 $('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=[['pescarias','Pescarias',I.boat],['contas','Contas',I.cash],['explorar','Explorar',I.search]].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}">${i}${l}</a>`).join('');
 if(fx==='q'){const q=$('#q');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
 }
@@ -371,7 +379,7 @@ else if(a==='souEu'){setMe(S.pid,v);scrollTo(0,0)}
 else if(a==='souNovo'){const n=$('#nq').value.trim();if(!n){$('#nq').focus();return}const nid=uid();setMe(S.pid,nid);change(p=>{p.pessoas.push({id:nid,nome:n,pix:''})})}
 else if(a==='google'){const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)flash('Não deu para entrar com Google agora.')}
 else if(a==='mandaCodigo'){const em=$('#em').value.trim();if(!/^\S+@\S+\.\S+$/.test(em)){flash('Confira o e-mail.');return}el.disabled=true;const conv=ls.get('bp_convite','');const {error}=await sb.auth.signInWithOtp({email:em,options:{shouldCreateUser:true,emailRedirectTo:location.origin+location.pathname+(conv?'?c='+encodeURIComponent(conv):'')}});el.disabled=false;if(error){flash('Não deu para mandar o código. Tente daqui a 1 minuto.');return}S.email=em;render()}
-else if(a==='confereCodigo'){const tk=$('#cod').value.replace(/\D/g,'');const {error}=await sb.auth.verifyOtp({email:S.email,token:tk,type:'email'});if(error)flash('Código errado ou vencido. Confira o e-mail.')}
+else if(a==='confereCodigo'){const tk=$('#cod').value.replace(/\D/g,'');if(tk.length<6){flash('Digite o código inteiro.');return}const {error}=await sb.auth.verifyOtp({email:S.email,token:tk,type:'email'});if(error)flash('Código errado ou vencido. Confira o e-mail.')}
 else if(a==='outroEmail'){S.email='';render()}
 else if(a==='sair'){await sb.auth.signOut();P=[];S.pid=null;render()}
 else if(a==='apagarConta'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Apagar sua conta?</h2><p>Você sai de todas as pescarias. As pescarias que você criou são apagadas para toda a turma. Não dá para desfazer.</p><button class="btn full" data-act="apagarOk" style="background:var(--warn)">Apagar minha conta</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
