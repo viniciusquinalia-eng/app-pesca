@@ -43,6 +43,10 @@ function rpc(u,name,a){a=a||{};if(!u)return {error:{message:'precisa entrar'}};
   anuncios:DB.ads.reduce((o,x)=>(o[x.status]=(o[x.status]||0)+1,o),{}),diario:DB.diario.length,fotos:DB.diario.filter(x=>x.dados.foto).length,avaliacoes:DB.aval.length,nota_media:DB.aval.length?DB.aval.reduce((s,x)=>s+x.nota,0)/DB.aval.length:null,
   visitas30:ev.filter(e=>e.tipo==='visita').length,whats30:ev.filter(e=>e.tipo==='whatsapp').length,mais_vistos:Object.entries(vis).map(([lugar,n])=>({lugar,n})).sort((x,y)=>y.n-x.n).slice(0,5),
   mais_bem_avaliados:DB.aval.map(x=>({lugar:x.lugar,m:x.nota,n:1})),ult_avaliacoes:DB.aval.map(x=>({id:x.id,lugar:x.lugar,autor_nome:x.autor_nome,nota:x.nota,comentario:x.comentario,oculto:!!x.oculto})),ult_diario:DB.diario.map(x=>({id:x.id,lugar:x.lugar,autor_nome:x.autor_nome,dados:x.dados,oculto:!!x.oculto}))}}}
+ if(name==='ver_promo')return {data:DB.promo||null};
+ if(name==='definir_promo'){if(!adm)return {error:{message:'sem acesso'}};DB.promo=a.p_lugar?{lugar:a.p_lugar,txt:String(a.p_txt||'').slice(0,90),ate:new Date(Date.now()+7*864e5).toISOString()}:null;return {data:null}}
+ if(name==='contar_pendentes')return {data:adm?DB.ads.filter(x=>x.status==='pendente').length:0};
+ if(name==='salvar_agenda'){const x=DB.ads.find(y=>y.id===a.p_id&&y.dono===u);if(!x)return {error:{message:'sem acesso'}};x.dados.ocupados=[...new Set(a.p_dias)].filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)).sort();return {data:null}}
  if(name==='painel_dono')return {data:DB.ads.filter(x=>x.dono===u).map(x=>({id:x.id,lugar:'u_'+x.id,nome:x.dados.nome,status:x.status,visitas30:(DB.ev||[]).filter(e=>e.lugar==='u_'+x.id&&e.tipo==='visita').length,whats30:(DB.ev||[]).filter(e=>e.lugar==='u_'+x.id&&e.tipo==='whatsapp').length,dias:Array(14).fill(0),nota:null,n_aval:0,n_diario:0}))};
  return {error:{message:'funcao desconhecida '+name}}}
 // ---- conferência independente do acerto ----
@@ -64,10 +68,10 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
    const q=new URL(u).searchParams;if(q.get('current'))return r.fulfill({json:{current:{temperature_2m:28.4,weather_code:1,wind_speed_10m:11}}});
    const ini=q.get('start_date'),fim=q.get('end_date');const time=[];for(let d=Date.parse(ini);d<=Date.parse(fim);d+=864e5)time.push(new Date(d).toISOString().slice(0,10));
    return r.fulfill({json:{daily:{time,weather_code:time.map((_,i)=>i?61:2),temperature_2m_max:time.map(()=>31),temperature_2m_min:time.map(()=>19),precipitation_probability_max:time.map((_,i)=>i?80:10),wind_speed_10m_max:time.map(()=>14)}}})});
-  await ctx.route(/images\.unsplash\.com/,r=>r.abort());
+  await ctx.route(/images\.unsplash\.com|openstreetmap\.org/,r=>r.abort());
   if(VIEW[i].old)await ctx.addInitScript(()=>{delete Array.prototype.at});
   await ctx.addInitScript(()=>{window.open=(u)=>{window.__aberto=u;return {}}});
-  await ctx.addInitScript(()=>{if(!localStorage.getItem('teste_areas')){localStorage.setItem('teste_areas','1');localStorage.setItem('bp_onb_pescador','true');localStorage.setItem('bp_area_manual','1')}});
+  await ctx.addInitScript(()=>{if(location.protocol!=='http:')return;if(!localStorage.getItem('teste_areas')){localStorage.setItem('teste_areas','1');localStorage.setItem('bp_onb_pescador','true');localStorage.setItem('bp_area_manual','1')}});
   const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(NOMES[i]+': '+e.message));pg.on('console',m=>{if(/Content Security Policy|Refused to/i.test(m.text()))errs.push(NOMES[i]+' (bloqueio CSP): '+m.text().slice(0,160))});P.push({pg,email,nome:NOMES[i]})}
  const [org,...amigos]=P;const pg0=org.pg;
  const login=async(p)=>{await p.pg.fill('#em',p.email);await p.pg.click('[data-act=mandaCodigo]');await p.pg.fill('#cod','123456');await p.pg.click('[data-act=confereCodigo]');await p.pg.waitForTimeout(300)};
@@ -157,7 +161,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  // 3c. dono de rancho anuncia; só aparece depois de aprovado
  {const c=P[3].pg;await c.goto(`http://localhost:${PORT}/#explorar`);await c.waitForTimeout(400);await c.click('[data-act=anunciar]');
   await c.fill('#fa-nome','Rancho do Carlão');await c.fill('#fa-local','Barra Bonita, SP');await c.fill('#fa-preco','550');await c.fill('#fa-sub','Rancho inteiro, até 6 pessoas');await c.fill('#fa-feat','Píer, Freezer, Churrasqueira');await c.fill('#fa-peixes','Tucunaré e corvina');
-  await c.fill('#fa-txt','Fica em -22.4912, -48.5583');await c.fill('#fa-wa','(14) 99876-5432');await c.setInputFiles('#fa-fotos',[__dirname+'/peixe-teste.jpg',__dirname+'/peixe-teste.jpg']);await c.waitForTimeout(900);ok((await c.$$('.fthumbs img')).length===2,'Dono escolhe 2 fotos e vê as miniaturas');await (await c.$('.fthumbs')).screenshot({path:__dirname+'/saida/form-fotos.png'});await c.check('#fa-ok');await c.click('[data-act=enviarad]');await c.waitForTimeout(300);
+  await c.fill('#fa-txt','Fica em -22.4912, -48.5583');await c.fill('#fa-wa','(14) 99876-5432');await c.setInputFiles('#fa-fotos',[__dirname+'/peixe-teste.jpg',__dirname+'/peixe-teste.jpg']);await c.waitForTimeout(900);ok((await c.$$('.fthumbs img')).length===2,'Dono escolhe 2 fotos e vê as miniaturas');await (await c.$('.fthumbs')).screenshot({path:__dirname+'/saida/form-fotos.png'});await c.check('#fa-barco');await c.check('#fa-ok');await c.click('[data-act=enviarad]');await c.waitForTimeout(300);
   ok(DB.ads.length===0,'Anúncio com coordenada no texto é barrado');
   await c.fill('#fa-txt','Casa com varanda para a represa.');await c.click('[data-act=enviarad]');await c.waitForTimeout(500);
   ok(DB.ads.length===1&&DB.ads[0].status==='pendente','Dono envia anúncio e ele fica esperando aprovação');
@@ -234,7 +238,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   await pg0.click('[data-act=sub][data-v=contas]');await pg0.waitForTimeout(200);await pg0.evaluate(()=>scrollTo(0,0));await pg0.screenshot({path:__dirname+'/saida/contas-nova.png',fullPage:true})}
  // 3f. entrada profissional: tipo de conta, apresentação, áreas e painéis
  {const ctx=await B.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'pt-BR'});await ctx.exposeFunction('__rpc',(u,nm,a)=>rpc(u,nm,a));await ctx.exposeFunction('__upload',(p,d)=>{FOTOS[p]=d;return true});
-  await ctx.route(/open-meteo\.com|images\.unsplash\.com/,r=>r.abort());
+  await ctx.route(/open-meteo\.com|images\.unsplash\.com|openstreetmap\.org/,r=>r.abort());
   const q=await ctx.newPage();q.on('pageerror',e=>errs.push('dono: '+e.message));await q.goto(`http://localhost:${PORT}/`);await q.waitForTimeout(400);
   ok((await t(q)).includes('Como você vai usar o app?'),'Tela de entrada pergunta se é pescador ou dono de rancho');await q.screenshot({path:__dirname+'/saida/entrada.png',fullPage:true});
   await q.click('[data-act=tipo][data-v=dono]');await q.fill('#em','dono@teste.local');await q.click('[data-act=mandaCodigo]');await q.fill('#cod','123456');await q.click('[data-act=confereCodigo]');await q.waitForTimeout(500);
@@ -242,6 +246,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   await q.click('[data-act=onbnext]');await q.click('[data-act=onbnext]');await q.click('[data-act=onbnext]');await q.waitForTimeout(500);
   const navTx=await q.textContent('#nav');ok(navTx.includes('Painel')&&navTx.includes('Anúncios')&&!navTx.includes('Contas'),'Dono tem menu próprio: Painel, Anúncios, Explorar, Perfil');
   ok((await t(q)).includes('Seu painel')&&(await t(q)).includes('EXEMPLO')&&(await q.$$('.bars')).length>0,'Painel do dono sem anúncio mostra exemplo com gráfico');await q.screenshot({path:__dirname+'/saida/painel-dono.png',fullPage:true});
+  {const tx=await t(q);const b=await q.$('button.cd.lv');ok(tx.includes('Agenda de dias livres')&&!!b,'Painel do dono tem a agenda de dias livres');const v=await b.getAttribute('data-v');await b.click();await q.waitForTimeout(150);ok(await q.$(`button.cd.oc[data-v="${v}"]`)!==null,'Tocar num dia marca como ocupado')}
   await q.click('#nav a[href="#anuncios"]');await q.waitForTimeout(300);ok((await t(q)).includes('Meus anúncios'),'Aba Anúncios mostra os anúncios do dono');
   await q.click('#nav a[href="#perfil"]');await q.waitForTimeout(300);ok(!(await t(q)).includes('dias de pesca'),'Perfil não mostra indicadores');
   await q.click('[data-act=exv][data-v="0"]');await q.waitForTimeout(400);{const tx=await t(q);ok(tx.includes('A turma')&&tx.includes('Peixes do diário')&&tx.includes('As contas')&&(await q.$$('.top .gal .slide')).length===6,'Pescaria de exemplo abre com fotos, turma, peixes e contas')}
@@ -249,14 +254,46 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   await q.click('[data-act=area][data-v=pescador]');await q.waitForTimeout(300);await q.click('[data-act=onbskip]').catch(()=>{});await q.waitForTimeout(200);
   ok((await q.textContent('#nav')).includes('Contas'),'Dá para trocar para a área do pescador no Perfil');
   await q.click('#nav a[href="#perfil"]');await q.waitForTimeout(300);ok(!(await t(q)).includes('Administrador'),'Quem não é administrador não vê a área de administrador');await ctx.close();
-  const ctx2=await B.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'pt-BR'});await ctx2.exposeFunction('__rpc',(u,nm,a)=>rpc(u,nm,a));await ctx2.route(/open-meteo\.com|images\.unsplash\.com/,r=>r.abort());
+  const ctx2=await B.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'pt-BR'});await ctx2.exposeFunction('__rpc',(u,nm,a)=>rpc(u,nm,a));await ctx2.route(/open-meteo\.com|images\.unsplash\.com|openstreetmap\.org/,r=>r.abort());
+  DB.ads.push({id:'adp',dono:'outro@teste.local',status:'pendente',dados:{nome:'Pousada Esperando',cat:'Pousada',local:'Bauru, SP'}});
   const w=await ctx2.newPage();w.on('pageerror',e=>errs.push('admin: '+e.message));await w.goto(`http://localhost:${PORT}/`);await w.waitForTimeout(400);
   await w.fill('#em','vini@teste.local');await w.click('[data-act=mandaCodigo]');await w.fill('#cod','123456');await w.click('[data-act=confereCodigo]');await w.waitForTimeout(900);
   const tx=await t(w);ok(tx.includes('Painel do administrador')&&tx.includes('cadastrados'),'Administrador entra direto no painel de administração');
   ok((await w.$$('.bars')).length>0&&tx.includes('Mais bem avaliados')&&tx.includes('Últimas avaliações'),'Painel do administrador tem gráfico, ranking e moderação');
   await w.screenshot({path:__dirname+'/saida/painel-admin.png',fullPage:true});
+  ok(((await w.textContent('#nav .nbadge').catch(()=>''))||'').trim()==='1','Menu do administrador mostra 1 anúncio esperando aprovação');
+  DB.ads.push({id:'adq',dono:'outro@teste.local',status:'pendente',dados:{nome:'Rancho Novo',cat:'Rancho',local:'Bauru, SP'}});
+  await w.evaluate(()=>window.__checaPend&&window.__checaPend());await w.waitForTimeout(400);ok((await w.textContent('#nav .nbadge')).trim()==='2'&&(await t(w)).includes('Chegou anúncio novo'),'Quando chega anúncio novo, o administrador recebe aviso e o número sobe');
+  DB.ads=DB.ads.filter(x=>x.id!=='adp'&&x.id!=='adq');
+  await w.selectOption('#pr-ad','a1');await w.fill('#pr-txt','10% de desconto em dezembro');await w.click('[data-act=prsave]');await w.waitForTimeout(400);
+  ok(DB.promo&&DB.promo.lugar==='a1'&&DB.promo.txt==='10% de desconto em dezembro','Administrador escolhe a promoção da semana');
+  await w.click('#nav a[href="#explorar"]');await w.waitForTimeout(400);ok((await t(w)).includes('Promoção da semana')&&(await t(w)).includes('10% de desconto em dezembro'),'Promoção aparece em destaque no Explorar');
+  await w.screenshot({path:__dirname+'/saida/promo.png'});await w.click('#nav a[href="#admin"]');await w.waitForTimeout(400);
   const av0=DB.aval[0];if(av0){await w.click(`[data-act=modav][data-v="${av0.id}"]`);await w.waitForTimeout(400);ok(av0.oculto===true,'Administrador esconde uma avaliação')}
   await ctx2.close()}
+ // 3g. filtros, agenda, mapa, compartilhar e instalar
+ {const a=P[1].pg;await a.goto(`http://localhost:${PORT}/#explorar`);await a.waitForTimeout(500);
+  ok((await a.$$('.inst')).length===1,'Explorar convida a instalar o app');await a.click('[data-act=instalar]');await a.waitForTimeout(150);ok((await a.$$('.passos li')).length===3,'Instalar mostra o passo a passo');await a.click('.sheet [data-act=mclose]');
+  await a.click('[data-act=filtros]');await a.waitForTimeout(150);await a.screenshot({path:__dirname+'/saida/filtros.png'});
+  await a.click('[data-act=fesp][data-v="Dourado"]');await a.click('[data-act=fbarco]');await a.waitForTimeout(100);const bt=await a.textContent('[data-act=fver]');const nN=Number((bt.match(/\d+/)||[0])[0]);
+  await a.click('[data-act=fver]');await a.waitForTimeout(200);{const cs=await a.$$eval('#app [data-act=ad]',els=>els.map(e=>e.dataset.v));ok(nN>0&&cs.length===nN&&cs.every(id=>['a5','a7','r3','a3'].includes(id)),'Filtro dourado + barco mostra só lugares com dourado e barco ('+cs.join(',')+')');
+   ok(((await a.textContent('.fbtn .fn'))||'').trim()==='2','Botão de filtros mostra quantos estão ligados')}
+  await a.screenshot({path:__dirname+'/saida/filtrado.png',fullPage:true});
+  await a.click('[data-act=filtros]');await a.click('[data-act=fclear]');await a.click('[data-act=ffaixa][data-v=ate150]');await a.click('[data-act=fver]');await a.waitForTimeout(200);
+  {const cs=await a.$$eval('#app [data-act=ad]',els=>els.map(e=>e.dataset.v));ok(cs.length>0&&cs.every(id=>['a8','a9'].includes(id)),'Filtro "até R$ 150" mostra só os baratos ('+cs.join(',')+')')}
+  await a.click('[data-act=limpafiltro]');await a.waitForTimeout(150);ok(!(await a.$('.fbtn .fn')),'Limpar desliga os filtros');
+  await a.click('[data-act=ad][data-v=a1]');await a.waitForTimeout(400);
+  ok((await a.$$('.calm')).length===1&&(await a.$$('.calm .cd.oc')).length>0,'Anúncio mostra a agenda com dias ocupados');
+  {const src=await a.getAttribute('.mapa iframe','src');ok(!!src&&src.startsWith('https://www.openstreetmap.org/export/embed.html?bbox=')&&!/\d\.\d{3}/.test(src)&&!src.includes('marker'),'Mapa mostra só a região, sem marcador e com posição arredondada')}
+  await a.click('[data-act=sharead]');{const u=await a.evaluate(()=>window.__aberto);ok(u&&u.startsWith('https://wa.me/?text=')&&decodeURIComponent(u).includes('/a/a1.html')&&decodeURIComponent(u).includes('Rancho Beira'),'Mandar anúncio no WhatsApp leva nome e link com prévia')}
+  await a.screenshot({path:__dirname+'/saida/anuncio-novo.png',fullPage:true});
+  const c=P[3].pg;await c.evaluate(()=>{localStorage.setItem('bp_area',JSON.stringify('dono'));localStorage.setItem('bp_onb_dono',JSON.stringify(1))});await c.goto(`http://localhost:${PORT}/#painel`);await c.waitForTimeout(700);
+  {const tx=await t(c);ok(tx.includes('Agenda de dias livres')&&tx.includes('Rancho do Carlão'),'Dono com anúncio vê a agenda do próprio anúncio')}
+  const b=await c.$('button.cd.lv');const dv=await b.getAttribute('data-v');await b.click();await c.click('[data-act=agsave]');await c.waitForTimeout(400);
+  ok((DB.ads[0].dados.ocupados||[]).includes(dv),'Dono salva a agenda');
+  await a.goto(`http://localhost:${PORT}/?ad=u_ad1#explorar`);await a.waitForTimeout(800);ok((await t(a)).includes('Rancho do Carlão')&&(await a.$$('.calm')).length===1,'Link do anúncio abre direto nele, com a agenda do dono');
+  {const tx=await t(a);ok(tx.includes('Tem barco')===!!DB.ads[0].dados.barco,'Anúncio real mostra "Tem barco" só se marcado')}
+  await c.evaluate(()=>localStorage.setItem('bp_area',JSON.stringify('pescador')));for(const pp of [a,c]){await pp.goto(`http://localhost:${PORT}/#pescarias`);await pp.waitForTimeout(400);await pp.click(`[data-act=open][data-v="${pid}"]`);await pp.waitForTimeout(200)}}
  // 3b. segurança: alguém da turma tenta esconder código num id e pôr foto de fora
  {const d=DB.pesc[pid].dados;const bad='"><img src=x onerror="window.__xss=1">';d.pessoas.push({id:bad,nome:'Intruso',pix:''});d.itens.push({id:bad,txt:'isca',quem:bad,ok:false});d.gastos.push({id:bad,desc:'Teste',valor:1,pagou:bad,parts:[bad]});DB.pesc[pid].versao++;
   DB.diario.push({id:'dx',autor:'x',autor_nome:'x',lugar:'zz',lugar_nome:'',dados:{especie:'Peixe',foto:'https://evil.example/rastreio.jpg',data:12345},publico:true,criado:new Date().toISOString()});
