@@ -2,6 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<!-- Segurança: o app só conversa com o próprio site, o Supabase do app, o Open-Meteo (tempo) e as fotos do Unsplash. Se trocar o projeto do Supabase, troque o endereço aqui também. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://images.unsplash.com https://dmumfsjmfwjndzgndsjp.supabase.co; connect-src 'self' https://dmumfsjmfwjndzgndsjp.supabase.co wss://dmumfsjmfwjndzgndsjp.supabase.co https://api.open-meteo.com https://geocoding-api.open-meteo.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Turma da Pesca</title>
 <link rel="manifest" href="manifest.json">
@@ -204,7 +207,7 @@ const FOTOS={"cabana": ["1629609197514-6a0a03d30dc9", "Jonas Allert", "VE3TeDTYS
 ['turma-acampamento','varas-barranco','por-do-sol-represa','tucunares-piranhas','sitio-entardecer','corrego-pedras','piaparas','disco-linguica','por-do-sol-represa-2','rio-sol-vara','piranha-rio','arvore-casas','disco-linguica-2','corrego-pedras-2','barcos-trilha','peixes-escama','rio-mata','pintado','piaus'].forEach(k=>FOTOS[k]=['L',k]);
 const fotoUrl=(f,w)=>FOTOS[f][0]==='L'?'fotos/'+(w<=720?'p':'g')+'/'+f+'.jpg':'https://images.unsplash.com/photo-'+FOTOS[f][0]+'?auto=format&fit=crop&w='+w+'&q=70';
 const exKeys=a=>(a.fotos&&!a.real?a.fotos:a.foto?[a.foto]:[]).filter(k=>FOTOS[k]);
-const adFotos=(a,w)=>a.real?(a.fotos||[]).map(f=>fotoUrl2(f)):exKeys(a).map(k=>fotoUrl(k,w));
+const adFotos=(a,w)=>a.real?(a.fotos||[]).map(f=>fotoUrl2(f)).filter(Boolean):exKeys(a).map(k=>fotoUrl(k,w));
 const imgF=(u,eager)=>`<img class="foto" src="${esc(u)}" alt="" ${eager?'':'loading="lazy" '}decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`;
 const galSync=g=>{const i=Math.round(g.scrollLeft/Math.max(1,g.clientWidth));const p=g.parentElement;const n=p.querySelector('.galn');if(n)n.textContent=(i+1)+' de '+g.dataset.n;p.querySelectorAll('.dots i').forEach((d,k)=>d.classList.toggle('on',k===i))};
 const cardGal=a=>{const f=adFotos(a,720);if(f.length<2)return picA(a,720);return `<div class="gal" data-k="c_${esc(a.id)}" data-n="${f.length}">${f.map((u,i)=>`<div class="slide">${scene(adIdx(a),a.cat)}${imgF(u,i===0)}</div>`).join('')}</div>`};
@@ -240,7 +243,7 @@ async function loadAds(){if(mode!=='cloud'||!user)return;
  if(ADMIN&&!S.admAuto){S.admAuto=true;if(!ls.get('bp_area_manual',0)&&area()!=='admin'){ls.set('bp_area','admin');if(!S.pid)S.tab='admin';history.replaceState(null,'','#'+S.tab)}}
  if(ADMIN){const f=await sb.rpc('anuncios_para_aprovar');if(!f.error)FILA=(f.data||[]).map(toAd)}
  render()}
-const temCoord=t=>/-?\d{1,3}[.,]\d{4,}/.test(t)||/\d{1,3}°/.test(t);
+const temCoord=t=>/-?\d{1,3}[.,]\d{4,}/.test(t)||/\d{1,3} ?°/.test(t)||/(maps\.app\.goo\.gl|goo\.gl\/maps|google\.[a-z.]+\/maps|maps\.google|waze\.com|plus\.codes)/i.test(t);
 /* piracema: na bacia do Rio Paraná (inclui o Tietê) vai em geral de 1º de novembro a 28 de fevereiro */
 const emPiracema=d=>{const m=Number(String(d||today()).slice(5,7));return m>=11||m<=2};
 const NATIVOS=/dourado|pintado|pacu|piau|traíra|traira|mandi|curimba|lambari|jaú|jau|barbado|piracanjuba/i;
@@ -274,7 +277,7 @@ let user=null;let authReady=!sb;
 const clone=o=>JSON.parse(JSON.stringify(o));
 const putLocal=p=>{const i=P.findIndex(x=>x.id===p.id);if(i<0)P.push(p);else P[i]=p};
 const local={
- list(){P=ls.get('bp_pescarias',[])},
+ list(){P=limpaIds(ls.get('bp_pescarias',[]))},
  create(p){putLocal(p);ls.set('bp_pescarias',P);render();return Promise.resolve(p.id)},
  change(id,fn){const p=getP(id);if(!p)return;const c=clone(p);fn(c);putLocal(c);ls.set('bp_pescarias',P);render()},
  del(id){P=P.filter(x=>x.id!==id);ls.set('bp_pescarias',P);render()}};
@@ -282,7 +285,15 @@ const queue={};
 /* base = última versão confirmada pelo banco; pend = mudanças desta pessoa ainda a caminho.
    A tela mostra base + pend, assim uma atualização vinda do banco nunca apaga o que a pessoa acabou de fazer. */
 const base={};const pend={};
-const rowToP=r=>({...r.dados,id:r.id,_v:r.versao,_convite:r.convite});
+/* Segurança: ids, quem pagou, votos etc. só podem ter letras, números, _ e -. Assim ninguém da turma esconde código num id. */
+const sId=v=>String(v??'').replace(/[^\w-]/g,'').slice(0,40);
+const limpaIds=o=>{if(Array.isArray(o))return o.map(limpaIds);if(!o||typeof o!=='object')return o;const r={};for(const k of Object.keys(o)){const v=o[k];
+ if(['id','quem','pagou','de','para'].includes(k)&&(typeof v==='string'||typeof v==='number'))r[k]=sId(v);
+ else if((k==='parts'||k==='votos')&&Array.isArray(v))r[k]=v.map(sId);
+ else if(k==='pagos'&&v&&typeof v==='object'&&!Array.isArray(v)){r[k]={};for(const pk of Object.keys(v))r[k][pk.split('>').map(sId).join('>')]=v[pk]}
+ else if(k==='valor')r[k]=Number(v)||0;
+ else r[k]=limpaIds(v)}return r};
+const rowToP=r=>({...limpaIds(r.dados||{}),id:r.id,_v:r.versao,_convite:r.convite});
 const view=id=>{const c=clone(base[id]);(pend[id]||[]).forEach(f=>{try{f(c)}catch(e){console.error(e)}});return c};
 const cloud={
  async list(){if(!user)return;loading=!P.length;render();
@@ -672,7 +683,8 @@ function vClimaAgora(local){const w=clima(local);if(!w||w.st!=='ok'||!w.j.curren
 let ADF=[];const notaDe=id=>{const L=LUG[id];if(!L||!L.aval||!L.aval.length)return null;return {m:L.aval.reduce((s,x)=>s+x.nota,0)/L.aval.length,n:L.aval.length}};
 let DIARIO=[],DLOAD=false;const LUG={};let FOTO=null,FOTOURL='';
 const ESPECIES=['Tucunaré','Tilápia','Corvina','Traíra','Dourado','Pintado','Pacu','Tambaqui','Piau','Lambari','Bagre','Carpa','Curimba','Piapara'];
-const fotoUrl2=f=>!f?'':/^(https?:|data:|fotos\/)/.test(f)?f:sb.storage.from('diario').getPublicUrl(f).data.publicUrl;
+/* Segurança: só mostra foto do próprio app (fotos/...) ou do armazenamento do app (pasta/arquivo.jpg). Link de fora não aparece. */
+const fotoUrl2=f=>{f=typeof f==='string'?f:'';if(/^fotos\/[\w\/.-]+\.jpg$/.test(f)&&!f.includes('..'))return f;if(/^[\w@.-]+\/[\w.-]+\.jpg$/.test(f)&&!f.includes('..'))return sb.storage.from('diario').getPublicUrl(f).data.publicUrl;return ''};
 const meuNome=()=>(ls.get('bp_nome','')||(user&&user.email?user.email.split('@')[0]:'Pescador')).split(' ')[0];
 const pesoTxt=k=>k?String(k).replace('.',',')+' kg':'';
 async function loadDiario(){if(mode!=='cloud'||!user)return;const {data,error}=await sb.rpc('meu_diario');DIARIO=error?[]:data||[];DLOAD=true;render()}
@@ -683,7 +695,7 @@ const estrelas=(n,tam)=>{let h='';for(let i=1;i<=5;i++)h+=`<span style="color:${
 const CRIT=[['peixe','Peixe'],['estrutura','Estrutura'],['atendimento','Atendimento'],['preco','Preço justo']];
 function cardDiario(d,dono){const x=d.dados||{};const f=fotoUrl2(x.foto);
  return `<div class="card dcard">${f?`<div class="pic" style="aspect-ratio:4/3;border-radius:0"><img class="foto" src="${esc(f)}" alt="${esc(x.especie||'Peixe')}" loading="lazy" onerror="this.remove()"></div>`:''}<div class="body" style="padding:12px 14px"><div class="t" style="font-size:18px">${esc(x.especie||'Peixe')}${x.peso?' · '+esc(pesoTxt(x.peso)):''}</div>
- <div class="m">${dono?esc(d.lugar_nome||'Sem lugar'):esc(d.autor_nome||'Pescador')} · ${esc(fmtD(x.data||''))}${x.data?' '+esc(x.data.slice(0,4)):''}</div>${x.isca?`<div class="m">Isca: ${esc(x.isca)}</div>`:''}${x.ponto?`<div class="m">Ponto: ${esc(x.ponto)}</div>`:''}${x.obs?`<div style="font-size:16px;margin-top:4px">${esc(x.obs)}</div>`:''}
+ <div class="m">${dono?esc(d.lugar_nome||'Sem lugar'):esc(d.autor_nome||'Pescador')} · ${esc(fmtD(String(x.data||'')))}${x.data?' '+esc(String(x.data).slice(0,4)):''}</div>${x.isca?`<div class="m">Isca: ${esc(x.isca)}</div>`:''}${x.ponto?`<div class="m">Ponto: ${esc(x.ponto)}</div>`:''}${x.obs?`<div style="font-size:16px;margin-top:4px">${esc(x.obs)}</div>`:''}
  ${dono?`<div style="display:flex;gap:8px;align-items:center;margin-top:8px"><span class="m" style="flex:1">${d.publico&&d.lugar?'Aparece no anúncio':'Só você vê'}</span><button class="btn sm alt" data-act="rmdiario" data-v="${esc(d.id)}" style="color:var(--warn)">Apagar</button></div>`:''}</div></div>`}
 function vDiarioResumo(){if(mode!=='cloud')return '';if(!DLOAD)loadDiario();
  const n=DIARIO.length;const maior=DIARIO.reduce((m,d)=>{const k=Number((d.dados||{}).peso)||0;return k>m.k?{k,e:(d.dados||{}).especie}:m},{k:0});
@@ -794,7 +806,7 @@ let pending=null;
 function render(){try{renderInner()}catch(e){console.error(e);const a=$('#app');if(a)a.removeAttribute('data-ok');window.__falhou&&window.__falhou(e.message)}}
 const onbAtivo=()=>mode==='cloud'&&!!user&&area()!=='admin'&&!ls.get('bp_onb_'+area(),false);
 function vAnuncios(){if(S.ex==='form')return vFormAd();return vMeus(true)}
-let LASTH='';window.__render=()=>render();window.__rerender=()=>{LASTH='';render()};
+let LASTH='';window.__render=()=>render();window.__seg={temCoord,fotoUrl2,get sb(){return sb}};window.__rerender=()=>{LASTH='';render()};
 function fixNav(){$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=AREAS[area()].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}"${S.tab===k?' aria-current="page"':''}><i>${i==='user'&&user?`<span class="navav">${esc((ls.get('bp_nome','')||user.email||'?').trim().charAt(0).toUpperCase())}</span>`:I[i]}</i>${l}</a>`).join('');if(onbAtivo())$('#nav').style.display='none';}
 function renderInner(){
 const app=$('#app');if(!app)return;
@@ -833,10 +845,13 @@ if(e.target.id==='d-foto'){const f=e.target.files&&e.target.files[0];if(!f)retur
 if(e.target.id==='fa-tempt'){$('#fa-pbox').style.display=e.target.checked?'':'none';return}if(a==='eu'){setMe(S.pid,e.target.value)}else if(a==='reg'){S.reg=e.target.value;render()}else if(a==='quem'){const v=e.target.dataset.v;change(p=>{const it=p.itens.find(i=>i.id===v);if(it)it.quem=e.target.value})}else if(a==='cid'){S.cid=e.target.value;render()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#modal').innerHTML)closeModal()});
 document.addEventListener('scroll',e=>{const g=e.target;if(!g||!g.classList||!g.classList.contains('gal'))return;galSync(g)},true);
+/* Segurança: botões que mandam algo ficam travados até terminar, para não enviar duas vezes. */
+const TRAVA=['enviarad','salvadiario','salvaraval','salvaresp','mandaCodigo','confereCodigo','apagarOk','criar','rmad','rmdiario','aprovar','recusar','modav','moddi','google'];const OCUPADO={};
 document.addEventListener('click',async e=>{
 const el=e.target.closest('[data-act]');if(!el)return;
 if(el.dataset.stop&&!e.target.closest('[data-act]:not([data-stop])'))return;
 const a=el.dataset.act,v=el.dataset.v;
+if(TRAVA.includes(a)){if(OCUPADO[a])return;OCUPADO[a]=1}try{
 if(['addp','addi','addr','addg','adddata','souNovo'].includes(a)){window.__limpar=true;setTimeout(()=>{window.__limpar=false},0)}
 if(a==='mclose'){if(e.target===el||el.tagName==='BUTTON')closeModal();return}
 if(a==='cat'){S.cat=v;render()}
@@ -898,7 +913,7 @@ else if(a==='salvadiario'){const g=id=>($('#'+id).value||'').trim();const esp=g(
   const {error}=await sb.rpc('salvar_diario',{p_dados:x,p_lugar:ad?ad.id:'',p_lugar_nome:ad?ad.nome:g('d-outro'),p_publico:pub,p_nome:meuNome()});
   if(error){flash(/limite/.test(error.message)?'Limite de 30 registros por dia.':'Não deu para salvar agora.');return}
   FOTO=null;FOTOURL='';S.pv=null;if(ad)delete LUG[ad.id];await loadDiario();scrollTo(0,0);if(!flashMsg)flash('Salvo no seu diário!')}finally{el.disabled=false}}
-else if(a==='rmdiario'){const {error}=await sb.rpc('apagar_diario',{p_id:v});if(error){flash('Não deu para apagar agora.');return}await loadDiario()}
+else if(a==='rmdiario'){const foto=((DIARIO||[]).find(x=>x.id===v)||{dados:{}}).dados.foto;const {error}=await sb.rpc('apagar_diario',{p_id:v});if(error){flash('Não deu para apagar agora.');return}if(foto&&!/^fotos\//.test(foto))try{await sb.storage.from('diario').remove([foto])}catch(e){}await loadDiario()}
 else if(a==='avaliar'){if(!LUG[v])lugarDados(v);modalAvaliar(v)}
 else if(a==='star'){const k=el.dataset.k,n=Number(v);document.querySelectorAll(`.star[data-k="${k}"]`).forEach(b=>b.classList.toggle('on',Number(b.dataset.v)<=n))}
 else if(a==='salvaraval'){const nota=k=>document.querySelectorAll(`.star.on[data-k="${k}"]`).length;if(!nota('geral')){flash('Toque nas estrelas da nota geral.');return}
@@ -925,7 +940,8 @@ else if(a==='modav'||a==='moddi'){const {error}=await sb.rpc(a==='modav'?'oculta
 else if(a==='waad'){evento(v,'whatsapp')}
 else if(a==='sair'){await sb.auth.signOut();P=[];S.pid=null;render()}
 else if(a==='apagarConta'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Apagar sua conta?</h2><p>Você sai de todas as pescarias. As pescarias que você criou são apagadas para toda a turma. Não dá para desfazer.</p><button class="btn full" data-act="apagarOk" style="background:var(--warn)">Apagar minha conta</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
-else if(a==='apagarOk'){const {error}=await sb.rpc('apagar_minha_conta');closeModal();if(error){flash('Não deu para apagar agora.');return}await sb.auth.signOut();P=[];render()}
+else if(a==='apagarOk'){/* LGPD: apaga também as fotos da pessoa no armazenamento */try{const r=await sb.storage.from('diario').list(user.id,{limit:1000});const fs=(r.data||[]).map(x=>user.id+'/'+x.name);if(fs.length)await sb.storage.from('diario').remove(fs)}catch(e){}
+ const {error}=await sb.rpc('apagar_minha_conta');closeModal();if(error){flash('Não deu para apagar agora.');return}await sb.auth.signOut();P=[];render()}
 else if(a==='open'){S.pid=v;S.sub='turma';render();scrollTo(0,0)}
 else if(a==='close'){S.pid=null;render()}
 else if(a==='sub'){S.sub=v;render()}
@@ -966,7 +982,7 @@ else if(a==='waopen'){waOpen($('#watxt').value)}
 else if(a==='convite'){const p=curP();const txt=`Bora pescar? ${p.nome}${p.local?' em '+p.local:''}${p.inicio?', '+fmtD(p.inicio)+(p.fim&&p.fim!==p.inicio?' a '+fmtD(p.fim):''):''}. Entra no app ${APP}, abre a pescaria e confirma presença.`;openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Convite</h2><textarea class="code" readonly id="cv" style="font-family:inherit;font-size:15px">${esc(txt)}</textarea><button class="btn full" data-act="copy" data-t="cv" style="margin-top:12px">Copiar convite</button></div></div>`)}
 else if(a==='delp'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Apagar esta pescaria?</h2><p>Some para toda a turma, com gastos e lista.</p><button class="btn full" data-act="delok" style="background:var(--warn)">Apagar</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
 else if(a==='delok'){store().del(S.pid);S.pid=null;closeModal()}
-});
+}finally{delete OCUPADO[a]}});
 (()=>{const q=new URLSearchParams(location.search);const c=q.get('c');if(c){ls.set('bp_convite',c);history.replaceState(null,'',location.pathname+location.hash)}})();
 const route0=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=TABS.includes(h)?h:DEFTAB[area()];if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
 const route=()=>{route0();if(S.tab==='explorar'){S.ex=S.ex||null;loadAds()}};

@@ -68,7 +68,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   if(VIEW[i].old)await ctx.addInitScript(()=>{delete Array.prototype.at});
   await ctx.addInitScript(()=>{window.open=(u)=>{window.__aberto=u;return {}}});
   await ctx.addInitScript(()=>{if(!localStorage.getItem('teste_areas')){localStorage.setItem('teste_areas','1');localStorage.setItem('bp_onb_pescador','true');localStorage.setItem('bp_area_manual','1')}});
-  const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(NOMES[i]+': '+e.message));P.push({pg,email,nome:NOMES[i]})}
+  const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(NOMES[i]+': '+e.message));pg.on('console',m=>{if(/Content Security Policy|Refused to/i.test(m.text()))errs.push(NOMES[i]+' (bloqueio CSP): '+m.text().slice(0,160))});P.push({pg,email,nome:NOMES[i]})}
  const [org,...amigos]=P;const pg0=org.pg;
  const login=async(p)=>{await p.pg.fill('#em',p.email);await p.pg.click('[data-act=mandaCodigo]');await p.pg.fill('#cod','123456');await p.pg.click('[data-act=confereCodigo]');await p.pg.waitForTimeout(300)};
  const t=async(pg)=>(await pg.textContent('#app'));
@@ -257,6 +257,17 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   await w.screenshot({path:__dirname+'/saida/painel-admin.png',fullPage:true});
   const av0=DB.aval[0];if(av0){await w.click(`[data-act=modav][data-v="${av0.id}"]`);await w.waitForTimeout(400);ok(av0.oculto===true,'Administrador esconde uma avaliação')}
   await ctx2.close()}
+ // 3b. segurança: alguém da turma tenta esconder código num id e pôr foto de fora
+ {const d=DB.pesc[pid].dados;const bad='"><img src=x onerror="window.__xss=1">';d.pessoas.push({id:bad,nome:'Intruso',pix:''});d.itens.push({id:bad,txt:'isca',quem:bad,ok:false});d.gastos.push({id:bad,desc:'Teste',valor:1,pagou:bad,parts:[bad]});DB.pesc[pid].versao++;
+  DB.diario.push({id:'dx',autor:'x',autor_nome:'x',lugar:'zz',lugar_nome:'',dados:{especie:'Peixe',foto:'https://evil.example/rastreio.jpg',data:12345},publico:true,criado:new Date().toISOString()});
+  const pg0=P[0].pg;await pg0.reload();await pg0.waitForTimeout(500);await pg0.click(`[data-act=open][data-v="${pid}"]`).catch(()=>{});await pg0.waitForTimeout(200);
+  for(const sub of ['turma','levar','contas']){await pg0.click(`[data-act=sub][data-v=${sub}]`).catch(()=>{});await pg0.waitForTimeout(120)}
+  const r=await pg0.evaluate(()=>({xss:!!window.__xss,ext:[...document.images].some(i=>/evil\.example/.test(i.src)),ext2:__seg.fotoUrl2('https://evil.example/a.jpg'),ok2:__seg.fotoUrl2('fotos/p/piaus.jpg')}));
+  ok(!r.xss,'Código escondido num id da pescaria não roda');ok(!r.ext&&r.ext2===''&&r.ok2==='fotos/p/piaus.jpg','Foto com link de fora não aparece (só fotos do app)');
+  const tc=await pg0.evaluate(()=>[__seg.temCoord('Fica em -22.4912, -48.5583'),__seg.temCoord('https://maps.app.goo.gl/abc'),__seg.temCoord('Píer iluminado, (14) 99876-5432')]);ok(tc[0]&&tc[1]&&!tc[2],'App recusa coordenada e link de mapa, aceita telefone');
+  const dbl=await pg0.evaluate(async()=>{const sb=__seg.sb;let n=0;const o=sb.rpc;sb.rpc=function(){n++;return new Promise(r=>setTimeout(()=>r({data:null,error:{message:'x'}}),300))};const b=document.createElement('button');b.dataset.act='rmdiario';b.dataset.v='zz';document.body.appendChild(b);b.click();b.click();b.click();await new Promise(r=>setTimeout(r,500));sb.rpc=o;b.remove();return n});
+  ok(dbl===1,'Botão que envia fica travado: 3 toques rápidos mandam só 1 vez (mandou '+dbl+')');
+  d.pessoas=d.pessoas.filter(x=>x.nome!=='Intruso');d.itens=d.itens.filter(x=>x.txt!=='isca'||x.quem!==bad);d.gastos=d.gastos.filter(x=>x.desc!=='Teste');DB.pesc[pid].versao++;DB.diario=DB.diario.filter(x=>x.id!=='dx');await pg0.reload();await pg0.waitForTimeout(500);await pg0.click(`[data-act=open][data-v="${pid}"]`).catch(()=>{});await pg0.waitForTimeout(200)}
  // 4. tela: rolagem lateral e tamanho das letras em cada celular
  for(const [i,p] of P.entries()){for(const sub of ['turma','datas','levar','roteiro','contas']){await p.pg.click(`[data-act=sub][data-v=${sub}]`);await p.pg.waitForTimeout(80);
    const r=await p.pg.evaluate(()=>{const over=document.documentElement.scrollWidth>window.innerWidth+1;const small=[];for(const el of document.querySelectorAll('#app *, #nav *')){if(!el.childNodes.length)continue;const own=[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());if(!own)continue;const r=el.getBoundingClientRect();if(!r.width)continue;const fs=parseFloat(getComputedStyle(el).fontSize);if(fs<15)small.push(fs+'px "'+el.textContent.trim().slice(0,30)+'"')}
