@@ -8,8 +8,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Turma da Pesca</title>
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="icone.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="apple-touch-icon" href="png/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Turma da Pesca">
@@ -20,7 +21,7 @@
 <meta property="og:description" content="Organize a pescaria da turma, divida as contas no Pix e encontre ranchos, pousadas e piloteiros.">
 <meta property="og:image" content="https://viniciusquinalia-eng.github.io/app-pesca/fotos/p/por-do-sol-represa.jpg">
 <meta property="og:url" content="https://viniciusquinalia-eng.github.io/app-pesca/">
-<meta name="theme-color" content="#0F5A50">
+<meta name="theme-color" content="#0E1B2C">
 <meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -28,12 +29,12 @@
 /* VOICE: simples e direto, como app de banco e de hospedagem; letra grande para todas as idades
    IDEA: o caderninho da pescaria da turma, no bolso
    PICTURE: cenas planas de rio, rancho e barco nos cards
-   COLOUR and TYPE: branco, verde-rio #0F5A50 dominante, amarelo-tucunaré só em detalhes; Inter
+   COLOUR and TYPE: branco, azul-marinho #0E1B2C dominante, amarelo-tucunaré só em detalhes; Inter
    LAYOUT: coluna de celular, menu de 3 abas embaixo, um assunto por tela */
 :root{color-scheme:light;
---bg:#ffffff;--card:#ffffff;--soft:#f4f6f5;--soft2:#eef2f0;
---ink:#0b2e33;--ink2:#2c4a4e;--mute:#5a6b68;--line:#e4eae8;
---brand:#0f5a50;--brand2:#0b463e;--brandsoft:#e6f0ed;--onbrand:#ffffff;--sun:#f2b035;--sunsoft:#fdf1d6;
+--bg:#ffffff;--card:#ffffff;--soft:#f4f5f7;--soft2:#eef0f3;
+--ink:#111c2a;--ink2:#2b3a4c;--mute:#566273;--line:#e3e6eb;
+--brand:#0E1B2C;--brand2:#060d17;--brandsoft:#e9edf3;--onbrand:#ffffff;--sun:#f2b035;--sunsoft:#fdf1d6;--laranja:#e8742a;
 --warn:#a33f0b;--warnbg:#fdeee3;--wa:#1d7a4c;
 --sh:0 1px 2px rgba(11,46,51,.05),0 6px 20px rgba(11,46,51,.07);--r:22px}
 *{box-sizing:border-box;min-width:0}
@@ -115,7 +116,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:24px 0}
 .star{width:48px;height:48px;border:0;background:none;font-size:34px;color:#d9dfdc;cursor:pointer;padding:0}.star.on{color:#F2B035}
 .gal{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.gal::-webkit-scrollbar{display:none}
 .gal .slide{flex:0 0 100%;position:relative;scroll-snap-align:start;overflow:hidden}
-.galbtn{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#0F5A50;font-size:30px;line-height:1;font-weight:700;cursor:pointer;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.galbtn{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#0E1B2C;font-size:30px;line-height:1;font-weight:700;cursor:pointer;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 .galn{position:absolute;right:14px;bottom:14px;background:rgba(0,0,0,.6);color:#fff;font-size:16px;font-weight:700;padding:6px 12px;border-radius:999px;z-index:2}
 .fthumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}.fthumbs div{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--line)}.fthumbs img{width:100%;height:100%;object-fit:cover;display:block}.fthumbs button{position:absolute;top:4px;right:4px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.95);color:var(--warn);font-size:22px;font-weight:800}
 .bars{display:flex;align-items:flex-end;gap:6px;height:150px;margin:8px 0 4px;padding:8px 4px 0;border-bottom:1px solid var(--line)}.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px}.bar i{display:block;width:100%;max-width:34px;background:var(--brand);border-radius:6px 6px 0 0}.bv{font-size:15px;font-weight:700;color:var(--brand)}.bl{font-size:15px;color:var(--mute);height:20px;white-space:nowrap}
@@ -134,7 +135,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:24px 0}
 .dest .destb{display:flex;flex-direction:column;align-items:stretch;flex:0 0 40%;max-width:170px;border:0;background:none;padding:0;text-align:left;color:inherit;scroll-snap-align:start;cursor:pointer}.dimg{display:block;aspect-ratio:1;border-radius:20px;overflow:hidden;background:var(--brandsoft);margin-bottom:8px}.dimg img{width:100%;height:100%;object-fit:cover;display:block}.destb b{display:block;font-size:17px}.destb .m{font-size:15px}
 .sechead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 0 10px}.sechead h2{margin:0;font-size:21px}.seta{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--brandsoft);color:var(--brand);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .heart{position:absolute;top:10px;right:10px;width:44px;height:44px;border:0;background:none;color:#fff;display:flex;align-items:center;justify-content:center;z-index:3;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5));cursor:pointer}.heart svg{width:30px;height:30px}.heart.on{color:#d64545}.heart.on svg{fill:#d64545}
-.tag.badge{background:rgba(255,255,255,.96);color:#0F5A50;font-weight:700}
+.tag.badge{background:rgba(255,255,255,.96);color:#0E1B2C;font-weight:700}
 .pira{margin:14px 0 0;background:var(--sunsoft);border-radius:16px;padding:4px 14px}.pira summary{display:flex;gap:10px;align-items:center;min-height:52px;cursor:pointer;font-size:16px;list-style:none}.pira summary::-webkit-details-marker{display:none}.pira p{margin:4px 0 12px;font-size:16px}
 .navav{width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
 .turma{display:flex;flex-wrap:wrap;gap:14px}.turma div{display:flex;flex-direction:column;align-items:center;gap:6px;width:76px;text-align:center;font-size:15px;font-weight:600}.turma .av{width:56px;height:56px;font-size:20px}
@@ -144,7 +145,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:24px 0}
 .passos{margin:0;padding-left:24px;font-size:18px;line-height:1.45}.passos li{margin:10px 0}
 .promo{max-width:none;flex:none;position:relative}.promotxt{margin-top:10px;display:inline-block;background:var(--sunsoft);color:#5a3d00;font-weight:800;font-size:17px;padding:8px 14px;border-radius:12px}
 .convbox{margin-top:16px;border-radius:20px;padding:18px;background:var(--brandsoft)}.convbox b{font-size:19px}
-.mapa{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:4/3;background:var(--brandsoft)}.mapa iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}.mcirc{position:absolute;left:50%;top:50%;width:58%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:rgba(15,90,80,.16);border:3px solid var(--brand)}.mlbl{position:absolute;left:12px;bottom:12px;background:#fff;color:var(--brand);font-weight:800;font-size:16px;padding:6px 12px;border-radius:999px;box-shadow:var(--sh)}
+.mapa{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:4/3;background:var(--brandsoft)}.mapa iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}.mcirc{position:absolute;left:50%;top:50%;width:58%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:rgba(14,27,44,.16);border:3px solid var(--brand)}.mlbl{position:absolute;left:12px;bottom:12px;background:#fff;color:var(--brand);font-weight:800;font-size:16px;padding:6px 12px;border-radius:999px;box-shadow:var(--sh)}
 .calm{border:1.5px solid var(--line);border-radius:20px;padding:12px}.calh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.calh b{font-size:18px;text-transform:capitalize}.calh .seta{font-size:26px}.calh .seta[disabled]{opacity:.3}
 .calg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.calg i{font-style:normal;text-align:center;font-size:14px;font-weight:700;color:var(--mute);padding:4px 0}
 .cd{display:flex;align-items:center;justify-content:center;min-height:42px;border-radius:12px;font-size:17px;font-weight:700;border:0;padding:0;color:inherit;font-family:inherit}.cd.lv{background:var(--brandsoft);color:var(--brand)}.cd.oc{background:#e4e4e4;color:#7a7a7a;text-decoration:line-through}.cd.pas{color:#c4c4c4;font-weight:500}button.cd{cursor:pointer}button.cd.lv{border:1.5px solid var(--brand)}
@@ -198,7 +199,7 @@ textarea.code{width:100%;height:110px;border-radius:14px;border:1.5px solid var(
 <div id="modal"></div>
 <script>
 if(!Array.prototype.at){Array.prototype.at=function(i){i=Math.trunc(i)||0;if(i<0)i+=this.length;return this[i]}}
-window.__falhou=function(msg){var a=document.getElementById('app');if(!a||a.getAttribute('data-ok'))return;a.innerHTML='<h1 style="margin-top:40px">Ops, o app não abriu</h1><p style="font-size:18px">Tente estas coisas, uma de cada vez:</p><ol style="font-size:18px;line-height:1.6"><li>Toque no botão abaixo para abrir de novo.</li><li>Se abriu pelo WhatsApp, toque nos três pontinhos ou no ícone de compartilhar e escolha <b>Abrir no Safari</b> (ou Chrome).</li><li>Atualize o sistema do celular (Ajustes › Geral › Atualização de Software).</li></ol><button onclick="location.reload()" style="width:100%;height:56px;border:0;border-radius:14px;background:#0F5A50;color:#fff;font:700 18px Inter,system-ui,sans-serif;margin-top:12px">Abrir de novo</button><p style="font-size:13px;color:#5f6b69;margin-top:18px">Detalhe para o suporte: '+String(msg||'').replace(/[<>&]/g,'').slice(0,160)+'</p>';};
+window.__falhou=function(msg){var a=document.getElementById('app');if(!a||a.getAttribute('data-ok'))return;a.innerHTML='<h1 style="margin-top:40px">Ops, o app não abriu</h1><p style="font-size:18px">Tente estas coisas, uma de cada vez:</p><ol style="font-size:18px;line-height:1.6"><li>Toque no botão abaixo para abrir de novo.</li><li>Se abriu pelo WhatsApp, toque nos três pontinhos ou no ícone de compartilhar e escolha <b>Abrir no Safari</b> (ou Chrome).</li><li>Atualize o sistema do celular (Ajustes › Geral › Atualização de Software).</li></ol><button onclick="location.reload()" style="width:100%;height:56px;border:0;border-radius:14px;background:#0E1B2C;color:#fff;font:700 18px Inter,system-ui,sans-serif;margin-top:12px">Abrir de novo</button><p style="font-size:13px;color:#5f6b69;margin-top:18px">Detalhe para o suporte: '+String(msg||'').replace(/[<>&]/g,'').slice(0,160)+'</p>';};
 window.addEventListener('error',function(e){window.__falhou(e.message)});
 setTimeout(function(){var a=document.getElementById('app');if(a&&!a.innerHTML.trim())window.__falhou('tela vazia')},6000);
 </script>
@@ -218,7 +219,7 @@ const daysTo=d=>Math.round((Date.parse(d)-Date.parse(today()))/864e5);
 const ls={get(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch(e){return f}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 
 /* ---------- cenas ---------- */
-const PAL=[['#F4C46E','#4E8A6B','#145A52','#FBE2A6'],['#8DBFA8','#3F7A5C','#1B6C73','#E8F3EC'],['#E9B76A','#245E4A','#0F5A50','#FCE7B8'],['#B9D6E3','#5D8F7A','#1E5F74','#F3F8FB']];
+const PAL=[['#F4C46E','#4E8A6B','#145A52','#FBE2A6'],['#8DBFA8','#3F7A5C','#1B6C73','#E8F3EC'],['#E9B76A','#245E4A','#0E1B2C','#FCE7B8'],['#B9D6E3','#5D8F7A','#1E5F74','#F3F8FB']];
 const scene=(i,kind)=>{const [sky,hill,water,sun]=PAL[i%4];
 const house=kind==='Rancho'||kind==='Pousada'?`<path d="M50 104 l52 -27 l52 27z" fill="#A9470F"/><rect x="60" y="104" width="84" height="32" fill="#F3EFE6"/><rect x="72" y="112" width="16" height="11" fill="#0B2E33"/><rect x="114" y="112" width="16" height="24" fill="#0B2E33"/><rect x="0" y="134" width="180" height="8" fill="#6B4A2B"/>`:'';
 const boat=kind==='Piloteiro'||kind==='Roteiro'?`<path d="M200 150 h70 l-9 12 h-52z" fill="#0B2E33"/><circle cx="228" cy="140" r="6" fill="#0B2E33"/><rect x="223" y="145" width="10" height="7" rx="2" fill="#0B2E33"/><path d="M232 146 L270 104" stroke="#0B2E33" stroke-width="2.5"/>`:'';
@@ -267,7 +268,7 @@ let REAL=[],MEUS=[],FILA=[],ADMIN=false,PROMO=null,PENDN=null;const AGD={};
 async function checaPend(){if(!ADMIN||!sb||!user)return;const r=await sb.rpc('contar_pendentes');if(r.error)return;const n=Number(r.data)||0;
  if(PENDN!==null&&n>PENDN){avisaAdmin(n);PENDN=n;loadAds()}else{PENDN=n;render()}}
 function avisaAdmin(n){flash(n===1?'Chegou anúncio novo. 1 espera aprovação.':'Chegou anúncio novo. '+n+' esperam aprovação.');
- try{if('Notification' in window&&Notification.permission==='granted'&&navigator.serviceWorker)navigator.serviceWorker.getRegistration().then(g=>{if(g)g.showNotification('Turma da Pesca',{body:n===1?'1 anúncio novo para aprovar':n+' anúncios esperando aprovação',icon:'icone-192.png',badge:'icone-192.png',tag:'fila'})})}catch(e){}}
+ try{if('Notification' in window&&Notification.permission==='granted'&&navigator.serviceWorker)navigator.serviceWorker.getRegistration().then(g=>{if(g)g.showNotification('Turma da Pesca',{body:n===1?'1 anúncio novo para aprovar':n+' anúncios esperando aprovação',icon:'png/icone-192.png',badge:'png/icone-192.png',tag:'fila'})})}catch(e){}}
 setInterval(()=>{checaPend()},60000);window.__checaPend=checaPend;
 const toAd=r=>{const d=r.dados||{};return {id:'u_'+r.id,uid:r.id,real:true,status:r.status,motivo:r.motivo,cat:d.cat||'Rancho',nome:d.nome||'',reg:d.reg||'',local:d.local||'',agua:d.agua||'',km:'',preco:d.preco||'Consultar',un:d.un||'',sub:d.sub||'',txt:d.txt||'',feat:(d.feat||[]).slice(0,3),peixes:d.peixes||'',pil:!!d.pil,barco:!!d.barco,ocupados:Array.isArray(d.ocupados)?d.ocupados.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).slice(0,400):null,wa:d.wa||'',pontos:(d.pontos||[]).slice(0,8),fotos:(d.fotos||[]).slice(0,5)}};
 const allAds=()=>REAL.concat(ADS);
@@ -432,7 +433,7 @@ chat:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="curren
 ok:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>'};
 
 /* ---------- telas ---------- */
-const AVC=['#0f5a50','#a9470f','#1e5f74','#6b4a2b','#4e6a2e','#7a3e6b'];
+const AVC=['#0E1B2C','#a9470f','#1e5f74','#6b4a2b','#4e6a2e','#7a3e6b'];
 const av=(nome,cls)=>{const n=String(nome||'?');let h=0;for(const ch of n)h=(h*31+ch.charCodeAt(0))>>>0;return `<span class="av ${cls||''}" style="background:${AVC[h%AVC.length]}" aria-hidden="true">${esc(n.trim().slice(0,1).toUpperCase())}</span>`};
 /* licença: em dia se vale até depois da volta (ou de hoje, sem data) */
 const fimViagem=p=>p.fim||p.inicio||today();
@@ -471,7 +472,7 @@ let DEFER=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();DEF
 const instalado=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
 const ehIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 function vInstalar(sempre){if(instalado()||(!sempre&&ls.get('bp_pwa_off',0)))return '';
- return `<div class="inst"><div style="display:flex;gap:14px;align-items:center"><img src="icone-192.png" alt="" width="56" height="56"><div class="grow"><b>Instale o app no celular</b><span class="m">Fica com o ícone na tela, igual aos outros aplicativos.</span></div></div>
+ return `<div class="inst"><div style="display:flex;gap:14px;align-items:center"><img src="png/icone-192.png" alt="" width="56" height="56"><div class="grow"><b>Instale o app no celular</b><span class="m">Fica com o ícone na tela, igual aos outros aplicativos.</span></div></div>
 <div style="display:flex;gap:8px;margin-top:12px"><button class="btn" style="flex:1" data-act="instalar">Instalar</button>${sempre?'':'<button class="btn alt" data-act="instoff">Agora não</button>'}</div></div>`}
 const SHARE_IC='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
 function passosInstalar(){const ios=ehIOS();const fora=ios&&/crios|fxios|edgios/i.test(navigator.userAgent);
@@ -724,8 +725,8 @@ return `<div style="display:flex;align-items:center;gap:14px;margin-top:8px">${a
 <div class="box" style="margin-top:14px"><span class="tag2" style="margin:0 0 6px">EXEMPLO</span><br>Assim fica o seu perfil depois das primeiras pescarias. Os dados abaixo são de exemplo e somem quando você tiver os seus.</div>
 <h2>Meu diário de pesca</h2>
 <button class="btn full" data-act="novodiario">${I.plus}Registrar pesca</button>
-<div class="revs" style="margin-top:12px">${EXD.map(x=>`<div style="padding:0;overflow:hidden"><div class="pic" style="aspect-ratio:4/3;border-radius:0"><img class="foto" src="fotos/p/${x.foto}.jpg" alt="${esc(x.especie)}" loading="lazy"><span class="tag" style="background:rgba(255,255,255,.95);color:#0F5A50">EXEMPLO</span></div><div style="padding:12px 14px"><div class="t" style="font-size:18px">${esc(x.especie)}${x.peso?' · '+esc(pesoTxt(x.peso)):''}</div><div class="m">${esc(x.lugar)} · ${esc(fmtD(x.data))}</div><div class="m">Isca: ${esc(x.isca)}${x.ponto?' · Ponto: '+esc(x.ponto):''}</div>${x.obs?`<div style="font-size:16px;margin-top:4px">${esc(x.obs)}</div>`:''}</div></div>`).join('')}</div>
-<h2>Histórico</h2>${EXP.map((p,i)=>`<div class="card abcard" role="button" tabindex="0" data-act="exv" data-v="${i}" style="margin-top:14px"><div class="pic" style="aspect-ratio:4/3"><img class="foto" src="fotos/p/${p.foto}.jpg" alt="" loading="lazy"><span class="tag" style="background:rgba(255,255,255,.95);color:#0F5A50">EXEMPLO</span></div><div class="abrow"><span class="t">${esc(p.nome)}</span></div><div class="m">${esc(quandoTxt(p))} ${p.inicio.slice(0,4)} · ${esc(p.local)}</div><div class="m">${diasDe(p)} dias · ${p.n} na turma · você gastou ${brl(p.gasto)}</div><div class="m" style="color:var(--brand);font-weight:700;margin-top:4px">Ver a pescaria ›</div></div>`).join('')}
+<div class="revs" style="margin-top:12px">${EXD.map(x=>`<div style="padding:0;overflow:hidden"><div class="pic" style="aspect-ratio:4/3;border-radius:0"><img class="foto" src="fotos/p/${x.foto}.jpg" alt="${esc(x.especie)}" loading="lazy"><span class="tag" style="background:rgba(255,255,255,.95);color:#0E1B2C">EXEMPLO</span></div><div style="padding:12px 14px"><div class="t" style="font-size:18px">${esc(x.especie)}${x.peso?' · '+esc(pesoTxt(x.peso)):''}</div><div class="m">${esc(x.lugar)} · ${esc(fmtD(x.data))}</div><div class="m">Isca: ${esc(x.isca)}${x.ponto?' · Ponto: '+esc(x.ponto):''}</div>${x.obs?`<div style="font-size:16px;margin-top:4px">${esc(x.obs)}</div>`:''}</div></div>`).join('')}</div>
+<h2>Histórico</h2>${EXP.map((p,i)=>`<div class="card abcard" role="button" tabindex="0" data-act="exv" data-v="${i}" style="margin-top:14px"><div class="pic" style="aspect-ratio:4/3"><img class="foto" src="fotos/p/${p.foto}.jpg" alt="" loading="lazy"><span class="tag" style="background:rgba(255,255,255,.95);color:#0E1B2C">EXEMPLO</span></div><div class="abrow"><span class="t">${esc(p.nome)}</span></div><div class="m">${esc(quandoTxt(p))} ${p.inicio.slice(0,4)} · ${esc(p.local)}</div><div class="m">${diasDe(p)} dias · ${p.n} na turma · você gastou ${brl(p.gasto)}</div><div class="m" style="color:var(--brand);font-weight:700;margin-top:4px">Ver a pescaria ›</div></div>`).join('')}
 <h2>Lugares onde já pescou</h2><div class="chips">${EXP.map(p=>`<span class="chip" style="cursor:default">${esc(cidade(p.local))}</span>`).join('')}</div>
 ${vInstalar(true)}${vTrocaArea()}
 ${vRodape()}`}
