@@ -3,10 +3,11 @@ const {chromium}=require('playwright');const http=require('http');const fs=requi
 const ROOT=path.join(__dirname,'..');const PORT=8765;
 const srv=http.createServer((q,r)=>{let p=decodeURIComponent(q.url.split('?')[0].split('#')[0]);if(p.endsWith('/'))p+='index.html';const f=path.join(ROOT,p);
  if(p==='/config.js'){r.writeHead(200,{'content-type':'text/javascript'});return r.end("window.BORA_CONFIG={nome:'Turma da Pesca',supabaseUrl:'http://fake',supabaseAnonKey:'fake',codigo:true}")}
+ if(p.startsWith('/fake-foto/')){const d=FOTOS[p.slice(11)];if(!d){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':'image/jpeg'});return r.end(Buffer.from(d.split(',')[1],'base64'))}
  if(p.startsWith('/vendor/')){r.writeHead(200,{'content-type':'text/javascript'});return r.end(fs.readFileSync(__dirname+'/fake-supabase.js'))}
  fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':f.endsWith('.html')?'text/html':f.endsWith('.json')?'application/json':f.endsWith('.svg')?'image/svg+xml':'text/javascript'});r.end(d)})});
 // ---- banco falso (mesmas regras do schema.sql) ----
-const DB={pesc:{},membros:new Set(),ads:[],admins:new Set(['vini@teste.local'])};let n=0;const log=[];
+const DB={pesc:{},membros:new Set(),ads:[],admins:new Set(['vini@teste.local']),diario:[],aval:[]};const FOTOS={};let n=0;const log=[];
 const M=(pid,u)=>DB.membros.has(pid+'|'+u);
 function rpc(u,name,a){a=a||{};if(!u)return {error:{message:'precisa entrar'}};
  if(name==='criar_pescaria'){const id='p'+(++n)+'-'+Math.random().toString(36).slice(2,8);const conv=Math.random().toString(36).slice(2,14);DB.pesc[id]={id,dono:u,convite:conv,dados:a.p_dados,versao:1,criado:Date.now()};DB.membros.add(id+'|'+u);return {data:[{id,convite:conv}]}}
@@ -23,6 +24,16 @@ function rpc(u,name,a){a=a||{};if(!u)return {error:{message:'precisa entrar'}};
  if(name==='anuncios_para_aprovar'){if(!adm)return {error:{message:'sem acesso'}};return {data:DB.ads.filter(x=>x.status==='pendente').map(out)}}
  if(name==='moderar_anuncio'){if(!adm)return {error:{message:'sem acesso'}};const x=DB.ads.find(y=>y.id===a.p_id);if(x){x.status=a.p_status;x.motivo=a.p_motivo}return {data:null}}
  if(name==='apagar_anuncio'){DB.ads=DB.ads.filter(x=>!(x.id===a.p_id&&(x.dono===u||adm)));return {data:null}}
+ // diário e avaliações (mesmas regras do supabase/004_diario_avaliacoes.sql)
+ if(name==='salvar_diario'){const id='d'+(DB.diario.length+1);DB.diario.push({id,autor:u,autor_nome:a.p_nome,lugar:a.p_lugar||'',lugar_nome:a.p_lugar_nome||'',dados:a.p_dados,publico:a.p_publico!==false,criado:new Date().toISOString()});return {data:id}}
+ if(name==='meu_diario')return {data:DB.diario.filter(x=>x.autor===u).reverse().map(x=>({id:x.id,lugar:x.lugar,lugar_nome:x.lugar_nome,dados:x.dados,publico:x.publico,criado:x.criado}))};
+ if(name==='diario_do_lugar')return {data:DB.diario.filter(x=>x.lugar===a.p_lugar&&x.publico).reverse().map(x=>({id:x.id,autor_nome:x.autor_nome,dados:x.dados,criado:x.criado}))};
+ if(name==='apagar_diario'){DB.diario=DB.diario.filter(x=>!(x.id===a.p_id&&(x.autor===u||adm)));return {data:null}}
+ if(name==='avaliar'){const pode=Object.values(DB.pesc).some(p=>M(p.id,u)&&(p.dados.anuncios||[]).includes(a.p_lugar));if(!pode)return {error:{message:'so quem pescou'}};
+  const x=DB.aval.find(y=>y.autor===u&&y.lugar===a.p_lugar);const v={autor:u,autor_nome:a.p_nome,lugar:a.p_lugar,nota:a.p_nota,notas:a.p_notas,comentario:a.p_comentario,criado:new Date().toISOString()};if(x)Object.assign(x,v);else DB.aval.push(Object.assign({id:'v'+(DB.aval.length+1)},v));return {data:null}}
+ if(name==='avaliacoes_do_lugar')return {data:DB.aval.filter(x=>x.lugar===a.p_lugar).map(x=>({id:x.id,autor_nome:x.autor_nome,nota:x.nota,notas:x.notas,comentario:x.comentario,resposta:x.resposta||null,criado:x.criado,minha:x.autor===u}))};
+ if(name==='responder_avaliacao'){const x=DB.aval.find(y=>y.id===a.p_id);if(x&&DB.ads.some(d=>'u_'+d.id===x.lugar&&d.dono===u))x.resposta=a.p_resposta;return {data:null}}
+ if(name==='apagar_avaliacao'){DB.aval=DB.aval.filter(x=>!(x.id===a.p_id&&(x.autor===u||adm)));return {data:null}}
  return {error:{message:'funcao desconhecida '+name}}}
 // ---- conferência independente do acerto ----
 function saldos(d){const b={};d.pessoas.forEach(x=>b[x.id]=0);d.gastos.forEach(g=>{b[g.pagou]+=g.valor;g.parts.forEach(id=>b[id]-=g.valor/g.parts.length)});return b}
@@ -38,6 +49,12 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  for(let i=0;i<5;i++){const ctx=await B.newContext({viewport:{width:VIEW[i].w,height:VIEW[i].h},isMobile:true,hasTouch:true,deviceScaleFactor:1,locale:'pt-BR'});
   const email=['vini','antonio','ze','carlao','marta'][i]+'@teste.local';
   await ctx.exposeFunction('__rpc',(u,nm,a)=>rpc(u,nm,a));
+  await ctx.exposeFunction('__upload',(path,d)=>{FOTOS[path]=d;return true});
+  await ctx.route(/open-meteo\.com/,r=>{const u=r.request().url();if(u.includes('geocoding'))return r.fulfill({json:{results:[{name:'Barra Bonita',admin1:'São Paulo',latitude:-22.49,longitude:-48.55}]}});
+   const q=new URL(u).searchParams;if(q.get('current'))return r.fulfill({json:{current:{temperature_2m:28.4,weather_code:1,wind_speed_10m:11}}});
+   const ini=q.get('start_date'),fim=q.get('end_date');const time=[];for(let d=Date.parse(ini);d<=Date.parse(fim);d+=864e5)time.push(new Date(d).toISOString().slice(0,10));
+   return r.fulfill({json:{daily:{time,weather_code:time.map((_,i)=>i?61:2),temperature_2m_max:time.map(()=>31),temperature_2m_min:time.map(()=>19),precipitation_probability_max:time.map((_,i)=>i?80:10),wind_speed_10m_max:time.map(()=>14)}}})});
+  await ctx.route(/images\.unsplash\.com/,r=>r.abort());
   if(VIEW[i].old)await ctx.addInitScript(()=>{delete Array.prototype.at});
   await ctx.addInitScript(()=>{window.open=(u)=>{window.__aberto=u;return {}}});
   const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(NOMES[i]+': '+e.message));P.push({pg,email,nome:NOMES[i]})}
@@ -143,6 +160,49 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   ok(href&&href.startsWith('https://wa.me/5514998765432?text='),'Botão do WhatsApp do anúncio real abre a conversa com o dono');
   ok(!(await z.textContent('.top')).includes('EXEMPLO'),'Anúncio real não leva a etiqueta EXEMPLO');
   for(const pp of [pg0,c,z]){await pp.goto(`http://localhost:${PORT}/#pescarias`);await pp.waitForTimeout(400);await pp.click(`[data-act=open][data-v="${pid}"]`);await pp.waitForTimeout(200)}}
+ // 3d. perfil, histórico, clima, pontos, diário com foto e avaliação
+ {const d0=new Date(Date.now()-40*864e5).toISOString().slice(0,10),d1=new Date(Date.now()-38*864e5).toISOString().slice(0,10),d3=new Date(Date.now()+3*864e5).toISOString().slice(0,10);
+  const mk=(id,dados)=>{DB.pesc[id]={id,dono:org.email,convite:'cv'+id,dados,versao:1,criado:Date.now()};DB.membros.add(id+'|'+org.email)};
+  mk('pfeita',{id:'pfeita',nome:'Tucunaré de outubro',local:'Rancho Beira-Tietê · Barra Bonita, SP',inicio:d0,fim:d1,pessoas:[{id:'eu1',nome:'Vinícius'},{id:'ou1',nome:'Carlão'}],datas:[],itens:[],roteiro:[],gastos:[{id:'g1',desc:'Rancho',valor:600,pagou:'eu1',parts:['eu1','ou1']},{id:'g2',desc:'Gelo',valor:40,pagou:'ou1',parts:['eu1','ou1']}],pagos:{},anuncios:['a1']});
+  mk('pprox',{id:'pprox',nome:'Corvina de fim de ano',local:'Barra Bonita',inicio:d3,fim:new Date(Date.now()+4*864e5).toISOString().slice(0,10),pessoas:[{id:'eu2',nome:'Vinícius'}],datas:[],itens:[],roteiro:[],gastos:[],pagos:{}});
+  await pg0.evaluate(()=>{localStorage.setItem('bp_me_pfeita','"eu1"');localStorage.setItem('bp_me_pprox','"eu2"')});
+  await pg0.goto(`http://localhost:${PORT}/#perfil`);await pg0.reload();await pg0.waitForTimeout(600);let tx=await t(pg0);
+  ok(tx.includes('Seu perfil')&&tx.includes('1pescaria feita')&&tx.includes('3dias de pesca'),'Perfil mostra pescarias feitas e dias de pesca');
+  ok(tx.includes('R$ 320,00')&&tx.includes('Tucunaré de outubro'),'Perfil mostra o histórico e a sua parte nos gastos (R$ 320)');
+  await pg0.screenshot({path:__dirname+'/saida/perfil.png',fullPage:true});
+  await pg0.goto(`http://localhost:${PORT}/#pescarias`);await pg0.waitForTimeout(300);await pg0.click('[data-act=open][data-v=pprox]');await pg0.waitForTimeout(600);tx=await t(pg0);
+  ok(tx.includes('Previsão do tempo')&&tx.includes('Sol com nuvens')&&tx.includes('atenção no barco'),'Pescaria próxima mostra a previsão do tempo e avisa chuva forte');
+  await pg0.screenshot({path:__dirname+'/saida/clima.png'});
+  await pg0.click('[data-act=close]');await pg0.goto(`http://localhost:${PORT}/#explorar`);await pg0.waitForTimeout(400);await pg0.click('[data-act=ad][data-v=a1]');await pg0.waitForTimeout(600);tx=await t(pg0);
+  ok(tx.includes('Pontos de pesca')&&tx.includes('Galhadas no braço')&&tx.includes('Tempo agora em Barra Bonita'),'Anúncio mostra pontos de pesca (sem localização) e o tempo agora');
+  // diário com foto que tem GPS no arquivo
+  await pg0.goto(`http://localhost:${PORT}/#perfil`);await pg0.waitForTimeout(400);await pg0.click('[data-act=novodiario]');await pg0.waitForTimeout(200);
+  await pg0.setInputFiles('#d-foto',__dirname+'/peixe-teste.jpg');await pg0.waitForTimeout(800);
+  ok(await pg0.isVisible('.fotobox img'),'Foto escolhida aparece antes de salvar');
+  await pg0.fill('#d-esp','Tucunaré');await pg0.fill('#d-peso','2,5');await pg0.fill('#d-isca','Hélice de superfície');await pg0.selectOption('#d-lugar','a1');
+  ok(!(await pg0.isVisible('#d-ponto')),'Ponto de pesca vem escondido: só mostra se a pessoa quiser');
+  await pg0.check('#d-tponto');await pg0.fill('#d-ponto','Galhada');await pg0.click('[data-act=salvadiario]');await pg0.waitForTimeout(800);
+  ok(DB.diario.length===1&&DB.diario[0].lugar==='a1'&&DB.diario[0].dados.peso===2.5&&DB.diario[0].dados.ponto==='Galhada','Registro do diário salvo com espécie, peso, isca, ponto e lugar');
+  const fk=Object.keys(FOTOS)[0];const bin=fk?Buffer.from(FOTOS[fk].split(',')[1],'base64'):Buffer.alloc(0);
+  ok(fk&&fk.startsWith(org.email+'/')&&bin.length<350000,'Foto enviada reduzida ('+Math.round(bin.length/1024)+' KB) na pasta do próprio usuário');
+  ok(bin.length&&!bin.includes('CameraTeste')&&!bin.includes(Buffer.from('Exif')),'Foto enviada sem os dados escondidos do celular (localização)');
+  tx=await t(pg0);ok(tx.includes('Tucunaré · 2,5 kg')&&tx.includes('1 peixe registrado'),'Registro aparece no diário do perfil');
+  await pg0.screenshot({path:__dirname+'/saida/diario.png',fullPage:true});
+  // outro pescador vê no anúncio; não pode avaliar sem ter pescado lá
+  const z=P[2].pg;await z.goto(`http://localhost:${PORT}/#explorar`);await z.waitForTimeout(400);await z.click('[data-act=ad][data-v=a1]');await z.waitForTimeout(700);tx=await t(z);
+  ok(tx.includes('Diário dos pescadores')&&tx.includes('Tucunaré · 2,5 kg'),'Outro pescador vê o registro no anúncio do rancho');
+  ok(await z.evaluate(()=>{const i=document.querySelector('.dcard img');return !!i&&i.naturalWidth>0}),'Foto do diário carrega no anúncio');
+  ok(tx.includes('Só avalia quem usou'),'Quem não pescou lá não consegue avaliar');
+  // avaliação
+  await pg0.goto(`http://localhost:${PORT}/#explorar`);await pg0.waitForTimeout(400);await pg0.click('[data-act=ad][data-v=a1]');await pg0.waitForTimeout(600);
+  await pg0.click('[data-act=avaliar]');await pg0.waitForTimeout(200);await pg0.click('[data-act=salvaraval]');await pg0.waitForTimeout(200);ok(DB.aval.length===0,'Sem nota geral, a avaliação não é enviada');
+  await pg0.click('.star[data-k=geral][data-v="4"]');await pg0.click('.star[data-k=peixe][data-v="5"]');await pg0.click('.star[data-k=preco][data-v="3"]');await pg0.fill('#av-txt','Rancho limpo, piloteiro bom. Tucunaré pequeno.');await pg0.click('[data-act=salvaraval]');await pg0.waitForTimeout(600);
+  ok(DB.aval.length===1&&DB.aval[0].nota===4&&DB.aval[0].notas.peixe===5&&DB.aval[0].notas.preco===3,'Avaliação salva com nota geral e notas por item');
+  await z.reload();await z.waitForTimeout(400);await z.goto(`http://localhost:${PORT}/#explorar`);await z.waitForTimeout(300);await z.click('[data-act=ad][data-v=a1]');await z.waitForTimeout(700);tx=await t(z);
+  ok(tx.includes('4,0')&&tx.includes('1 avaliação')&&tx.includes('Rancho limpo'),'Outros veem a nota média e o comentário');
+  await z.screenshot({path:__dirname+'/saida/avaliacao.png',fullPage:true});
+  delete DB.pesc.pfeita;delete DB.pesc.pprox;await pg0.goto(`http://localhost:${PORT}/#pescarias`);await pg0.reload();await pg0.waitForTimeout(400);await pg0.click(`[data-act=open][data-v="${pid}"]`);await pg0.waitForTimeout(200);
+  await z.goto(`http://localhost:${PORT}/#pescarias`);await z.waitForTimeout(400);await z.click(`[data-act=open][data-v="${pid}"]`);await z.waitForTimeout(200)}
  // 4. tela: rolagem lateral e tamanho das letras em cada celular
  for(const [i,p] of P.entries()){for(const sub of ['turma','datas','levar','roteiro','contas']){await p.pg.click(`[data-act=sub][data-v=${sub}]`);await p.pg.waitForTimeout(80);
    const r=await p.pg.evaluate(()=>{const over=document.documentElement.scrollWidth>window.innerWidth+1;const small=[];for(const el of document.querySelectorAll('#app *, #nav *')){if(!el.childNodes.length)continue;const own=[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());if(!own)continue;const r=el.getBoundingClientRect();if(!r.width)continue;const fs=parseFloat(getComputedStyle(el).fontSize);if(fs<15)small.push(fs+'px "'+el.textContent.trim().slice(0,30)+'"')}

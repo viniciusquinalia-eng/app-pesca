@@ -83,10 +83,15 @@ label.f{display:block;font-size:16px;font-weight:600;color:var(--ink2);margin:16
 .li .grow{flex:1}
 .ic{width:48px;height:48px;border-radius:14px;background:var(--brandsoft);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:none;font-weight:800;font-size:15px}
 .nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 8px calc(12px + env(safe-area-inset-bottom));z-index:5}
-.nav a{flex:0 1 150px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px;font-weight:600;color:var(--mute);text-decoration:none;padding:2px 0;min-height:56px}
+.nav a{flex:1 1 0;max-width:150px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px;font-weight:600;color:var(--mute);text-decoration:none;padding:2px 0;min-height:56px}
 .nav a i{display:flex;align-items:center;justify-content:center;width:60px;height:32px;border-radius:16px;font-style:normal}
 .nav a.on{color:var(--brand)}.nav a.on i{background:var(--brandsoft)}
 .back{width:48px;height:48px;border-radius:24px;border:0;background:var(--soft);display:inline-flex;align-items:center;justify-content:center;margin-top:18px;color:var(--ink)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 6px}
+.stat{border:1px solid var(--line);border-radius:16px;padding:14px}.stat .n{font-size:24px;font-weight:800;color:var(--brand)}.stat .m{font-size:16px}
+.dgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}.dcard{padding:0;overflow:hidden}
+.fotobox{display:flex;align-items:center;justify-content:center;min-height:180px;border:2px dashed var(--line);border-radius:16px;cursor:pointer;font-size:17px;font-weight:600;color:var(--brand);overflow:hidden}.fotobox span{display:flex;gap:8px;align-items:center}.fotobox img{width:100%;max-height:320px;object-fit:cover;display:block}
+.star{width:48px;height:48px;border:0;background:none;font-size:34px;color:#d9dfdc;cursor:pointer;padding:0}.star.on{color:#F2B035}
 .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
 .feat div{border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;font-size:15px;font-weight:600}
 .sticky{position:fixed;left:0;right:0;bottom:84px;background:var(--bg);border-top:1px solid var(--line)}
@@ -162,13 +167,13 @@ const fotoUrl=(f,w)=>'https://images.unsplash.com/photo-'+FOTOS[f][0]+'?auto=for
 const picA=(a,w)=>scene(adIdx(a),a.cat)+(a.foto&&FOTOS[a.foto]?`<img class="foto" src="${fotoUrl(a.foto,w)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:'');
 const credA=a=>a.foto&&FOTOS[a.foto]?`<p class="note" style="margin-top:6px;font-size:16px">Foto ilustrativa: <a href="https://unsplash.com/photos/${FOTOS[a.foto][2]}" target="_blank" rel="noopener" style="color:inherit">${esc(FOTOS[a.foto][1])}</a> / Unsplash. Não é o local anunciado.</p>`:'';
 const ADS=[
-{id:'a1',foto:'cabana',agua:'represa',reg:T,cat:'Rancho',nome:'Rancho Beira-Tietê',local:'Barra Bonita, SP',km:120,preco:'R$ 650',un:'/dia',sub:'Rancho inteiro, até 8 pessoas',feat:['Píer e rampa','Piloteiro indicado','Freezer e limpeza de peixe'],peixes:'Tucunaré, corvina e tilápia',pil:true,txt:'Casa com 3 quartos, varanda virada para o rio, churrasqueira e lugar para 2 barcos.'},
-{id:'a2',foto:'aurora',agua:'represa',reg:T,cat:'Pousada',nome:'Pousada Remanso do Rio',local:'Barra Bonita, SP',km:122,preco:'R$ 390',un:'/pessoa',sub:'Pacote com barco, piloteiro, café e janta',feat:['Piloteiro incluso','Barco 5 lugares','Café e janta'],peixes:'Tucunaré e corvina',pil:true,txt:'Pacote de pesca por dia, com barco saindo do píer da pousada às 6h.'},
-{id:'a3',foto:'pescador',agua:'represa',reg:T,cat:'Piloteiro',nome:'Piloteiro Tonho',local:'Represa de Barra Bonita',km:120,preco:'R$ 500',un:'/dia',sub:'20 anos de rio, barco próprio',feat:['Barco próprio','Leva até 3','Conhece as galhadas'],peixes:'Tucunaré',pil:true,txt:'Saída 5h30, volta 16h. Combustível incluso até 60 km de navegação.'},
-{id:'a4',foto:'casa',agua:'represa',reg:T,cat:'Rancho',nome:'Rancho Recanto das Garças',local:'Igaraçu do Tietê, SP',km:115,preco:'R$ 480',un:'/dia',sub:'Rancho inteiro, até 6 pessoas',feat:['Rampa','Churrasqueira','Wi-Fi'],peixes:'Tucunaré e traíra',pil:false,txt:'Rancho simples e bem cuidado, bom para turma pequena.'},
-{id:'a5',foto:'pier',agua:'rio',reg:R,cat:'Rancho',nome:'Rancho Três Irmãos',local:'Rosana, SP',km:390,preco:'R$ 850',un:'/dia',sub:'Rancho inteiro, até 12 pessoas',feat:['Píer','Barco para alugar','Piloteiro indicado'],peixes:'Dourado, pintado e corvina',pil:true,txt:'Rancho grande para turma, com 2 barcos de alumínio para alugar.'},
-{id:'a6',foto:'barco',agua:'represa',reg:R,cat:'Pousada',nome:'Pousada Barranco Alto',local:'Presidente Epitácio, SP (represa)',km:330,preco:'R$ 290',un:'/pessoa',sub:'Hospedagem com café, pesca de barranco',feat:['Só hospedagem','Pesca de barranco','Estacionamento'],peixes:'Corvina e mandi',pil:false,txt:'Quartos para 2 a 4 pessoas e barranco liberado para hóspedes.'},
-{id:'a7',foto:'vara',agua:'rio',reg:R,cat:'Piloteiro',nome:'Piloteiro Zé Dourado',local:'Rosana, SP',km:390,preco:'R$ 600',un:'/dia',sub:'Especialista em dourado',feat:['Barco com motor 40hp','Leva até 3','Iscas inclusas'],peixes:'Dourado',pil:true,txt:'Pesca esportiva com solta do peixe. Leva colete para todos.'},
+{id:'a1',pontos:["Galhadas no braço da represa, boas para tucunaré", "Píer do rancho com luz para pesca à noite", "Barranco com sombra para corvina"],foto:'cabana',agua:'represa',reg:T,cat:'Rancho',nome:'Rancho Beira-Tietê',local:'Barra Bonita, SP',km:120,preco:'R$ 650',un:'/dia',sub:'Rancho inteiro, até 8 pessoas',feat:['Píer e rampa','Piloteiro indicado','Freezer e limpeza de peixe'],peixes:'Tucunaré, corvina e tilápia',pil:true,txt:'Casa com 3 quartos, varanda virada para o rio, churrasqueira e lugar para 2 barcos.'},
+{id:'a2',pontos:["Pedral na saída do braço, bom de manhã cedo", "Margem de capim para isca artificial"],foto:'aurora',agua:'represa',reg:T,cat:'Pousada',nome:'Pousada Remanso do Rio',local:'Barra Bonita, SP',km:122,preco:'R$ 390',un:'/pessoa',sub:'Pacote com barco, piloteiro, café e janta',feat:['Piloteiro incluso','Barco 5 lugares','Café e janta'],peixes:'Tucunaré e corvina',pil:true,txt:'Pacote de pesca por dia, com barco saindo do píer da pousada às 6h.'},
+{id:'a3',pontos:["Galhadas e paliteiros conhecidos pelo piloteiro", "Canal fundo para corvina no fim da tarde", "Margem rasa para tucunaré na superfície"],foto:'pescador',agua:'represa',reg:T,cat:'Piloteiro',nome:'Piloteiro Tonho',local:'Represa de Barra Bonita',km:120,preco:'R$ 500',un:'/dia',sub:'20 anos de rio, barco próprio',feat:['Barco próprio','Leva até 3','Conhece as galhadas'],peixes:'Tucunaré',pil:true,txt:'Saída 5h30, volta 16h. Combustível incluso até 60 km de navegação.'},
+{id:'a4',pontos:["Píer de madeira na frente do rancho", "Remanso com taboa, bom para traíra"],foto:'casa',agua:'represa',reg:T,cat:'Rancho',nome:'Rancho Recanto das Garças',local:'Igaraçu do Tietê, SP',km:115,preco:'R$ 480',un:'/dia',sub:'Rancho inteiro, até 6 pessoas',feat:['Rampa','Churrasqueira','Wi-Fi'],peixes:'Tucunaré e traíra',pil:false,txt:'Rancho simples e bem cuidado, bom para turma pequena.'},
+{id:'a5',pontos:["Barranco do próprio rancho, com sombra", "Corredeira a mais de 1.500 m da barragem (com piloteiro)", "Poço fundo para pintado à noite"],foto:'pier',agua:'rio',reg:R,cat:'Rancho',nome:'Rancho Três Irmãos',local:'Rosana, SP',km:390,preco:'R$ 850',un:'/dia',sub:'Rancho inteiro, até 12 pessoas',feat:['Píer','Barco para alugar','Piloteiro indicado'],peixes:'Dourado, pintado e corvina',pil:true,txt:'Rancho grande para turma, com 2 barcos de alumínio para alugar.'},
+{id:'a6',pontos:["Barranco gramado com sombra, ideal para quem não usa barco", "Prainha para tilápia e corvina"],foto:'barco',agua:'represa',reg:R,cat:'Pousada',nome:'Pousada Barranco Alto',local:'Presidente Epitácio, SP (represa)',km:330,preco:'R$ 290',un:'/pessoa',sub:'Hospedagem com café, pesca de barranco',feat:['Só hospedagem','Pesca de barranco','Estacionamento'],peixes:'Corvina e mandi',pil:false,txt:'Quartos para 2 a 4 pessoas e barranco liberado para hóspedes.'},
+{id:'a7',pontos:["Pedrais de correnteza para dourado", "Boca de canal para pintado à noite"],foto:'vara',agua:'rio',reg:R,cat:'Piloteiro',nome:'Piloteiro Zé Dourado',local:'Rosana, SP',km:390,preco:'R$ 600',un:'/dia',sub:'Especialista em dourado',feat:['Barco com motor 40hp','Leva até 3','Iscas inclusas'],peixes:'Dourado',pil:true,txt:'Pesca esportiva com solta do peixe. Leva colete para todos.'},
 {id:'a8',foto:'lagoa',agua:'tanque',reg:B,cat:'Pesqueiro',nome:'Pesqueiro Águas Claras',local:'Bauru, SP',km:15,preco:'R$ 60',un:'/pessoa',sub:'Bate-volta, aberto o ano todo',feat:['Tanques de tilápia','Lanchonete','Aluga vara'],peixes:'Tilápia, tambaqui e pintado',pil:false,txt:'Pesqueiro com 4 tanques, quiosques com sombra e banheiro.'},
 {id:'a9',foto:'barco',agua:'tanque',reg:B,cat:'Pesqueiro',nome:'Pesqueiro Lagoa Dourada',local:'Agudos, SP',km:20,preco:'R$ 45',un:'/pessoa',sub:'Pesque e solte ou pesque e pague',feat:['Pesque e solte','Restaurante','Bom para família'],peixes:'Tilápia e pacu',pil:false,txt:'Ótimo para levar quem está começando e para a época da piracema.'},
 {id:'r1',foto:'pescador',agua:'represa',reg:T,cat:'Roteiro',nome:'Fim de semana no Tietê',local:'Barra Bonita, SP',km:120,preco:'2 dias',un:'',sub:'Rancho + barco com piloteiro',feat:['2 dias','Com piloteiro','Turma de 4 a 8'],peixes:'Tucunaré',pil:true,dias:[['Sex','05:00','Saída de Bauru'],['Sex','07:30','Check-in no rancho'],['Sex','08:00','Barco com piloteiro nas galhadas'],['Sáb','06:00','Pesca na saída do sol'],['Sáb','19:00','Churrasco no rancho'],['Dom','12:00','Volta pra casa']],levar:['Gelo','Isca artificial','Carne e carvão','Protetor solar','Licença de pesca']},
@@ -179,7 +184,7 @@ const ADS=[
 const REGS=['Todas',T,R,B];
 /* anúncios reais (aprovados no banco) + estado do anunciante e do administrador */
 let REAL=[],MEUS=[],FILA=[],ADMIN=false;
-const toAd=r=>{const d=r.dados||{};return {id:'u_'+r.id,uid:r.id,real:true,status:r.status,motivo:r.motivo,cat:d.cat||'Rancho',nome:d.nome||'',reg:d.reg||'',local:d.local||'',agua:d.agua||'',km:'',preco:d.preco||'Consultar',un:d.un||'',sub:d.sub||'',txt:d.txt||'',feat:(d.feat||[]).slice(0,3),peixes:d.peixes||'',pil:!!d.pil,wa:d.wa||''}};
+const toAd=r=>{const d=r.dados||{};return {id:'u_'+r.id,uid:r.id,real:true,status:r.status,motivo:r.motivo,cat:d.cat||'Rancho',nome:d.nome||'',reg:d.reg||'',local:d.local||'',agua:d.agua||'',km:'',preco:d.preco||'Consultar',un:d.un||'',sub:d.sub||'',txt:d.txt||'',feat:(d.feat||[]).slice(0,3),peixes:d.peixes||'',pil:!!d.pil,wa:d.wa||'',pontos:(d.pontos||[]).slice(0,8)}};
 const allAds=()=>REAL.concat(ADS);
 const findAd=id=>allAds().find(x=>x.id===id)||MEUS.find(x=>x.id===id)||FILA.find(x=>x.id===id);
 const adIdx=a=>{const i=ADS.indexOf(a);return i>=0?i:idx(a.id)};
@@ -309,6 +314,8 @@ const waOpen=txt=>{const u='https://wa.me/?text='+encodeURIComponent(txt);const 
 
 /* ---------- ícones ---------- */
 const I={
+pin:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+user:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
 search:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
 boat:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15h18l-3 5H6z"/><path d="M12 15V3l6 9"/></svg>',
 cash:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/></svg>',
@@ -363,6 +370,8 @@ return `<button class="back" data-act="exback" aria-label="Voltar">${I.back}</bu
 <label class="f" for="fa-feat">3 destaques, separados por vírgula</label><input id="fa-feat" maxlength="90" value="${esc(e?e.feat.join(', '):'')}" placeholder="Píer, Freezer, Piloteiro indicado">
 <label class="f" for="fa-peixes">Peixes da região</label><input id="fa-peixes" maxlength="80" value="${v('peixes')}" placeholder="Tucunaré, corvina, tilápia">
 <label class="f" for="fa-txt">Mais detalhes (opcional)</label><textarea id="fa-txt" maxlength="400" style="width:100%;height:110px;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;font-size:17px">${v('txt')}</textarea>
+<label class="chip" style="display:flex;align-items:center;gap:10px;margin-top:14px;min-height:56px;height:auto;padding:10px 16px"><input type="checkbox" id="fa-tempt" ${e&&e.pontos&&e.pontos.length?'checked':''} > Quero mostrar os pontos de pesca que ofereço</label>
+<div id="fa-pbox" style="${e&&e.pontos&&e.pontos.length?'':'display:none'}"><label class="f" for="fa-pontos">Pontos de pesca, um por linha</label><textarea id="fa-pontos" maxlength="400" style="width:100%;height:110px;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;font-size:17px" placeholder="Galhadas no braço da represa&#10;Píer iluminado para pesca à noite">${esc(e&&e.pontos?e.pontos.join('\n'):'')}</textarea><p class="m" style="margin-top:4px">Só o tipo de lugar. Nunca coordenada ou endereço do ponto.</p></div>
 <label class="chip" style="display:flex;align-items:center;gap:10px;margin-top:14px;min-height:56px"><input type="checkbox" id="fa-pil" ${e&&e.pil?'checked':''}> Tem piloteiro (incluso ou indicado)</label>
 <label class="f" for="fa-wa">WhatsApp para contato (com DDD)</label><input id="fa-wa" type="tel" inputmode="tel" maxlength="20" value="${v('wa')}" placeholder="(14) 99999-9999">
 <label class="chip" style="display:flex;align-items:center;gap:10px;margin-top:14px;min-height:56px;height:auto;padding:10px 16px"><input type="checkbox" id="fa-ok"> Autorizo mostrar este WhatsApp no anúncio e li a <a href="privacidade.html" style="color:var(--brand)">política de privacidade</a>.</label>
@@ -384,8 +393,11 @@ return `<div class="top"><div class="pic">${picA(a,1000)}${a.real?'':'<span clas
 <p style="font-size:18px">${esc(a.sub)}.${a.txt?' '+esc(a.txt):''}</p>
 <div class="feat">${a.feat.map(x=>`<div>${esc(x)}</div>`).join('')}</div>
 <div class="box"><b>Peixes:</b> ${esc(a.peixes)}</div>
+${!pt&&!ro?vClimaAgora(a.local):''}
+${a.pontos&&a.pontos.length?`<h2>Pontos de pesca</h2><div class="list">${a.pontos.map(x=>`<div class="li"><div class="ic">${I.pin}</div><div class="grow"><div class="t" style="font-size:17px">${esc(x)}</div></div></div>`).join('')}</div><p class="m">O lugar exato você combina com ${a.cat==='Piloteiro'?'o piloteiro':'o dono'}. O app nunca mostra a localização.</p>`:''}
 ${emPiracema()?piraBox(a.agua,a.peixes):''}${!emPiracema()&&a.agua!=='tanque'?`<p class="m">Entre 1º de novembro e 28 de fevereiro vale a piracema: só peixes não nativos e, no rio, só de barranco.</p>`:''}
 ${pt?`<div class="box">Por respeito aos pescadores, o app mostra só a região e o tipo de lugar, nunca a localização exata do ponto.</div>`:''}
+${!ro&&!pt?vAvaliacoes(a)+vDiarioLugar(a):''}
 ${ro?`<h2>Dia a dia</h2><div class="list">${a.dias.map(d=>`<div class="li"><div class="ic">${esc(d[0])}</div><div class="grow"><div class="t" style="font-size:17px">${esc(d[2])}</div><div class="m">${esc(d[1])}</div></div></div>`).join('')}</div>${a.levar?`<h2>Já vem na lista do que levar</h2><p class="m">${esc(a.levar.join(', '))}</p>`:''}`:''}
 ${!ro&&!pt?(a.real&&a.wa?`<a class="btn wa full" id="wa-ad" href="https://wa.me/55${esc(String(a.wa).replace(/\D/g,'').replace(/^55(?=\d{10,11}$)/,''))}?text=${encodeURIComponent('Olá! Vi seu anúncio "'+a.nome+'" no '+APP+' e queria saber mais.')}" target="_blank" rel="noopener" style="margin-top:16px;text-decoration:none">${I.chat}Chamar no WhatsApp</a>`:`<button class="btn alt full" disabled style="margin-top:16px">${I.chat}Chamar no WhatsApp</button><p class="m" style="text-align:center;margin-top:6px">Anúncio de exemplo: ainda sem contato real.</p>`):''}
 <div style="height:100px"></div>
@@ -426,6 +438,8 @@ ${(p.roteiro||[]).length?'':'<p class="m">Monte o passo a passo da viagem, ou es
 if(S.sub==='contas')body=vContasBody(p);
 return `<div class="top"><div class="pic">${scene(idx(p.id),kindOf(p))}<span class="count">${falta(d)}</span></div><button class="back" data-act="close" aria-label="Voltar">${I.back}</button></div>
 <div class="title"><h1>${esc(p.nome)}</h1><div class="meta"><span>${esc(quandoTxt(p))}</span>${p.local?`<span>${esc(p.local)}</span>`:''}<span>${(p.pessoas||[]).length} na turma</span></div></div>
+${vClimaPescaria(p)}
+${mode==='cloud'?(()=>{const ad=(p.anuncios||[]).map(id=>findAd(id)).filter(x=>x&&x.cat!=='Roteiro'&&x.cat!=='Ponto')[0];return `<div style="display:flex;gap:8px;margin-top:14px"><button class="btn sm alt" style="flex:1" data-act="novodiario" data-v="${ad?esc(ad.id):''}">Registrar peixe</button>${ad&&p.inicio&&daysTo(p.inicio)<=0?`<button class="btn sm alt" style="flex:1" data-act="avaliar" data-v="${esc(ad.id)}">Avaliar o lugar</button>`:''}</div>`})():''}
 ${p.inicio&&emPiracema(p.inicio)&&daysTo(p.fim||p.inicio)>=0&&!/pesqueiro/i.test(p.local||'')?(()=>{const ad=(p.anuncios||[]).map(id=>findAd(id)).filter(Boolean).find(x=>x.cat!=='Roteiro')||(p.anuncios||[]).map(id=>findAd(id)).filter(Boolean)[0];const agua=ad?ad.agua:/represa|barra bonita/i.test(p.local||'')?'represa':'';return `<details class="warnbox" style="margin-top:16px"><summary style="font-weight:700;cursor:pointer;min-height:44px;display:flex;align-items:center">A data cai na piracema. Toque para ver o que pode e o que não pode.</summary><div style="margin-top:10px">${piraBox(agua,ad&&ad.peixes)}</div></details>`})():''}
 ${(()=>{const sl=semLic(p);if(!sl.length||(p.inicio&&daysTo(p.inicio)<0))return '';const euSem=sl.some(x=>x.id===eu);return `<button class="card warnbox" data-act="${euSem?'lic':'sub'}" data-v="${euSem?eu:'turma'}" style="margin-top:16px;padding:14px 16px;font-weight:600"><b>Licença de pesca:</b> ${euSem?'a sua não está em dia para esta viagem. Toque para informar a validade.':sl.length+(sl.length>1?' pessoas ainda não informaram':' pessoa ainda não informou')+' a licença em dia ('+esc(sl.map(x=>x.nome).join(', '))+').'}</button>`})()}
 <div class="tabs">${subs.map(([k,l])=>`<button class="chip ${S.sub===k?'on':''}" data-act="sub" data-v="${k}">${l}</button>`).join('')}</div>
@@ -480,6 +494,104 @@ ${S.email?(CFG.codigo?`<h2>Agora olhe seu e-mail</h2><p style="margin-top:0">Man
 <p class="m" style="text-align:center;margin:16px 0 6px">ou entre pelo e-mail</p>`:`<h2>Entre com seu e-mail</h2><p class="m" style="margin-top:0">${CFG.codigo?'Vamos mandar um código de 6 números.':'Vamos mandar um link para você entrar, sem senha.'}</p>`}
 <input id="em" type="email" autocomplete="email" placeholder="seu@email.com"><button class="btn ${CFG.google?'alt':''} full" data-act="mandaCodigo" style="margin-top:10px">${CFG.codigo?'Mandar código':'Mandar link de entrada'}</button>`}
 <p class="note">Ao entrar, você concorda com a <a href="privacidade.html" style="color:var(--brand)">política de privacidade</a>. Organizar e dividir as contas é grátis.</p></div>`}
+/* ---------- perfil e histórico ---------- */
+const fimDe=p=>p.fim||p.inicio;
+const feita=p=>!!p.inicio&&daysTo(fimDe(p))<0;
+const diasDe=p=>p.inicio?Math.max(1,Math.round((Date.parse(fimDe(p))-Date.parse(p.inicio))/864e5)+1):0;
+const minhaParte=p=>{const eu=me(p.id);if(!eu)return 0;return (p.gastos||[]).reduce((s,g)=>{const n=(g.parts||[]).length;return s+(n&&g.parts.includes(eu)?g.valor/n:0)},0)};
+const cidade=l=>String(l||'').split('·').pop().split(',')[0].replace(/\(.*?\)/g,'').replace(/^\s*(represa|rio|lago)\s+(de|do|da)\s+/i,'').trim();
+function vPerfil(){
+if(S.pv==='novo')return vNovoDiario();
+const nome=ls.get('bp_nome','')||(user&&user.email?user.email.split('@')[0]:'');
+const feitas=P.filter(feita).sort((a,b)=>b.inicio.localeCompare(a.inicio));const prox=P.filter(p=>!feita(p));
+const dias=feitas.reduce((s,p)=>s+diasDe(p),0);const lugares=[...new Set(feitas.map(p=>cidade(p.local)).filter(Boolean))];
+const gasto=feitas.reduce((s,p)=>s+minhaParte(p),0);
+const stat=(n,l)=>`<div class="stat"><div class="n">${n}</div><div class="m">${l}</div></div>`;
+return `<div style="display:flex;align-items:center;gap:14px;margin-top:8px">${av(nome||'?')}<div><p class="eyebrow" style="margin:0">Seu perfil</p><h1 style="margin:0">${esc(nome||'Pescador')}</h1></div></div>
+<div class="stats">${stat(feitas.length,feitas.length===1?'pescaria feita':'pescarias feitas')}${stat(dias,dias===1?'dia de pesca':'dias de pesca')}${stat(lugares.length,lugares.length===1?'lugar':'lugares')}${stat(brl(gasto),'sua parte nos gastos')}</div>
+${typeof vDiarioResumo==='function'?vDiarioResumo():''}
+<h2>Histórico</h2>
+${feitas.length?`<div class="list">${feitas.map(p=>`<button class="li card" data-act="openp" data-v="${esc(p.id)}" style="text-align:left;width:100%"><div class="ic" style="width:auto;padding:0 10px">${esc(p.inicio.slice(0,4))}</div><div class="grow"><div class="t" style="font-size:17px">${esc(p.nome)}</div><div class="m">${esc(quandoTxt(p))}${p.local?' · '+esc(p.local):''}</div><div class="m">${diasDe(p)} ${diasDe(p)===1?'dia':'dias'} · ${(p.pessoas||[]).length} na turma${minhaParte(p)?' · você gastou '+brl(minhaParte(p)):''}</div></div></button>`).join('')}</div>`:'<div class="box">Quando uma pescaria passar da data de volta, ela aparece aqui, com os dias, o lugar e quanto você gastou.</div>'}
+${lugares.length?`<h2>Lugares onde já pescou</h2><div class="chips">${lugares.map(l=>`<span class="chip" style="cursor:default">${esc(l)}</span>`).join('')}</div>`:''}
+${prox.length?`<div class="box" style="margin-top:18px">Você tem <b>${prox.length} ${prox.length===1?'pescaria':'pescarias'}</b> pela frente. <a href="#pescarias" style="color:var(--brand);font-weight:700">Ver</a></div>`:''}
+${vRodape()}`}
+
+/* ---------- clima (Open-Meteo, grátis, sem cadastro) ---------- */
+const WX={};
+const WTXT=c=>c===0?'Sol':c<=2?'Sol com nuvens':c===3?'Nublado':c<=48?'Neblina':c<=57?'Garoa':c<=67?'Chuva':c<=77?'Frio intenso':c<=82?'Pancadas de chuva':'Temporal';
+const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+async function geo(c){const k='bp_geo_'+norm(c);const g=ls.get(k,null);if(g)return g;
+ const j=await (await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=pt&countryCode=BR&name='+encodeURIComponent(c))).json();
+ const x=j&&j.results&&j.results[0];if(!x)return null;const o={lat:x.latitude,lon:x.longitude,nome:x.name+(x.admin1?', '+x.admin1:'')};ls.set(k,o);return o}
+function clima(local,ini,fim){const c=cidade(local);if(!c)return null;const k=c+'|'+(ini||'agora')+'|'+(fim||'');
+ if(WX[k]&&!(WX[k].st==='ok'&&Date.now()-WX[k].t>3*36e5))return WX[k];WX[k]={st:'carregando'};
+ (async()=>{try{const g=await geo(c);if(!g){WX[k]={st:'sem'};render();return}
+  let u='https://api.open-meteo.com/v1/forecast?latitude='+g.lat+'&longitude='+g.lon+'&timezone=America%2FSao_Paulo&wind_speed_unit=kmh';
+  u+=ini?'&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&start_date='+ini+'&end_date='+(fim||ini):'&current=temperature_2m,weather_code,wind_speed_10m';
+  const j=await (await fetch(u)).json();WX[k]=j&&!j.error?{st:'ok',g,j,t:Date.now()}:{st:'sem'}}catch(e){WX[k]={st:'erro'}}render()})();
+ return WX[k]}
+const addDias=(d,n)=>new Date(Date.parse(d)+n*864e5).toISOString().slice(0,10);
+function vClimaPescaria(p){if(!p.inicio||!p.local||daysTo(fimDe(p))<0)return '';const c=cidade(p.local);if(!c)return '';
+ if(daysTo(p.inicio)>15)return `<div class="box wx" style="margin-top:16px"><b>Tempo em ${esc(c)}</b><br>A previsão aparece a partir de ${esc(fmtD(addDias(p.inicio,-15)))}, 16 dias antes da viagem.</div>`;
+ const ini=daysTo(p.inicio)<0?today():p.inicio;let fim=fimDe(p);if(daysTo(fim)>15)fim=addDias(today(),15);
+ const w=clima(p.local,ini,fim);if(!w||w.st==='carregando')return `<div class="box wx" style="margin-top:16px"><b>Tempo em ${esc(c)}</b><br><span class="m">Buscando a previsão…</span></div>`;
+ if(w.st!=='ok')return '';const d=w.j.daily;if(!d||!d.time)return '';
+ return `<div class="box wx" style="margin-top:16px"><b>Previsão do tempo · ${esc(w.g.nome)}</b><div class="list" style="margin-top:6px;border:0;background:none;box-shadow:none;padding:0">${d.time.map((t,i)=>{const ch=d.precipitation_probability_max[i],vt=d.wind_speed_10m_max[i];const ruim=ch>=70||vt>=35;return `<div class="li" style="padding:10px 0;${ruim?'color:var(--warn)':''}"><div class="ic" style="width:auto;min-width:56px;padding:0 6px">${SEM[new Date(t+'T12:00').getDay()]} ${Number(t.slice(8))}</div><div class="grow"><div class="t" style="font-size:17px">${WTXT(d.weather_code[i])} · ${Math.round(d.temperature_2m_max[i])}° / ${Math.round(d.temperature_2m_min[i])}°</div><div class="m" style="${ruim?'color:var(--warn)':''}">Chuva ${ch==null?'?':ch+'%'} · vento até ${Math.round(vt)} km/h${ruim?' · atenção no barco':''}</div></div></div>`}).join('')}</div><p class="m" style="margin:6px 0 0">Previsão do Open-Meteo. Confira de novo na véspera.</p></div>`}
+function vClimaAgora(local){const w=clima(local);if(!w||w.st!=='ok'||!w.j.current)return '';const c=w.j.current;
+ return `<div class="box wx"><b>Tempo agora em ${esc(w.g.nome)}:</b> ${Math.round(c.temperature_2m)}°, ${WTXT(c.weather_code).toLowerCase()}, vento ${Math.round(c.wind_speed_10m)} km/h</div>`}
+
+/* ---------- diário de pesca e avaliações ---------- */
+let DIARIO=[],DLOAD=false;const LUG={};let FOTO=null,FOTOURL='';
+const ESPECIES=['Tucunaré','Tilápia','Corvina','Traíra','Dourado','Pintado','Pacu','Tambaqui','Piau','Lambari','Bagre','Carpa','Curimba','Piapara'];
+const fotoUrl2=f=>!f?'':/^(https?:|data:)/.test(f)?f:sb.storage.from('diario').getPublicUrl(f).data.publicUrl;
+const meuNome=()=>(ls.get('bp_nome','')||(user&&user.email?user.email.split('@')[0]:'Pescador')).split(' ')[0];
+const pesoTxt=k=>k?String(k).replace('.',',')+' kg':'';
+async function loadDiario(){if(mode!=='cloud'||!user)return;const {data,error}=await sb.rpc('meu_diario');if(!error){DIARIO=data||[];DLOAD=true;render()}}
+function lugarDados(id,forca){if(mode!=='cloud'||!user)return {diario:[],aval:[]};if(LUG[id]&&!forca)return LUG[id];LUG[id]=LUG[id]||{diario:[],aval:[],st:'carregando'};
+ Promise.all([sb.rpc('diario_do_lugar',{p_lugar:id}),sb.rpc('avaliacoes_do_lugar',{p_lugar:id})]).then(([d,v])=>{LUG[id]={diario:d.error?[]:d.data||[],aval:v.error?[]:v.data||[],st:'ok'};render()});return LUG[id]}
+const lugaresDiario=()=>{const meus=[];P.forEach(p=>(p.anuncios||[]).forEach(id=>{const a=findAd(id);if(a&&a.cat!=='Roteiro'&&a.cat!=='Ponto'&&!meus.includes(a))meus.push(a)}));const outros=allAds().filter(a=>a.cat!=='Roteiro'&&a.cat!=='Ponto'&&!meus.includes(a));return {meus,outros}};
+const estrelas=(n,tam)=>{let h='';for(let i=1;i<=5;i++)h+=`<span style="color:${i<=Math.round(n)?'#F2B035':'#d9dfdc'}">★</span>`;return `<span style="font-size:${tam||20}px;letter-spacing:1px" aria-label="${(Math.round(n*10)/10).toString().replace('.',',')} de 5">${h}</span>`};
+const CRIT=[['peixe','Peixe'],['estrutura','Estrutura'],['atendimento','Atendimento'],['preco','Preço justo']];
+function cardDiario(d,dono){const x=d.dados||{};const f=fotoUrl2(x.foto);
+ return `<div class="card dcard">${f?`<div class="pic" style="aspect-ratio:4/3;border-radius:0"><img class="foto" src="${esc(f)}" alt="${esc(x.especie||'Peixe')}" loading="lazy" onerror="this.remove()"></div>`:''}<div class="body" style="padding:12px 14px"><div class="t" style="font-size:18px">${esc(x.especie||'Peixe')}${x.peso?' · '+esc(pesoTxt(x.peso)):''}</div>
+ <div class="m">${dono?esc(d.lugar_nome||'Sem lugar'):esc(d.autor_nome||'Pescador')} · ${esc(fmtD(x.data||''))}${x.data?' '+esc(x.data.slice(0,4)):''}</div>${x.isca?`<div class="m">Isca: ${esc(x.isca)}</div>`:''}${x.ponto?`<div class="m">Ponto: ${esc(x.ponto)}</div>`:''}${x.obs?`<div style="font-size:16px;margin-top:4px">${esc(x.obs)}</div>`:''}
+ ${dono?`<div style="display:flex;gap:8px;align-items:center;margin-top:8px"><span class="m" style="flex:1">${d.publico&&d.lugar?'Aparece no anúncio':'Só você vê'}</span><button class="btn sm alt" data-act="rmdiario" data-v="${esc(d.id)}" style="color:var(--warn)">Apagar</button></div>`:''}</div></div>`}
+function vDiarioResumo(){if(mode!=='cloud')return '';if(!DLOAD)loadDiario();
+ const n=DIARIO.length;const maior=DIARIO.reduce((m,d)=>{const k=Number((d.dados||{}).peso)||0;return k>m.k?{k,e:(d.dados||{}).especie}:m},{k:0});
+ return `<h2>Meu diário de pesca</h2><p class="m" style="margin-top:0">${n?`${n} ${n===1?'peixe registrado':'peixes registrados'}${maior.k?` · maior: ${esc(maior.e||'peixe')} de ${esc(pesoTxt(maior.k))}`:''}`:'Registre cada peixe com foto, peso e isca. Se quiser, ele aparece no anúncio do rancho ou da pousada.'}</p>
+ <button class="btn full" data-act="novodiario">${I.plus}Registrar pesca</button>
+ ${n?`<div class="dgrid">${DIARIO.slice(0,S.dtodos?500:6).map(d=>cardDiario(d,true)).join('')}</div>${n>6&&!S.dtodos?`<button class="btn alt full" data-act="dtodos" style="margin-top:10px">Ver os ${n} registros</button>`:''}`:''}`}
+function vNovoDiario(){const {meus,outros}=lugaresDiario();const pre=S.dlugar||'';
+ const opt=a=>`<option value="${esc(a.id)}" ${a.id===pre?'selected':''}>${esc(a.nome)} · ${esc(a.local)}${a.real?'':' (exemplo)'}</option>`;
+ return `<button class="back" data-act="dback" aria-label="Voltar">${I.back}</button><h1>Registrar pesca</h1>
+<label class="f">Foto do peixe</label><label class="fotobox" for="d-foto">${FOTOURL?`<img src="${FOTOURL}" alt="Foto escolhida">`:`<span>${I.plus}Tirar ou escolher foto</span>`}</label><input id="d-foto" type="file" accept="image/*" style="position:absolute;opacity:0;width:1px;height:1px">
+<p class="m" style="margin-top:4px">O app tira da foto a localização que o celular grava junto.</p>
+<label class="f" for="d-esp">Espécie</label><input id="d-esp" list="d-esps" maxlength="40" placeholder="Tucunaré"><datalist id="d-esps">${ESPECIES.map(e=>`<option value="${e}">`).join('')}</datalist>
+<div style="display:flex;gap:8px"><div style="flex:1"><label class="f" for="d-peso">Peso (kg)</label><input id="d-peso" inputmode="decimal" maxlength="8" placeholder="2,5"></div><div style="flex:1"><label class="f" for="d-data">Dia</label><input id="d-data" type="date" value="${esc(S.ddata||today())}"></div></div>
+<label class="f" for="d-isca">Isca</label><input id="d-isca" maxlength="60" placeholder="Isca artificial de superfície">
+<label class="f" for="d-lugar">Onde pescou</label><select id="d-lugar"><option value="">Outro lugar</option>${meus.length?`<optgroup label="Das suas pescarias">${meus.map(opt).join('')}</optgroup>`:''}<optgroup label="Lugares do app">${outros.map(opt).join('')}</optgroup></select>
+<input id="d-outro" maxlength="60" placeholder="Nome do lugar (ex.: Represa de Barra Bonita)" style="margin-top:8px">
+<label class="chip" style="display:flex;align-items:center;gap:10px;margin-top:14px;min-height:56px;height:auto;padding:10px 16px"><input type="checkbox" id="d-tponto"> Quero mostrar o ponto de pesca</label>
+<div id="d-pbox" style="display:none"><input id="d-ponto" maxlength="60" placeholder="Tipo de lugar: galhada, píer, barranco…" style="margin-top:8px"><p class="m" style="margin-top:4px">Só o tipo de lugar. Nunca coordenada.</p></div>
+<label class="f" for="d-obs">Como foi (opcional)</label><textarea id="d-obs" maxlength="300" style="width:100%;height:90px;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;font-size:17px" placeholder="Pegou no começo da manhã, perto da galhada."></textarea>
+<label class="chip" style="display:flex;align-items:center;gap:10px;margin-top:14px;min-height:56px;height:auto;padding:10px 16px"><input type="checkbox" id="d-pub" checked> Mostrar no anúncio do lugar, para outros pescadores verem</label>
+<button class="btn full" data-act="salvadiario" style="margin-top:16px">Salvar no diário</button>`}
+async function prepFoto(file){const url=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});
+ const k=Math.min(1,1280/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*k);c.height=Math.round(img.naturalHeight*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+ let q=.75,b=null;do{b=await new Promise(r=>c.toBlob(r,'image/jpeg',q));q-=.15}while(b&&b.size>300000&&q>.3);return b}finally{URL.revokeObjectURL(url)}}
+function vAvaliacoes(a){if(mode!=='cloud'||!user)return '';const L=lugarDados(a.id);const av_=L.aval||[];const media=av_.length?av_.reduce((s,x)=>s+x.nota,0)/av_.length:0;
+ const pode=P.some(p=>(p.anuncios||[]).includes(a.id));const minha=av_.find(x=>x.minha);const souDono=a.real&&MEUS.some(m=>m.id===a.id);
+ const crit=CRIT.map(([k,l])=>{const v=av_.map(x=>Number((x.notas||{})[k])).filter(n=>n>0);return v.length?`<div class="li" style="padding:6px 0"><div class="grow" style="font-size:16px">${l}</div>${estrelas(v.reduce((s,n)=>s+n,0)/v.length,18)}</div>`:''}).join('');
+ return `<h2>Avaliações</h2>${av_.length?`<div class="box" style="display:flex;align-items:center;gap:14px"><div style="font-size:40px;font-weight:800;color:var(--brand)">${media.toFixed(1).replace('.',',')}</div><div>${estrelas(media,24)}<div class="m">${av_.length} ${av_.length===1?'avaliação':'avaliações'} de pescadores</div></div></div>${crit?`<div class="list">${crit}</div>`:''}
+ <div class="list">${av_.map(x=>`<div class="li" style="display:block"><div style="display:flex;align-items:center;gap:10px">${av(x.autor_nome,'s')}<div class="grow"><b>${esc(x.autor_nome||'Pescador')}</b><div class="m">${esc(fmtD(String(x.criado).slice(0,10)))}</div></div>${estrelas(x.nota,18)}</div>${x.comentario?`<p style="margin:8px 0 0;font-size:17px">${esc(x.comentario)}</p>`:''}${x.resposta?`<div class="box" style="margin-top:8px"><b>Resposta do dono:</b> ${esc(x.resposta)}</div>`:''}${souDono?`<button class="btn sm alt" data-act="responder" data-v="${esc(x.id)}" style="margin-top:8px">${x.resposta?'Mudar resposta':'Responder'}</button>`:''}</div>`).join('')}</div>`:'<p class="m">Ainda sem avaliações.</p>'}
+ ${pode?`<button class="btn ${minha?'alt':''} full" data-act="avaliar" data-v="${esc(a.id)}" style="margin-top:10px">${minha?'Mudar minha avaliação':'Avaliar este lugar'}</button>`:`<p class="m">Só avalia quem usou este lugar numa pescaria. Assim as notas são de quem pescou lá de verdade.</p>`}`}
+function vDiarioLugar(a){if(mode!=='cloud'||!user)return '';const L=lugarDados(a.id);const d=L.diario||[];
+ return `<h2>Diário dos pescadores</h2>${d.length?`<div class="dgrid">${d.slice(0,8).map(x=>cardDiario(x,false)).join('')}</div>`:'<p class="m">Ninguém registrou pesca aqui ainda. Pescou aqui? Registre no seu Perfil.</p>'}`}
+function modalAvaliar(id){const a=findAd(id);if(!a)return;const L=LUG[id]||{aval:[]};const mi=(L.aval||[]).find(x=>x.minha)||{nota:0,notas:{},comentario:''};
+ const row=(k,l,n)=>`<div class="srow" data-k="${k}"><div style="font-size:17px;font-weight:600;margin:12px 0 4px">${l}</div><div style="display:flex;gap:4px">${[1,2,3,4,5].map(i=>`<button class="star ${i<=n?'on':''}" data-act="star" data-k="${k}" data-v="${i}" aria-label="${i} de 5">★</button>`).join('')}</div></div>`;
+ openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Avaliar ${esc(a.nome)}</h2>${row('geral','Nota geral',mi.nota)}${CRIT.map(([k,l])=>row(k,l,Number(mi.notas[k])||0)).join('')}
+ <label class="f" for="av-txt">Comentário</label><textarea id="av-txt" maxlength="600" style="width:100%;height:100px;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;font-size:17px" placeholder="Como foi a pesca, a estrutura, o atendimento…">${esc(mi.comentario||'')}</textarea>
+ <button class="btn full" data-act="salvaraval" data-v="${esc(id)}" style="margin-top:12px">Enviar avaliação</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
 function vRodape(){
 return `<div style="margin-top:34px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px">
 ${mode==='cloud'&&user?`<p class="m" style="margin:0;text-align:center">Entrou como ${esc(user.email||'')}</p><button class="btn alt full" data-act="sair">Sair</button>`:''}
@@ -490,18 +602,19 @@ function render(){try{renderInner()}catch(e){console.error(e);const a=$('#app');
 function renderInner(){
 const app=$('#app');if(!app)return;
 const fx=document.activeElement&&document.activeElement.id;
-let h=!authReady?'<h1>'+esc(APP)+'</h1><div class="box">Abrindo…</div>':(mode==='cloud'&&!user)?vLogin():S.tab==='explorar'?vExplorar():S.tab==='pescarias'?vPescarias():vContas();
+let h=!authReady?'<h1>'+esc(APP)+'</h1><div class="box">Abrindo…</div>':(mode==='cloud'&&!user)?vLogin():S.tab==='explorar'?vExplorar():S.tab==='pescarias'?vPescarias():S.tab==='perfil'?vPerfil():vContas();
 if(flashMsg)h+=`<div class="warnbox" role="status" style="position:fixed;left:18px;right:18px;bottom:96px;max-width:484px;margin:0 auto;z-index:8">${esc(flashMsg)}</div>`;
 /* guarda o que a pessoa está digitando, para uma atualização da tela não apagar */
-const keep={};if(!window.__limpar)app.querySelectorAll('input[id],select[id]:not([data-act])').forEach(el=>{if(el.type!=='checkbox'&&el.value)keep[el.id]=el.value});
+const keep={};if(!window.__limpar)app.querySelectorAll('input[id]:not([type=file]),select[id]:not([data-act])').forEach(el=>{if(el.type!=='checkbox'&&el.value)keep[el.id]=el.value});
 const keepChk={};let hadChk=false;app.querySelectorAll('input.gpart').forEach(el=>{hadChk=true;keepChk[el.value]=el.checked});const keepIdChk={};app.querySelectorAll('input[type=checkbox][id]').forEach(el=>{keepIdChk[el.id]=el.checked});const keepTa={};app.querySelectorAll('textarea[id]:not([readonly])').forEach(el=>{if(el.value)keepTa[el.id]=el.value});
 const pos=fx&&document.activeElement&&document.activeElement.selectionStart;
 app.innerHTML=h;app.setAttribute('data-ok','1');
 Object.entries(keep).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&el.closest('#app')&&!el.value)el.value=v});
 if(!window.__limpar){Object.entries(keepIdChk).forEach(([id,c])=>{const el=document.getElementById(id);if(el&&el.closest('#app'))el.checked=c});Object.entries(keepTa).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&el.closest('#app')&&!el.value)el.value=v})}
+[['d-tponto','d-pbox'],['fa-tempt','fa-pbox']].forEach(([c,b])=>{const x=document.getElementById(c),y=document.getElementById(b);if(x&&y)y.style.display=x.checked?'':'none'});
 if(hadChk)app.querySelectorAll('input.gpart').forEach(el=>{if(el.value in keepChk)el.checked=keepChk[el.value]});
 if(fx&&fx!=='q'){const el=document.getElementById(fx);if(el&&el.closest('#app')){el.focus();try{if(pos!=null)el.setSelectionRange(pos,pos)}catch(e){}}}
-$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=[['pescarias','Pescarias',I.boat],['contas','Contas',I.cash],['explorar','Explorar',I.search]].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}"${S.tab===k?' aria-current="page"':''}><i>${i}</i>${l}</a>`).join('');
+$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=[['pescarias','Pescarias',I.boat],['contas','Contas',I.cash],['explorar','Explorar',I.search],['perfil','Perfil',I.user]].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}"${S.tab===k?' aria-current="page"':''}><i>${i}</i>${l}</a>`).join('');
 if(fx==='q'){const q=$('#q');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
 }
 const openModal=h=>{$('#modal').innerHTML=h;const i=$('#modal input');if(i)i.focus()};
@@ -513,7 +626,10 @@ function curP(){return S.tab==='contas'?getP($('[data-act=cid]')?.value):getP(S.
 function change(fn){const p=curP();if(!p)return;store().change(p.id,fn)}
 
 document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;render()}});
-document.addEventListener('change',e=>{const a=e.target.dataset.act;if(a==='eu'){setMe(S.pid,e.target.value)}else if(a==='reg'){S.reg=e.target.value;render()}else if(a==='quem'){const v=e.target.dataset.v;change(p=>{const it=p.itens.find(i=>i.id===v);if(it)it.quem=e.target.value})}else if(a==='cid'){S.cid=e.target.value;render()}});
+document.addEventListener('change',e=>{const a=e.target.dataset.act;if(e.target.id==='d-data'){S.ddata=e.target.value;return}if(e.target.id==='d-lugar'){S.dlugar=e.target.value;return}
+if(e.target.id==='d-tponto'){$('#d-pbox').style.display=e.target.checked?'':'none';return}
+if(e.target.id==='d-foto'){const f=e.target.files&&e.target.files[0];if(!f)return;prepFoto(f).then(b=>{if(!b){flash('Não deu para ler essa foto.');return}FOTO=b;if(FOTOURL)URL.revokeObjectURL(FOTOURL);FOTOURL=URL.createObjectURL(b);render()}).catch(()=>flash('Não deu para ler essa foto.'));return}
+if(e.target.id==='fa-tempt'){$('#fa-pbox').style.display=e.target.checked?'':'none';return}if(a==='eu'){setMe(S.pid,e.target.value)}else if(a==='reg'){S.reg=e.target.value;render()}else if(a==='quem'){const v=e.target.dataset.v;change(p=>{const it=p.itens.find(i=>i.id===v);if(it)it.quem=e.target.value})}else if(a==='cid'){S.cid=e.target.value;render()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#modal').innerHTML)closeModal()});
 document.addEventListener('click',async e=>{
 const el=e.target.closest('[data-act]');if(!el)return;
@@ -534,14 +650,14 @@ else if(a==='fila'){S.ex='fila';render();scrollTo(0,0);loadAds()}
 else if(a==='exback'){S.ex=S.ex==='form'&&S.edit?'meus':null;S.edit=null;render();scrollTo(0,0)}
 else if(a==='editad'){S.ex='form';S.edit=v;render();scrollTo(0,0)}
 else if(a==='enviarad'){const g=id=>($('#'+id).value||'').trim();
- const d={cat:g('fa-cat'),nome:g('fa-nome'),reg:g('fa-reg'),local:g('fa-local'),agua:g('fa-agua'),preco:g('fa-preco'),un:g('fa-un'),sub:g('fa-sub'),feat:g('fa-feat').split(',').map(x=>x.trim()).filter(Boolean).slice(0,3),peixes:g('fa-peixes'),txt:g('fa-txt'),pil:$('#fa-pil').checked,wa:g('fa-wa')};
+ const d={cat:g('fa-cat'),nome:g('fa-nome'),reg:g('fa-reg'),local:g('fa-local'),agua:g('fa-agua'),preco:g('fa-preco'),un:g('fa-un'),sub:g('fa-sub'),feat:g('fa-feat').split(',').map(x=>x.trim()).filter(Boolean).slice(0,3),peixes:g('fa-peixes'),txt:g('fa-txt'),pil:$('#fa-pil').checked,wa:g('fa-wa'),pontos:$('#fa-tempt').checked?g('fa-pontos').split('\n').map(x=>x.trim()).filter(Boolean).slice(0,8):[]};
  if(d.preco&&/^[\d.,]+$/.test(d.preco))d.preco='R$ '+d.preco;
  const fone=d.wa.replace(/\D/g,'').replace(/^55(?=\d{10,11}$)/,'');
  if(!d.nome){flash('Escreva o nome do anúncio.');$('#fa-nome').focus();return}
  if(!d.local){flash('Escreva a cidade.');$('#fa-local').focus();return}
  if(fone.length<10||fone.length>11){flash('Confira o WhatsApp com DDD.');$('#fa-wa').focus();return}
  if(!$('#fa-ok').checked){flash('Marque que autoriza mostrar o WhatsApp.');return}
- if(temCoord(d.nome+' '+d.sub+' '+d.txt+' '+d.local)){flash('Tire as coordenadas do texto. Mostre só a cidade.');return}
+ if(temCoord(d.nome+' '+d.sub+' '+d.txt+' '+d.local+' '+d.pontos.join(' '))){flash('Tire as coordenadas do texto. Mostre só a cidade.');return}
  const editId=S.edit?MEUS.find(x=>x.id===S.edit).uid:null;el.disabled=true;
  const {error}=await sb.rpc('enviar_anuncio',editId?{p_dados:d,p_id:editId}:{p_dados:d});el.disabled=false;
  if(error){flash(/limite/.test(error.message||'')?'Você já mandou muitos anúncios hoje. Tente amanhã.':'Não deu para enviar agora. Tente de novo.');return}
@@ -562,6 +678,30 @@ else if(a==='google'){const {error}=await sb.auth.signInWithOAuth({provider:'goo
 else if(a==='mandaCodigo'){const em=$('#em').value.trim();if(!/^\S+@\S+\.\S+$/.test(em)){flash('Confira o e-mail.');return}el.disabled=true;const conv=ls.get('bp_convite','');const {error}=await sb.auth.signInWithOtp({email:em,options:{shouldCreateUser:true,emailRedirectTo:location.origin+location.pathname+(conv?'?c='+encodeURIComponent(conv):'')}});el.disabled=false;if(error){flash('Não deu para mandar o código. Tente daqui a 1 minuto.');return}S.email=em;render()}
 else if(a==='confereCodigo'){const tk=$('#cod').value.replace(/\D/g,'');if(tk.length<6){flash('Digite o código inteiro.');return}const {error}=await sb.auth.verifyOtp({email:S.email,token:tk,type:'email'});if(error)flash('Código errado ou vencido. Confira o e-mail.')}
 else if(a==='outroEmail'){S.email='';render()}
+else if(a==='openp'){S.tab='pescarias';S.pid=v;S.sub='turma';location.hash='pescarias';S.pid=v;render();scrollTo(0,0)}
+else if(a==='novodiario'){S.tab='perfil';S.pv='novo';S.dlugar=v||'';S.ddata='';FOTO=null;FOTOURL='';if(location.hash!=='#perfil')history.replaceState(null,'','#perfil');render();scrollTo(0,0)}
+else if(a==='dback'){S.pv=null;render();scrollTo(0,0)}
+else if(a==='dtodos'){S.dtodos=true;render()}
+else if(a==='salvadiario'){const g=id=>($('#'+id).value||'').trim();const esp=g('d-esp');if(!esp){flash('Escreva a espécie do peixe.');$('#d-esp').focus();return}
+ const peso=g('d-peso')?valorBR(g('d-peso')):0;if(g('d-peso')&&!(peso>0&&peso<200)){flash('Confira o peso em quilos.');return}
+ const lugar=g('d-lugar');const ad=lugar?findAd(lugar):null;const ponto=$('#d-tponto').checked?g('d-ponto'):'';
+ if(temCoord(ponto+' '+g('d-obs')+' '+g('d-outro'))){flash('Tire as coordenadas. Mostre só o tipo de lugar.');return}
+ const x={especie:esp,peso:peso?Math.round(peso*100)/100:0,isca:g('d-isca'),data:g('d-data')||today(),ponto,obs:g('d-obs')};
+ let pub=$('#d-pub').checked&&!!ad;
+ if(pub&&emPiracema(x.data)&&NATIVOS.test(esp)&&!(ad&&ad.agua==='tanque')){pub=false;flash('Peixe nativo na piracema: salvo só para você, sem aparecer no anúncio.')}
+ el.disabled=true;try{if(FOTO){const path=user.id+'/'+Date.now()+'-'+uid()+'.jpg';const up=await sb.storage.from('diario').upload(path,FOTO,{contentType:'image/jpeg'});if(up.error){flash('Não deu para mandar a foto. Tente de novo.');return}x.foto=path}
+  const {error}=await sb.rpc('salvar_diario',{p_dados:x,p_lugar:ad?ad.id:'',p_lugar_nome:ad?ad.nome:g('d-outro'),p_publico:pub,p_nome:meuNome()});
+  if(error){flash(/limite/.test(error.message)?'Limite de 30 registros por dia.':'Não deu para salvar agora.');return}
+  FOTO=null;FOTOURL='';S.pv=null;if(ad)delete LUG[ad.id];await loadDiario();scrollTo(0,0);if(!flashMsg)flash('Salvo no seu diário!')}finally{el.disabled=false}}
+else if(a==='rmdiario'){const {error}=await sb.rpc('apagar_diario',{p_id:v});if(error){flash('Não deu para apagar agora.');return}await loadDiario()}
+else if(a==='avaliar'){if(!LUG[v])lugarDados(v);modalAvaliar(v)}
+else if(a==='star'){const k=el.dataset.k,n=Number(v);document.querySelectorAll(`.star[data-k="${k}"]`).forEach(b=>b.classList.toggle('on',Number(b.dataset.v)<=n))}
+else if(a==='salvaraval'){const nota=k=>document.querySelectorAll(`.star.on[data-k="${k}"]`).length;if(!nota('geral')){flash('Toque nas estrelas da nota geral.');return}
+ const notas={};CRIT.forEach(([k])=>{if(nota(k))notas[k]=nota(k)});const txt=($('#av-txt').value||'').trim();
+ const {error}=await sb.rpc('avaliar',{p_lugar:v,p_nota:nota('geral'),p_notas:notas,p_comentario:txt,p_nome:meuNome()});
+ if(error){flash(/pescou/.test(error.message)?'Só avalia quem usou este lugar numa pescaria.':'Não deu para enviar agora.');return}closeModal();lugarDados(v,true);flash('Obrigado pela avaliação!')}
+else if(a==='responder'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Responder avaliação</h2><textarea id="rsp" maxlength="600" style="width:100%;height:110px;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;font-size:17px"></textarea><button class="btn full" data-act="salvaresp" data-v="${esc(v)}" style="margin-top:12px">Publicar resposta</button></div></div>`)}
+else if(a==='salvaresp'){const {error}=await sb.rpc('responder_avaliacao',{p_id:v,p_resposta:($('#rsp').value||'').trim()});if(error){flash('Não deu agora.');return}closeModal();if(S.ad)lugarDados(S.ad,true)}
 else if(a==='sair'){await sb.auth.signOut();P=[];S.pid=null;render()}
 else if(a==='apagarConta'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Apagar sua conta?</h2><p>Você sai de todas as pescarias. As pescarias que você criou são apagadas para toda a turma. Não dá para desfazer.</p><button class="btn full" data-act="apagarOk" style="background:var(--warn)">Apagar minha conta</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
 else if(a==='apagarOk'){const {error}=await sb.rpc('apagar_minha_conta');closeModal();if(error){flash('Não deu para apagar agora.');return}await sb.auth.signOut();P=[];render()}
@@ -605,7 +745,7 @@ else if(a==='delp'){openModal(`<div class="modal" data-act="mclose"><div class="
 else if(a==='delok'){store().del(S.pid);S.pid=null;closeModal()}
 });
 (()=>{const q=new URLSearchParams(location.search);const c=q.get('c');if(c){ls.set('bp_convite',c);history.replaceState(null,'',location.pathname+location.hash)}})();
-const route0=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=['explorar','pescarias','contas'].includes(h)?h:'pescarias';if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
+const route0=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=['explorar','pescarias','contas','perfil'].includes(h)?h:'pescarias';if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
 const route=()=>{route0();if(S.tab==='explorar'){S.ex=S.ex||null;loadAds()}};
 addEventListener('hashchange',route);route();
 }
