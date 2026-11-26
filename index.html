@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App de Pesca</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0F5A50">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* VOICE: simples e direto, como app de banco e de hospedagem; letra grande para todas as idades
+   IDEA: o caderninho da pescaria da turma, no bolso
+   PICTURE: cenas planas de rio, rancho e barco nos cards
+   COLOUR and TYPE: branco, verde-rio #0F5A50 dominante, amarelo-tucunaré só em detalhes; Inter
+   LAYOUT: coluna de celular, menu de 3 abas embaixo, um assunto por tela */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0d1715);--card:light-dark(#ffffff,#15221f);--soft:light-dark(#f2f1ec,#1d2c29);
+--ink:light-dark(#0b2e33,#e9f1ef);--mute:light-dark(#5f6b69,#9fb2ae);--line:light-dark(#ecebe5,#26352f);
+--brand:light-dark(#0f5a50,#3fae9c);--onbrand:light-dark(#ffffff,#06201c);--sun:#f2b035;--warn:light-dark(#a9470f,#f0a070);--warnbg:light-dark(#fbe6d3,#3a2618)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
+#app{max-width:520px;margin:0 auto;min-height:100vh;padding:0 18px 110px}
+h1{font-size:30px;line-height:1.1;letter-spacing:-.02em;margin:26px 0 18px;font-weight:800;text-wrap:balance}
+h2{font-size:19px;margin:26px 0 10px;font-weight:700}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.btn{height:52px;padding:0 22px;border-radius:14px;border:0;background:var(--brand);color:var(--onbrand);font-weight:700;font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.alt{background:var(--soft);color:var(--ink)}.btn.full{width:100%}.btn.sm{height:48px;padding:0 16px;font-size:16px;border-radius:12px}
+.btn.wa{background:#1f7a4d;color:#fff}
+.btn:focus-visible,.chip:focus-visible,.card:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+input,select{width:100%;height:50px;border:1px solid var(--line);border-radius:12px;padding:0 14px;background:var(--card);font-size:16px}
+label.f{display:block;font-size:16px;color:var(--mute);margin:12px 0 6px}
+.search{display:flex;align-items:center;gap:10px;height:56px;border-radius:28px;padding:0 18px;background:var(--card);box-shadow:0 2px 12px rgba(11,46,51,.13)}
+.search input{border:0;height:auto;padding:0;background:transparent;outline:none}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:16px 0 4px;scrollbar-width:none}
+.chip{flex:none;height:48px;padding:0 18px;border-radius:24px;border:1px solid var(--line);background:var(--card);font-size:16px;font-weight:600}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card{display:block;width:100%;text-align:left;border:0;background:none;padding:0;margin:18px 0 6px}
+.pic{border-radius:20px;overflow:hidden;position:relative;aspect-ratio:16/10;background:#f4c46e}
+.pic svg{position:absolute;inset:0;width:100%;height:100%}
+.tag{position:absolute;left:12px;top:12px;background:#fff;color:#0b2e33;font-size:15px;font-weight:700;padding:5px 11px;border-radius:14px}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-top:10px}
+.t{font-size:18px;font-weight:700}.m{color:var(--mute);font-size:16px}.price{font-weight:700;white-space:nowrap}
+.note{font-size:15px;color:var(--mute);margin:14px 0 0}
+.box{background:var(--soft);border-radius:16px;padding:14px 16px;margin:12px 0}
+.warnbox{background:var(--warnbg);color:var(--warn);border-radius:14px;padding:12px 14px;font-size:16px;margin-top:14px}
+.hero{background:var(--brand);color:var(--onbrand);border-radius:24px;padding:22px;margin:4px 0 8px}
+.hero .big{font-size:38px;font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:4px 0}
+.list{border-top:1px solid var(--line)}
+.li{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.li .grow{flex:1}
+.ic{width:46px;height:46px;border-radius:23px;background:var(--soft);display:flex;align-items:center;justify-content:center;flex:none;font-weight:800}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:14px 0 4px}
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 8px calc(14px + env(safe-area-inset-bottom))}
+.nav a{flex:0 1 150px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:15px;color:var(--mute);text-decoration:none;padding:4px 0;min-height:52px}
+.nav a.on{color:var(--brand);font-weight:700}
+.back{width:44px;height:44px;border-radius:22px;border:0;background:var(--soft);display:inline-flex;align-items:center;justify-content:center;margin-top:18px}
+.feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+.feat div{border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;font-size:14px;font-weight:600}
+.sticky{position:fixed;left:0;right:0;bottom:78px;background:var(--bg);border-top:1px solid var(--line)}
+.sticky>div{max-width:520px;margin:0 auto;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.check{width:28px;height:28px;border-radius:8px;border:2px solid var(--brand);background:none;flex:none;display:flex;align-items:center;justify-content:center;color:var(--onbrand)}
+.check.on{background:var(--brand)}
+.x{border:0;background:none;color:var(--mute);font-size:26px;width:48px;height:48px}
+.money{font-weight:700;white-space:nowrap}
+.pill{font-size:15px;font-weight:700;color:var(--brand)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:9}
+.sheet{background:var(--bg);width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:22px 18px 30px;max-height:90vh;overflow:auto}
+textarea.code{width:100%;height:110px;border-radius:12px;border:1px solid var(--line);padding:12px;font:14px/1.4 ui-monospace,monospace;background:var(--soft);color:var(--ink);overflow-wrap:anywhere}
+.status{font-size:15px;color:var(--mute);text-align:center;margin-top:8px}
+.parts{display:flex;flex-wrap:wrap;gap:8px}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(40px);opacity:.4}}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="nav" id="nav"></nav>
+<div id="modal"></div>
+<script src="config.js"></script>
+<script src="vendor/supabase-2.79.0.js"></script>
+<script>
+{
+const APP=(window.BORA_CONFIG&&window.BORA_CONFIG.nome)||'App de Pesca';
+document.title=APP;
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10);
+const brl=n=>'R$ '+(Math.round(n*100)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const today=()=>new Date().toISOString().slice(0,10);
+const fmtD=d=>{if(!d)return '';const [y,m,dd]=d.split('-');return Number(dd)+' '+['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'].at(Number(m)-1)};
+const daysTo=d=>Math.round((Date.parse(d)-Date.parse(today()))/864e5);
+const ls={get(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch(e){return f}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- cenas ---------- */
+const PAL=[['#F4C46E','#4E8A6B','#145A52','#FBE2A6'],['#8DBFA8','#3F7A5C','#1B6C73','#E8F3EC'],['#E9B76A','#245E4A','#0F5A50','#FCE7B8'],['#B9D6E3','#5D8F7A','#1E5F74','#F3F8FB']];
+const scene=(i,kind)=>{const [sky,hill,water,sun]=PAL.at(i%4);
+const house=kind==='Rancho'||kind==='Pousada'?`<path d="M50 104 l52 -27 l52 27z" fill="#A9470F"/><rect x="60" y="104" width="84" height="32" fill="#F3EFE6"/><rect x="72" y="112" width="16" height="11" fill="#0B2E33"/><rect x="114" y="112" width="16" height="24" fill="#0B2E33"/><rect x="0" y="134" width="180" height="8" fill="#6B4A2B"/>`:'';
+const boat=kind==='Piloteiro'||kind==='Roteiro'?`<path d="M200 150 h70 l-9 12 h-52z" fill="#0B2E33"/><circle cx="228" cy="140" r="6" fill="#0B2E33"/><rect x="223" y="145" width="10" height="7" rx="2" fill="#0B2E33"/><path d="M232 146 L270 104" stroke="#0B2E33" stroke-width="2.5"/>`:'';
+const fish=kind==='Pesqueiro'||kind==='Ponto'?`<path d="M150 170c10-12 24-18 38-18 10 0 17 6 23 12l7-7v26l-7-7c-6 7-13 13-23 13-14 0-28-6-38-19z" fill="#F2B035"/>`:'';
+return `<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="320" height="200" fill="${sky}"/><circle cx="250" cy="62" r="24" fill="${sun}"/><path d="M0 100 L45 82 L100 96 L160 74 L220 92 L280 78 L320 88 V200 H0z" fill="${hill}"/><rect y="138" width="320" height="62" fill="${water}"/>${house}${boat}${fish}<path d="M20 176 h36 M110 188 h44 M230 182 h52" stroke="#ffffff" stroke-opacity=".25" stroke-width="3" stroke-linecap="round"/></svg>`};
+
+/* ---------- anúncios de exemplo ---------- */
+const ADS=[
+{id:'a1',cat:'Rancho',nome:'Rancho Beira-Tietê',local:'Barra Bonita, SP',km:120,preco:'R$ 600',un:'/dia',sub:'Rancho inteiro, até 8 pessoas',feat:['Píer e rampa','Piloteiro indicado','Freezer e limpeza de peixe'],peixes:'Tucunaré e corvina',pil:true,livre:'Livre neste fim de semana'},
+{id:'a2',cat:'Pousada',nome:'Pousada Remanso',local:'Barra Bonita, SP',km:122,preco:'R$ 345',un:'/pessoa',sub:'Pacote com barco e piloteiro, café e janta',feat:['Piloteiro incluso','Barco 5 lugares','Café e janta'],peixes:'Tucunaré e corvina',pil:true},
+{id:'a3',cat:'Piloteiro',nome:'Seu Antônio',local:'Represa de Barra Bonita',km:120,preco:'R$ 450',un:'/dia',sub:'20 anos de rio, barco próprio',feat:['Barco próprio','Leva até 3','Conhece as galhadas'],peixes:'Tucunaré',pil:true},
+{id:'a4',cat:'Pesqueiro',nome:'Pesqueiro Águas Claras',local:'Bauru, SP',km:15,preco:'R$ 60',un:'/pessoa',sub:'Bate-volta, aberto o ano todo',feat:['Tanques de tilápia','Lanchonete','Aluga vara'],peixes:'Tilápia e tambaqui',pil:false,livre:'Aberto na piracema'},
+{id:'a5',cat:'Rancho',nome:'Rancho Três Irmãos',local:'Rio Paraná, SP',km:230,preco:'R$ 800',un:'/dia',sub:'Rancho inteiro, até 12 pessoas',feat:['Píer','Barco para alugar','Piloteiro indicado'],peixes:'Dourado e pintado',pil:true},
+{id:'a6',cat:'Pousada',nome:'Pousada Beira-Rio',local:'Rio Paraná, SP',km:240,preco:'R$ 280',un:'/pessoa',sub:'Só hospedagem, pesca de barranco',feat:['Só hospedagem','Pesca de barranco','Estacionamento'],peixes:'Corvina e mandi',pil:false},
+{id:'a7',cat:'Piloteiro',nome:'Zé do Barco',local:'Rio Paraná, SP',km:230,preco:'R$ 500',un:'/dia',sub:'Especialista em dourado',feat:['Barco com motor','Leva até 3','Iscas inclusas'],peixes:'Dourado',pil:true},
+{id:'a8',cat:'Rancho',nome:'Rancho do Lago Azul',local:'Represa de Promissão, SP',km:110,preco:'R$ 450',un:'/dia',sub:'Rancho inteiro, até 6 pessoas',feat:['Rampa','Churrasqueira','Wi-Fi'],peixes:'Tucunaré',pil:false},
+{id:'r1',cat:'Roteiro',nome:'Fim de semana no Tietê',local:'Barra Bonita, SP',km:120,preco:'2 dias',un:'',sub:'Rancho + barco com piloteiro',feat:['2 dias','Com piloteiro','Para turma de 4 a 8'],peixes:'Tucunaré',pil:true,dias:[['Sex','05:00','Saída de Bauru'],['Sex','07:30','Check-in no rancho'],['Sex','08:00','Barco com piloteiro nas galhadas'],['Sáb','06:00','Pesca na saída do sol'],['Sáb','19:00','Churrasco no rancho'],['Dom','12:00','Volta pra casa']]},
+{id:'r2',cat:'Roteiro',nome:'Bate-volta no pesqueiro',local:'Bauru, SP',km:15,preco:'1 dia',un:'',sub:'Ideal na piracema',feat:['1 dia','Sem barco','Boa para iniciantes'],peixes:'Tilápia',pil:false,dias:[['Sáb','06:30','Saída'],['Sáb','07:00','Pesca nos tanques'],['Sáb','12:00','Almoço no pesqueiro'],['Sáb','16:00','Volta']]},
+{id:'r3',cat:'Roteiro',nome:'Dourado no Rio Paraná',local:'Rio Paraná, SP',km:230,preco:'3 dias',un:'',sub:'Rancho + piloteiro especialista',feat:['3 dias','Com piloteiro','Pesca esportiva'],peixes:'Dourado',pil:true,dias:[['Qui','18:00','Saída e chegada no rancho'],['Sex','06:00','Barco com piloteiro'],['Sáb','06:00','Barco com piloteiro'],['Dom','10:00','Volta']]},
+{id:'p1',cat:'Ponto',nome:'Galhadas do braço do rio',local:'Represa de Barra Bonita',km:120,preco:'Dica',un:'',sub:'Bom para tucunaré no começo da manhã',feat:['Isca artificial','Manhã cedo','Precisa de barco'],peixes:'Tucunaré',pil:true},
+{id:'p2',cat:'Ponto',nome:'Corredeira abaixo da barragem',local:'Rio Paraná',km:230,preco:'Dica',un:'',sub:'Respeite a distância mínima da barragem',feat:['Isca natural','Fim de tarde','Barco ou barranco'],peixes:'Dourado e pintado',pil:false}];
+const CATS=[['Todos',''],['Ranchos','Rancho'],['Pousadas','Pousada'],['Piloteiros','Piloteiro'],['Pesqueiros','Pesqueiro'],['Roteiros','Roteiro'],['Pontos','Ponto']];
+
+/* ---------- dados ---------- */
+/* Sem config (config.js vazio): modo de teste, salvo só neste aparelho.
+   Com config: Supabase, login e cada pessoa só vê as pescarias em que entrou. */
+let P=[];let loading=false;let loadNote='';
+const CFG=window.BORA_CONFIG||{};
+const sb=(CFG.supabaseUrl&&CFG.supabaseAnonKey&&window.supabase)?window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey):null;
+const mode=sb?'cloud':'local';
+let user=null;let authReady=!sb;
+const clone=o=>JSON.parse(JSON.stringify(o));
+const putLocal=p=>{const i=P.findIndex(x=>x.id===p.id);if(i<0)P.push(p);else P[i]=p};
+const local={
+ list(){P=ls.get('bp_pescarias',[])},
+ create(p){putLocal(p);ls.set('bp_pescarias',P);render();return Promise.resolve(p.id)},
+ change(id,fn){const p=getP(id);if(!p)return;const c=clone(p);fn(c);putLocal(c);ls.set('bp_pescarias',P);render()},
+ del(id){P=P.filter(x=>x.id!==id);ls.set('bp_pescarias',P);render()}};
+const queue={};
+const cloud={
+ async list(){if(!user)return;loading=!P.length;render();
+  const {data,error}=await sb.from('pescarias').select('id,dados,versao,convite').order('criado',{ascending:false});
+  loading=false;if(error){loadNote='Não deu para carregar as pescarias. Confira a internet.';render();return}
+  loadNote='';P=data.map(r=>({...r.dados,id:r.id,_v:r.versao,_convite:r.convite}));render()},
+ async create(p){const {id,_v,_convite,...dados}=p;const {data,error}=await sb.rpc('criar_pescaria',{p_dados:dados});
+  if(error||!data||!data.length){flash('Não deu para criar agora. Tente de novo.');return null}
+  const r=data[0];putLocal({...dados,id:r.id,_v:1,_convite:r.convite});render();return r.id},
+ change(id,fn){const p=getP(id);if(!p)return;const c=clone(p);fn(c);putLocal(c);render();
+  queue[id]=(queue[id]||Promise.resolve()).then(()=>cloud._send(id,fn)).catch(()=>flash('Não salvou agora. Confira a internet e tente de novo.'))},
+ async _send(id,fn){
+  for(let t=0;t<4;t++){
+   const cur=getP(id);const {id:_i,_v,_convite,...dados}=cur;
+   const {data,error}=await sb.rpc('salvar_pescaria',{p_id:id,p_dados:dados,p_versao:_v});
+   if(error)throw error;
+   if(data>0){cur._v=data;return}
+   /* outra pessoa mexeu ao mesmo tempo: busca a versão nova e refaz a mudança em cima dela */
+   const r=await sb.from('pescarias').select('id,dados,versao,convite').eq('id',id).single();
+   if(r.error)throw r.error;const fresh={...r.data.dados,id,_v:r.data.versao,_convite:r.data.convite};fn(fresh);putLocal(fresh);render()}
+  throw new Error('conflito')},
+ async del(id){P=P.filter(x=>x.id!==id);render();const {error}=await sb.rpc('apagar_pescaria',{p_id:id});if(error)flash('Não apagou agora.')},
+ async join(convite){const {data,error}=await sb.rpc('entrar_pescaria',{p_convite:convite});if(error||!data){flash('Convite não encontrado. Peça o link de novo para quem organizou.');return null}await cloud.list();return data}};
+const store=()=>mode==='cloud'?cloud:local;
+const save=p=>store().change(p.id,c=>Object.assign(c,clone(p)));
+if(mode==='local')local.list();
+else{
+ sb.auth.getSession().then(({data})=>{user=data.session?.user||null;authReady=true;afterLogin()});
+ sb.auth.onAuthStateChange((ev,s)=>{const was=user;user=s?.user||null;authReady=true;if(!was&&user)afterLogin();else render()});
+ /* busca de novo quando a pessoa volta para o app e a cada 20 s, para ver o que a turma mudou */
+ addEventListener('focus',()=>user&&cloud.list());
+ setInterval(()=>{if(user&&document.visibilityState==='visible'&&!$('#modal').innerHTML&&!(document.activeElement&&/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)))cloud.list()},20000)}
+async function afterLogin(){
+ if(!user){render();return}
+ const pend=ls.get('bp_convite','');
+ if(pend){ls.set('bp_convite','');const id=await cloud.join(pend);if(id){S.tab='pescarias';S.pid=id;S.sub='turma';history.replaceState(null,'','#pescarias')}}
+ else await cloud.list();
+ render()}
+
+/* ---------- estado da tela ---------- */
+const S={tab:'pescarias',q:'',cat:'',pil:false,ad:null,pid:null,sub:'turma',cid:null};
+const me=pid=>ls.get('bp_me_'+pid,'');
+const setMe=(pid,v)=>{ls.set('bp_me_'+pid,v);render()};
+const getP=id=>P.find(p=>p.id===id);
+const pname=(p,id)=>(p.pessoas||[]).find(x=>x.id===id)?.nome||'?';
+let flashMsg='';const flash=m=>{flashMsg=m;render();setTimeout(()=>{flashMsg='';render()},3500)};
+
+/* ---------- contas ---------- */
+const balances=p=>{const b={};(p.pessoas||[]).forEach(x=>b[x.id]=0);(p.gastos||[]).forEach(g=>{const parts=(g.parts||[]).filter(id=>id in b);if(!parts.length||!(g.pagou in b))return;b[g.pagou]+=g.valor;const share=g.valor/parts.length;parts.forEach(id=>b[id]-=share)});return b};
+const settle=p=>{const b=balances(p);const cred=[],deb=[];Object.entries(b).forEach(([id,v])=>{if(v>0.009)cred.push([id,v]);else if(v<-0.009)deb.push([id,-v])});cred.sort((a,c)=>c[1]-a[1]);deb.sort((a,c)=>c[1]-a[1]);const out=[];let i=0,j=0;while(i<deb.length&&j<cred.length){const v=Math.min(deb[i][1],cred[j][1]);out.push({de:deb[i][0],para:cred[j][0],v:Math.round(v*100)/100});deb[i][1]-=v;cred[j][1]-=v;if(deb[i][1]<0.009)i++;if(cred[j][1]<0.009)j++}return out};
+const total=p=>(p.gastos||[]).reduce((s,g)=>s+g.valor,0);
+
+/* ---------- Pix copia e cola (BR Code estático) ---------- */
+const norm=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9 ]/g,'').toUpperCase().trim();
+const f=(id,v)=>id+String(v.length).padStart(2,'0')+v;
+const crc=s=>{let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let k=0;k<8;k++)c=c&0x8000?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF}return c.toString(16).toUpperCase().padStart(4,'0')};
+const pix=(chave,nome,cidade,valor)=>{let s=f('00','01')+f('26',f('00','br.gov.bcb.pix')+f('01',chave.trim()))+f('52','0000')+f('53','986')+f('54',valor.toFixed(2))+f('58','BR')+f('59',(norm(nome)||'RECEBEDOR').slice(0,25))+f('60',(norm(cidade)||'BRASIL').slice(0,15))+f('62',f('05','***'))+'6304';return s+crc(s)};
+
+/* ---------- mensagens para o WhatsApp ---------- */
+const WA_LABEL={turma:'Mandar convite no WhatsApp',datas:'Mandar votação de datas',levar:'Mandar lista do que levar',roteiro:'Mandar roteiro',contas:'Mandar acerto no WhatsApp'};
+const quando=p=>p.inicio?fmtD(p.inicio)+(p.fim&&p.fim!==p.inicio?' a '+fmtD(p.fim):''):'data a combinar';
+const linkConvite=p=>p._convite?location.origin+location.pathname+'#c='+p._convite:'';
+const waText=(p,k)=>{const L=[];const lk=linkConvite(p);const t='*'+p.nome+'*'+(p.local?' em '+p.local:'')+' · '+quando(p);
+if(k==='convite'){L.push('Bora pescar? 🎣',t,'','Turma até agora: '+(p.pessoas||[]).map(x=>x.nome).join(', ')+'.');if(lk)L.push('','Toque no link, entre e escolha seu nome:',lk);else L.push('Responde aqui se você vai!')}
+else if(k==='datas'){L.push('🎣 '+p.nome+' · qual data dá pra você?','');(p.datas||[]).forEach((o,i)=>L.push((i+1)+') '+fmtD(o.ini)+(o.fim&&o.fim!==o.ini?' a '+fmtD(o.fim):'')+((o.votos||[]).length?' · podem: '+o.votos.map(id=>pname(p,id)).join(', '):'')));if(!(p.datas||[]).length)L.push('Ainda sem datas sugeridas.');L.push('','Responde com o número da data.')}
+else if(k==='levar'){L.push('🎣 '+t,'','*Quem leva o quê*');(p.itens||[]).forEach(it=>L.push((it.ok?'✅ ':'▫️ ')+it.txt+' · '+(it.quem?pname(p,it.quem):'falta alguém pegar')))}
+else if(k==='roteiro'){L.push('🎣 '+t,'','*Roteiro*');(p.roteiro||[]).forEach(r=>L.push([r.dia,r.hora].filter(Boolean).join(' ')+' · '+r.txt));if(!(p.roteiro||[]).length)L.push('Roteiro ainda não montado.')}
+else if(k==='contas'){const st=settle(p);const pg=p.pagos||{};L.push('🎣 '+p.nome+' · *acerto das contas*','Total: '+brl(total(p))+' · '+(p.pessoas||[]).length+' pessoas','');
+(p.gastos||[]).forEach(g=>L.push('• '+g.desc+': '+brl(g.valor)+' ('+pname(p,g.pagou)+' pagou)'));L.push('');
+if(!st.length)L.push('Ninguém deve nada. 👍');
+st.forEach(s2=>{const k2=s2.de+'>'+s2.para;const x=(p.pessoas||[]).find(y=>y.id===s2.para);L.push('*'+pname(p,s2.de)+' paga '+brl(s2.v)+' para '+pname(p,s2.para)+'*'+(pg[k2]?' ✅ pago':''));if(!pg[k2]){if(x&&x.pix){L.push('Pix copia e cola:',pix(x.pix,x.nome,x.cidade,s2.v))}else L.push('(falta a chave Pix de '+pname(p,s2.para)+')')}L.push('')});
+L.push('Calculado no '+APP+'. O app não mexe em dinheiro: cada um paga direto pelo banco.')}
+if(lk&&k!=='convite')L.push('','Abrir a pescaria: '+lk);return L.join('\n')};
+const waOpen=txt=>{const u='https://wa.me/?text='+encodeURIComponent(txt);const w=window.open(u,'_blank','noopener');if(!w)location.href=u};
+
+/* ---------- ícones ---------- */
+const I={
+search:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+boat:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15h18l-3 5H6z"/><path d="M12 15V3l6 9"/></svg>',
+cash:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/></svg>',
+back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>',
+ok:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>'};
+
+/* ---------- telas ---------- */
+function vExplorar(){
+if(S.ad)return vAnuncio(ADS.find(a=>a.id===S.ad));
+const q=norm(S.q);const list=ADS.filter(a=>(!S.cat||a.cat===S.cat)&&(!S.pil||a.pil)&&(!q||norm(a.nome+' '+a.local+' '+a.peixes+' '+a.cat).includes(q)));
+return `<h1>Pra onde vamos pescar?</h1>
+<label class="search">${I.search}<input id="q" type="search" placeholder="Rio, rancho ou peixe" value="${esc(S.q)}" aria-label="Buscar"></label>
+<div class="chips">${CATS.map(([l,v])=>`<button class="chip ${S.cat===v?'on':''}" data-act="cat" data-v="${v}">${l}</button>`).join('')}<button class="chip ${S.pil?'on':''}" data-act="pil">Com piloteiro</button></div>
+${list.length?list.map((a,i)=>`<button class="card" data-act="ad" data-v="${a.id}"><div class="pic">${scene(ADS.indexOf(a),a.cat)}${a.livre?`<span class="tag">${esc(a.livre)}</span>`:`<span class="tag">${esc(a.cat)}</span>`}</div><div class="row"><div><div class="t">${esc(a.nome)}</div><div class="m">${esc(a.local)} · ${a.km} km</div></div><div class="price">${esc(a.preco)}<span class="m" style="font-weight:400">${esc(a.un)}</span></div></div></button>`).join(''):`<div class="box">Nada encontrado. Tente outro nome ou tire um filtro.</div>`}
+<p class="note">Anúncios de exemplo, para testar o app. Distâncias a partir de Bauru.</p>`}
+
+function vAnuncio(a){
+const ro=a.cat==='Roteiro';
+return `<button class="back" data-act="unad" aria-label="Voltar">${I.back}</button>
+<div class="pic" style="margin-top:14px">${scene(ADS.indexOf(a),a.cat)}</div>
+<h1 style="margin-top:18px;margin-bottom:4px">${esc(a.nome)}</h1>
+<div class="m">${esc(a.local)} · ${esc(a.sub)}</div>
+<div class="feat">${a.feat.map(x=>`<div>${esc(x)}</div>`).join('')}</div>
+<div class="box"><b>Peixes:</b> ${esc(a.peixes)}</div>
+${ro?`<h2>Dia a dia</h2><div class="list">${a.dias.map(d=>`<div class="li"><div class="ic" style="font-size:13px">${esc(d[0])}</div><div class="grow"><div class="t" style="font-size:16px">${esc(d[2])}</div><div class="m">${esc(d[1])}</div></div></div>`).join('')}</div>`:''}
+${a.cat==='Ponto'?`<div class="warnbox">Confira as regras da região e a época de piracema antes de pescar.</div>`:''}
+${!ro&&a.cat!=='Ponto'?`<p class="m" style="margin-top:16px">Falar com o anunciante pelo WhatsApp fica disponível quando os anúncios forem reais.</p>`:''}
+<div style="height:90px"></div>
+<div class="sticky"><div><div><div class="price" style="font-size:19px">${esc(a.preco)} <span class="m" style="font-weight:400">${esc(a.un)}</span></div><div class="pill">${esc(a.livre||a.cat)}</div></div><button class="btn" data-act="usead" data-v="${a.id}">${ro?'Usar roteiro':'Montar pescaria'}</button></div></div>`}
+
+function vPescarias(){
+if(S.pid&&getP(S.pid))return vPescaria(getP(S.pid));
+const list=[...P].sort((a,b)=>(a.inicio||'').localeCompare(b.inicio||''));
+return `<h1>Pescarias</h1>
+${loading?'<div class="box">Carregando as pescarias…</div>':''}${loadNote?`<div class="warnbox">${esc(loadNote)}</div>`:''}
+${list.map(p=>{const d=p.inicio?daysTo(p.inicio):null;return `<button class="card" data-act="open" data-v="${esc(p.id)}" style="margin:12px 0"><div class="hero" style="margin:0"><div style="opacity:.85;font-size:15px">${esc(p.nome)}</div><div class="big" style="font-size:30px">${d===null?'Sem data':d>1?'Faltam '+d+' dias':d===1?'É amanhã':d===0?'É hoje!':'Já foi'}</div><div>${esc(fmtD(p.inicio))}${p.fim&&p.fim!==p.inicio?' a '+esc(fmtD(p.fim)):''}${p.local?' · '+esc(p.local):''}</div><div style="margin-top:10px;font-size:15px">${(p.pessoas||[]).length} na turma</div></div></button>`}).join('')}
+${!list.length&&!loading?'<div class="box">Nenhuma pescaria ainda. Crie a primeira e chame a turma.</div>':''}
+<button class="btn full" data-act="nova" style="margin-top:14px">+ Nova pescaria</button>
+<p class="status">${mode==='cloud'?'Só quem você convidar vê cada pescaria.':'Modo de teste: salvo só neste aparelho.'}</p>${vRodape()}`}
+
+function vQuem(p){
+return `<button class="back" data-act="close" aria-label="Voltar">${I.back}</button>
+<h1>${esc(p.nome)}</h1><h2 style="margin-top:0">Quem é você?</h2><p class="m" style="margin-top:0">Toque no seu nome.</p>
+${(p.pessoas||[]).map(x=>`<button class="btn alt full" data-act="souEu" data-v="${x.id}" style="margin-top:10px;height:60px;font-size:18px">${esc(x.nome)}</button>`).join('')}
+<label class="f" for="nq" style="margin-top:22px">Seu nome não está aí? Escreva aqui:</label><input id="nq" placeholder="Como a turma te chama"><button class="btn full" data-act="souNovo" style="margin-top:10px">Entrar na turma</button>`}
+function vPescaria(p){
+if(!me(p.id))return vQuem(p);
+const d=p.inicio?daysTo(p.inicio):null;const eu=me(p.id);
+const subs=[['turma','Turma'],['datas','Datas'],['levar','Quem leva'],['roteiro','Roteiro'],['contas','Contas']];
+let body='';
+if(S.sub==='turma')body=`<div class="list">${(p.pessoas||[]).map(x=>`<div class="li"><div class="ic">${esc(x.nome.slice(0,1).toUpperCase())}</div><div class="grow"><div class="t" style="font-size:16px">${esc(x.nome)}${x.id===eu?' (você)':''}</div><div class="m">${x.pix?'Pix: '+esc(x.pix):'Sem chave Pix'}</div></div><button class="btn sm alt" data-act="pixkey" data-v="${x.id}">Pix</button><button class="x" data-act="rmp" data-v="${x.id}" aria-label="Tirar ${esc(x.nome)}">×</button></div>`).join('')}</div>
+<label class="f" for="np">Adicionar pescador</label><div style="display:flex;gap:8px"><input id="np" placeholder="Nome"><button class="btn" data-act="addp">Adicionar</button></div>
+<label class="f" for="eu">Quem é você neste aparelho?</label><select id="eu" data-act="eu"><option value="">Escolha</option>${(p.pessoas||[]).map(x=>`<option value="${x.id}" ${x.id===eu?'selected':''}>${esc(x.nome)}</option>`).join('')}</select>`;
+if(S.sub==='datas')body=`<p class="m">Sugira datas e cada um marca as que pode ir.</p><div class="list">${(p.datas||[]).map(o=>{const v=(o.votos||[]).includes(eu);return `<div class="li"><div class="grow"><div class="t" style="font-size:16px">${esc(fmtD(o.ini))}${o.fim&&o.fim!==o.ini?' a '+esc(fmtD(o.fim)):''}</div><div class="m">${(o.votos||[]).length} pode(m): ${esc((o.votos||[]).map(id=>pname(p,id)).join(', ')||'ninguém ainda')}</div></div><button class="btn sm ${v?'':'alt'}" data-act="vote" data-v="${o.id}" ${eu?'':'disabled'}>${v?'Vou':'Posso?'}</button><button class="btn sm alt" data-act="pick" data-v="${o.id}">Fechar</button></div>`}).join('')}</div>
+${eu?'':'<div class="warnbox">Escolha quem você é na aba Turma para votar.</div>'}
+<label class="f">Sugerir datas</label><div style="display:flex;gap:8px"><input id="di" type="date" aria-label="Início"><input id="df" type="date" aria-label="Fim"></div><button class="btn alt full" data-act="adddata" style="margin-top:8px">Sugerir</button>`;
+if(S.sub==='levar'){const falta=(p.itens||[]).filter(i=>!i.ok).length;body=`<p class="m">${falta?'Faltam '+falta+' itens':'Tudo certo!'}</p><div class="list">${(p.itens||[]).map(it=>`<div class="li"><button class="check ${it.ok?'on':''}" data-act="tick" data-v="${it.id}" aria-label="Marcar ${esc(it.txt)}">${it.ok?I.ok:''}</button><div class="grow"><div class="t" style="font-size:16px">${esc(it.txt)}</div><select data-act="quem" data-v="${it.id}" style="height:40px;margin-top:6px" aria-label="Quem leva"><option value="">Sem dono</option>${(p.pessoas||[]).map(x=>`<option value="${x.id}" ${x.id===it.quem?'selected':''}>${esc(x.nome)}</option>`).join('')}</select></div><button class="x" data-act="rmi" data-v="${it.id}" aria-label="Apagar">×</button></div>`).join('')}</div>
+<label class="f" for="ni">Novo item</label><div style="display:flex;gap:8px"><input id="ni" placeholder="Gelo, isca, carvão…"><button class="btn" data-act="addi">Pôr</button></div>`}
+if(S.sub==='roteiro')body=`<div class="list">${(p.roteiro||[]).map(r=>`<div class="li"><div class="ic" style="font-size:13px">${esc(r.dia||'—')}</div><div class="grow"><div class="t" style="font-size:16px">${esc(r.txt)}</div><div class="m">${esc(r.hora)}</div></div><button class="x" data-act="rmr" data-v="${r.id}" aria-label="Apagar">×</button></div>`).join('')}</div>
+${(p.roteiro||[]).length?'':'<p class="m">Monte o passo a passo da viagem, ou escolha um roteiro pronto em Explorar.</p>'}
+<label class="f">Novo passo</label><div style="display:flex;gap:8px"><input id="rd" placeholder="Dia" style="flex:0 0 80px"><input id="rh" type="time" style="flex:0 0 120px" aria-label="Hora"></div><input id="rt" placeholder="O que acontece" style="margin-top:8px"><button class="btn alt full" data-act="addr" style="margin-top:8px">Adicionar passo</button>`;
+if(S.sub==='contas')body=vContasBody(p);
+return `<button class="back" data-act="close" aria-label="Voltar">${I.back}</button>
+<div class="hero" style="margin-top:14px"><div style="opacity:.85">${esc(p.nome)}</div><div class="big">${d===null?'Sem data':d>1?'Faltam '+d+' dias':d===1?'É amanhã':d===0?'É hoje!':'Já foi'}</div><div>${esc(fmtD(p.inicio))}${p.fim&&p.fim!==p.inicio?' a '+esc(fmtD(p.fim)):''}${p.local?' · '+esc(p.local):''}</div></div>
+<div class="tabs">${subs.map(([k,l])=>`<button class="chip ${S.sub===k?'on':''}" data-act="sub" data-v="${k}">${l}</button>`).join('')}</div>
+${body}
+<h2>Mandar para o grupo</h2><p class="m" style="margin-top:0">Abre o WhatsApp com a mensagem pronta. É só escolher o grupo da turma.</p>
+<button class="btn wa full" data-act="wa" data-v="${S.sub==='turma'?'convite':S.sub}">${WA_LABEL[S.sub]}</button>
+${S.sub!=='turma'?`<button class="btn alt full" data-act="wa" data-v="convite" style="margin-top:8px">Mandar convite</button>`:''}
+<button class="btn alt full" data-act="delp" style="margin-top:8px;color:var(--warn)">Apagar pescaria</button>`}
+
+function vContasBody(p){
+const ppl=p.pessoas||[];
+if(ppl.length<2)return `<div class="box">Adicione pelo menos 2 pescadores na aba Turma para dividir as contas.</div>`;
+const eu=me(p.id);const st=settle(p);const b=balances(p);const pagos=p.pagos||{};
+const meu=eu?b[eu]||0:null;
+return `<div class="box" style="background:var(--brand);color:var(--onbrand)"><div style="opacity:.85">${eu?(meu>=0?'Você tem a receber':'Você deve'):'Total da pescaria'}</div><div style="font-size:34px;font-weight:800">${eu?brl(Math.abs(meu)):brl(total(p))}</div>${eu?`<div style="opacity:.85">Total da pescaria: ${brl(total(p))}</div>`:''}</div>
+<h2>Acerto</h2>${st.length?`<div class="list">${st.map(s=>{const k=s.de+'>'+s.para;const pg=!!pagos[k];return `<div class="li"><div class="grow"><div class="t" style="font-size:16px;${pg?'color:var(--mute)':''}">${esc(pname(p,s.de))} paga ${esc(pname(p,s.para))}</div><div class="money">${brl(s.v)}</div></div>${pg?`<button class="btn sm alt" data-act="unpago" data-v="${esc(k)}">Pago ✓</button>`:`<button class="btn sm" data-act="pixgo" data-v="${esc(k)}" data-n="${s.v}">Pix</button><button class="btn sm alt" data-act="pago" data-v="${esc(k)}">Pago</button>`}</div>`}).join('')}</div>`:'<p class="m">Ninguém deve nada. Lance os gastos abaixo.</p>'}
+<h2>Gastos</h2><div class="list">${(p.gastos||[]).map(g=>`<div class="li"><div class="grow"><div class="t" style="font-size:16px">${esc(g.desc)}</div><div class="m">${esc(pname(p,g.pagou))} pagou · divide por ${(g.parts||[]).length}</div></div><div class="money">${brl(g.valor)}</div><button class="x" data-act="rmg" data-v="${g.id}" aria-label="Apagar gasto">×</button></div>`).join('')}</div>
+<label class="f" for="gd">Novo gasto</label><input id="gd" placeholder="Combustível, rancho, mercado…">
+<div style="display:flex;gap:8px;margin-top:8px"><input id="gv" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Valor (R$)"><select id="gp" aria-label="Quem pagou">${ppl.map(x=>`<option value="${x.id}" ${x.id===eu?'selected':''}>${esc(x.nome)} pagou</option>`).join('')}</select></div>
+<label class="f">Divide entre</label><div class="parts">${ppl.map(x=>`<label class="chip on" style="display:inline-flex;align-items:center;gap:6px"><input type="checkbox" class="gpart" value="${x.id}" checked style="width:18px;height:18px">${esc(x.nome)}</label>`).join('')}</div>
+<button class="btn full" data-act="addg" style="margin-top:12px">Lançar gasto</button>`}
+
+function vContas(){
+if(!P.length)return `<h1>Contas</h1><div class="box">Crie uma pescaria para começar a dividir os gastos.</div><button class="btn full" data-act="nova">+ Nova pescaria</button>`;
+const cid=S.cid&&getP(S.cid)?S.cid:[...P].sort((a,b)=>(b.inicio||'').localeCompare(a.inicio||'')).at(0).id;const p=getP(cid);
+return `<h1>Contas</h1><select data-act="cid" aria-label="Pescaria">${P.map(x=>`<option value="${esc(x.id)}" ${x.id===cid?'selected':''}>${esc(x.nome)}</option>`).join('')}</select>
+${!me(p.id)?`<div class="warnbox">Para ver quanto você deve ou recebe, diga quem você é na aba Turma da pescaria.</div>`:''}
+<div style="margin-top:8px">${vContasBody(p)}</div>${(p.pessoas||[]).length>1?`<button class="btn wa full" data-act="wa" data-v="contas" style="margin-top:22px">Mandar acerto no WhatsApp</button>`:''}`}
+
+function vNova(pref){
+return `<div class="modal" data-act="mclose"><div class="sheet" role="dialog" aria-label="Nova pescaria" data-stop="1">
+<h2 style="margin-top:0">Nova pescaria</h2>
+<label class="f" for="nn">Nome</label><input id="nn" value="${esc(pref?.nome||'')}" placeholder="Tucunaré de dezembro">
+<label class="f" for="nl">Onde</label><input id="nl" value="${esc(pref?.local||'')}" placeholder="Rio, represa ou rancho">
+<div style="display:flex;gap:8px"><div style="flex:1"><label class="f" for="ni1">Ida</label><input id="ni1" type="date"></div><div style="flex:1"><label class="f" for="ni2">Volta</label><input id="ni2" type="date"></div></div>
+<label class="f" for="nme">Seu nome</label><input id="nme" value="${esc(ls.get('bp_nome',''))}" placeholder="Como a turma te chama">
+<button class="btn full" data-act="criar" style="margin-top:16px">Criar pescaria</button>
+<button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`}
+
+function vLogin(){
+const conv=S.convidado||ls.get('bp_convite','');
+return `<div style="padding-top:30px"><div class="pic" style="aspect-ratio:16/9">${scene(0,'Piloteiro')}</div>
+<h1>${esc(APP)}</h1>
+<p style="font-size:18px;margin-top:-6px">${conv?'Você foi convidado para uma pescaria. Entre para ver.':'Organize a pescaria com a turma e acerte as contas no Pix.'}</p>
+${S.email?`<h2>Digite o código</h2><p class="m" style="margin-top:0">Mandamos um código de 6 números para <b>${esc(S.email)}</b>. Olhe também no lixo eletrônico.</p>
+<input id="cod" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" style="font-size:24px;letter-spacing:6px;text-align:center;height:60px">
+<button class="btn full" data-act="confereCodigo" style="margin-top:12px">Entrar</button><button class="btn alt full" data-act="outroEmail" style="margin-top:8px">Usar outro e-mail</button>`
+:`${CFG.google?`<button class="btn full" data-act="google" style="margin-top:10px;height:58px">Entrar com Google</button>
+<p class="m" style="text-align:center;margin:16px 0 6px">ou receba um código no e-mail</p>`:`<h2>Entre com seu e-mail</h2><p class="m" style="margin-top:0">Vamos mandar um código de 6 números.</p>`}
+<input id="em" type="email" autocomplete="email" placeholder="seu@email.com"><button class="btn ${CFG.google?'alt':''} full" data-act="mandaCodigo" style="margin-top:10px">Mandar código</button>`}
+<p class="note">Ao entrar, você concorda com a <a href="privacidade.html" style="color:var(--brand)">política de privacidade</a>. Organizar e dividir as contas é grátis.</p></div>`}
+function vRodape(){
+return `<div style="margin-top:34px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px">
+${mode==='cloud'&&user?`<p class="m" style="margin:0;text-align:center">Entrou como ${esc(user.email||'')}</p><button class="btn alt full" data-act="sair">Sair</button>`:''}
+<a href="privacidade.html" class="btn alt full" style="text-decoration:none">Privacidade</a>
+${mode==='cloud'&&user?`<button class="btn alt full" data-act="apagarConta" style="color:var(--warn)">Apagar minha conta</button>`:''}</div>`}
+let pending=null;
+function render(){
+const app=$('#app');if(!app)return;
+const fx=document.activeElement&&document.activeElement.id;
+let h=!authReady?'<h1>'+esc(APP)+'</h1><div class="box">Abrindo…</div>':(mode==='cloud'&&!user)?vLogin():S.tab==='explorar'?vExplorar():S.tab==='pescarias'?vPescarias():vContas();
+if(flashMsg)h+=`<div class="warnbox" role="status" style="position:fixed;left:18px;right:18px;bottom:96px;max-width:484px;margin:0 auto;z-index:8">${esc(flashMsg)}</div>`;
+app.innerHTML=h;
+$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=[['pescarias','Pescarias',I.boat],['contas','Contas',I.cash],['explorar','Explorar',I.search]].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}">${i}${l}</a>`).join('');
+if(fx==='q'){const q=$('#q');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
+}
+const openModal=h=>{$('#modal').innerHTML=h;const i=$('#modal input');if(i)i.focus()};
+const closeModal=()=>{$('#modal').innerHTML='';pending=null};
+
+function upd(fn){const p=getP(S.pid||S.cid)||getP(pendingCid());if(!p)return;const c=JSON.parse(JSON.stringify(p));fn(c);save(c)}
+const pendingCid=()=>S.tab==='contas'?($('[data-act=cid]')?.value):S.pid;
+function curP(){return S.tab==='contas'?getP($('[data-act=cid]')?.value):getP(S.pid)}
+function change(fn){const p=curP();if(!p)return;store().change(p.id,fn)}
+
+document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;render()}});
+document.addEventListener('change',e=>{const a=e.target.dataset.act;if(a==='eu'){setMe(S.pid,e.target.value)}else if(a==='quem'){const v=e.target.dataset.v;change(p=>{const it=p.itens.find(i=>i.id===v);if(it)it.quem=e.target.value})}else if(a==='cid'){S.cid=e.target.value;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#modal').innerHTML)closeModal()});
+document.addEventListener('click',async e=>{
+const el=e.target.closest('[data-act]');if(!el)return;
+if(el.dataset.stop&&!e.target.closest('[data-act]:not([data-stop])'))return;
+const a=el.dataset.act,v=el.dataset.v;
+if(a==='mclose'){if(e.target===el||el.tagName==='BUTTON')closeModal();return}
+if(a==='cat'){S.cat=v;render()}
+else if(a==='pil'){S.pil=!S.pil;render()}
+else if(a==='ad'){S.ad=v;render();scrollTo(0,0)}
+else if(a==='unad'){S.ad=null;render()}
+else if(a==='usead'){const ad=ADS.find(x=>x.id===v);pending=ad;openModal(vNova({nome:ad.cat==='Roteiro'?ad.nome:'Pescaria em '+ad.local.split(',')[0],local:ad.cat==='Roteiro'?ad.local:ad.nome+' · '+ad.local}))}
+else if(a==='nova'){pending=null;openModal(vNova())}
+else if(a==='criar'){const nome=$('#nn').value.trim();if(!nome){$('#nn').focus();return}const eu=$('#nme').value.trim()||'Eu';ls.set('bp_nome',eu);const pid=uid();const meid=uid();
+const ro=pending&&pending.dias?pending.dias.map(d=>({id:uid(),dia:d[0],hora:d[1],txt:d[2]})):[];
+const p={id:pid,nome,local:$('#nl').value.trim(),inicio:$('#ni1').value||'',fim:$('#ni2').value||$('#ni1').value||'',criado:Date.now(),pessoas:[{id:meid,nome:eu,pix:''}],datas:[],itens:['Gelo','Isca','Carne e carvão','Licença de pesca'].map(t=>({id:uid(),txt:t,quem:'',ok:false})),roteiro:ro,gastos:[],pagos:{}};
+closeModal();const nid=await store().create(p);if(!nid)return;ls.set('bp_me_'+nid,meid);S.tab='pescarias';S.pid=nid;S.sub='turma';S.ad=null;location.hash='pescarias';render();scrollTo(0,0)}
+else if(a==='souEu'){setMe(S.pid,v);scrollTo(0,0)}
+else if(a==='souNovo'){const n=$('#nq').value.trim();if(!n){$('#nq').focus();return}const nid=uid();setMe(S.pid,nid);change(p=>{p.pessoas.push({id:nid,nome:n,pix:''})})}
+else if(a==='google'){const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)flash('Não deu para entrar com Google agora.')}
+else if(a==='mandaCodigo'){const em=$('#em').value.trim();if(!/^\S+@\S+\.\S+$/.test(em)){flash('Confira o e-mail.');return}el.disabled=true;const {error}=await sb.auth.signInWithOtp({email:em,options:{shouldCreateUser:true}});el.disabled=false;if(error){flash('Não deu para mandar o código. Tente daqui a 1 minuto.');return}S.email=em;render()}
+else if(a==='confereCodigo'){const tk=$('#cod').value.replace(/\D/g,'');const {error}=await sb.auth.verifyOtp({email:S.email,token:tk,type:'email'});if(error)flash('Código errado ou vencido. Confira o e-mail.')}
+else if(a==='outroEmail'){S.email='';render()}
+else if(a==='sair'){await sb.auth.signOut();P=[];S.pid=null;render()}
+else if(a==='apagarConta'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Apagar sua conta?</h2><p>Você sai de todas as pescarias. As pescarias que você criou são apagadas para toda a turma. Não dá para desfazer.</p><button class="btn full" data-act="apagarOk" style="background:var(--warn)">Apagar minha conta</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
+else if(a==='apagarOk'){const {error}=await sb.rpc('apagar_minha_conta');closeModal();if(error){flash('Não deu para apagar agora.');return}await sb.auth.signOut();P=[];render()}
+else if(a==='open'){S.pid=v;S.sub='turma';render();scrollTo(0,0)}
+else if(a==='close'){S.pid=null;render()}
+else if(a==='sub'){S.sub=v;render()}
+else if(a==='addp'){const n=$('#np').value.trim();if(!n)return;change(p=>{p.pessoas.push({id:uid(),nome:n,pix:''})})}
+else if(a==='rmp'){change(p=>{p.pessoas=p.pessoas.filter(x=>x.id!==v)})}
+else if(a==='pixkey'){const p=curP();const x=p.pessoas.find(y=>y.id===v);openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Chave Pix de ${esc(x.nome)}</h2><p class="m">Usada para gerar a cobrança quando alguém precisar pagar ${esc(x.nome)}.</p><label class="f" for="pk">Chave (CPF, celular, e-mail ou aleatória)</label><input id="pk" value="${esc(x.pix||'')}"><label class="f" for="pc">Cidade</label><input id="pc" value="${esc(x.cidade||'')}" placeholder="Bauru"><button class="btn full" data-act="savepix" data-v="${x.id}" style="margin-top:14px">Salvar</button></div></div>`)}
+else if(a==='savepix'){const k=$('#pk').value.trim(),c=$('#pc').value.trim();change(p=>{const x=p.pessoas.find(y=>y.id===v);if(x){x.pix=k;x.cidade=c}});closeModal()}
+else if(a==='adddata'){const i=$('#di').value,f2=$('#df').value;if(!i)return;change(p=>{p.datas=p.datas||[];p.datas.push({id:uid(),ini:i,fim:f2||i,votos:[]})})}
+else if(a==='vote'){const eu=me(S.pid);change(p=>{const o=p.datas.find(x=>x.id===v);if(!o)return;o.votos=o.votos||[];o.votos=o.votos.includes(eu)?o.votos.filter(x=>x!==eu):[...o.votos,eu]})}
+else if(a==='pick'){change(p=>{const o=p.datas.find(x=>x.id===v);if(o){p.inicio=o.ini;p.fim=o.fim}});flash('Data fechada!')}
+else if(a==='tick'){change(p=>{const it=p.itens.find(i=>i.id===v);if(it)it.ok=!it.ok})}
+else if(a==='rmi'){change(p=>{p.itens=p.itens.filter(i=>i.id!==v)})}
+else if(a==='addi'){const t=$('#ni').value.trim();if(!t)return;change(p=>{p.itens.push({id:uid(),txt:t,quem:'',ok:false})})}
+else if(a==='addr'){const t=$('#rt').value.trim();if(!t)return;change(p=>{p.roteiro=p.roteiro||[];p.roteiro.push({id:uid(),dia:$('#rd').value.trim(),hora:$('#rh').value,txt:t})})}
+else if(a==='rmr'){change(p=>{p.roteiro=p.roteiro.filter(r=>r.id!==v)})}
+else if(a==='addg'){const d=$('#gd').value.trim();const val=parseFloat(String($('#gv').value).replace(',','.'));const parts=[...document.querySelectorAll('.gpart:checked')].map(x=>x.value);if(!d||!(val>0)){flash('Preencha o gasto e o valor.');return}if(!parts.length){flash('Escolha quem divide.');return}change(p=>{p.gastos=p.gastos||[];p.gastos.push({id:uid(),desc:d,valor:Math.round(val*100)/100,pagou:$('#gp').value,parts})})}
+else if(a==='rmg'){change(p=>{p.gastos=p.gastos.filter(g=>g.id!==v)})}
+else if(a==='pago'){change(p=>{p.pagos=p.pagos||{};p.pagos[v]=true})}
+else if(a==='unpago'){change(p=>{p.pagos=p.pagos||{};delete p.pagos[v]})}
+else if(a==='pixgo'){const p=curP();const [de,para]=v.split('>');const x=p.pessoas.find(y=>y.id===para);const val=Number(el.dataset.n);
+if(!x||!x.pix){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Falta a chave Pix</h2><p>${esc(x?x.nome:'')} ainda não cadastrou a chave Pix. Vá em Turma e toque em Pix ao lado do nome.</p><button class="btn full" data-act="mclose">Entendi</button></div></div>`);return}
+const code=pix(x.pix,x.nome,x.cidade,val);openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">${esc(pname(p,de))} paga ${brl(val)} para ${esc(x.nome)}</h2><p class="m">Copie o código e cole no app do banco, em Pix copia e cola.</p><textarea class="code" readonly id="pixcode">${esc(code)}</textarea><button class="btn full" data-act="copy" data-t="pixcode" style="margin-top:12px">Copiar código Pix</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Fechar</button></div></div>`)}
+else if(a==='copy'){const t=$('#'+el.dataset.t);try{await navigator.clipboard.writeText(t.value);el.textContent='Copiado!'}catch(err){t.select();el.textContent='Selecione e copie'}}
+else if(a==='wa'){const p=curP();if(!p)return;const txt=waText(p,v);openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Mensagem pronta</h2><p class="m">Confira e toque em Abrir WhatsApp. Lá você escolhe o grupo da turma.</p><textarea class="code" readonly id="watxt" style="font-family:inherit;font-size:16px;height:220px">${esc(txt)}</textarea><button class="btn wa full" data-act="waopen" style="margin-top:12px">Abrir WhatsApp</button><button class="btn alt full" data-act="copy" data-t="watxt" style="margin-top:8px">Só copiar o texto</button></div></div>`)}
+else if(a==='waopen'){waOpen($('#watxt').value)}
+else if(a==='convite'){const p=curP();const txt=`Bora pescar? ${p.nome}${p.local?' em '+p.local:''}${p.inicio?', '+fmtD(p.inicio)+(p.fim&&p.fim!==p.inicio?' a '+fmtD(p.fim):''):''}. Entra no app ${APP}, abre a pescaria e confirma presença.`;openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Convite</h2><textarea class="code" readonly id="cv" style="font-family:inherit;font-size:15px">${esc(txt)}</textarea><button class="btn full" data-act="copy" data-t="cv" style="margin-top:12px">Copiar convite</button></div></div>`)}
+else if(a==='delp'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Apagar esta pescaria?</h2><p>Some para toda a turma, com gastos e lista.</p><button class="btn full" data-act="delok" style="background:var(--warn)">Apagar</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
+else if(a==='delok'){store().del(S.pid);S.pid=null;closeModal()}
+});
+const route=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=['explorar','pescarias','contas'].includes(h)?h:'pescarias';if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
+addEventListener('hashchange',route);route();
+}
+</script>
+</body>
+</html>
