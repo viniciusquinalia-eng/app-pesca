@@ -106,7 +106,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  for(const [i,k] of [[1,'antonio.pix@teste.local'],[2,'11999998888']]){const a=P[i];await refresh(a);await a.pg.click('[data-act=sub][data-v=turma]');const me=await a.pg.evaluate(pid=>JSON.parse(localStorage.getItem('bp_me_'+pid)),pid);await a.pg.click(`[data-act=pixkey][data-v="${me}"]`);await a.pg.fill('#pk',k);await a.pg.fill('#pc','Bauru');await a.pg.click('[data-act=savepix]');await a.pg.waitForTimeout(300)}
  // 3. gastos com divisões diferentes
  const G=[[0,'Rancho 2 diárias',1200,null],[1,'Combustível',387.5,null],[2,'Mercado',643.21,[0,2,3,4]],[3,'Cerveja',210,[1,3,4]],[4,'Isca viva',99.99,[0,1]],[0,'Gelo',45.3,null]];
- for(const [who,desc,val,parts] of G){const a=P[who];await refresh(a);await a.pg.click('[data-act=sub][data-v=contas]');await a.pg.fill('#gd',desc);await a.pg.fill('#gv',String(val).replace('.',','));
+ for(const [who,desc,val,parts] of G){const a=P[who];await refresh(a);await a.pg.click('[data-act=sub][data-v=contas]');await a.pg.click('[data-act=novogasto]');await a.pg.fill('#gd',desc);await a.pg.fill('#gv',String(val).replace('.',','));
   if(parts){d=DB.pesc[pid].dados;const ids=d.pessoas.map(x=>x.id);for(const cb of await a.pg.$$('.gpart')){const v=await cb.getAttribute('value');const want=parts.map(k=>ids[k]).includes(v);if((await cb.isChecked())!==want)await cb.click()}}
   await a.pg.click('[data-act=addg]');await a.pg.waitForTimeout(300)}
  await Promise.all(P.map(p=>p.pg.waitForTimeout(500)));d=DB.pesc[pid].dados;
@@ -114,7 +114,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  // "Combustível" com vírgula
  const comb=d.gastos.find(g=>g.desc==='Combustível');ok(comb&&comb.valor===387.5,'Valor com vírgula (387,50) entendido certo');
  // mudar um gasto já lançado (Gelo 45,30 -> 60,00)
- await refresh(org);await pg0.click('[data-act=sub][data-v=contas]');{const gid=DB.pesc[pid].dados.gastos.find(g=>g.desc==='Gelo').id;await pg0.click(`[data-act=edg][data-v="${gid}"]`);await pg0.fill('#egv','60,00');await pg0.click('[data-act=saveg]');await pg0.waitForTimeout(400);
+ await refresh(org);await pg0.click('[data-act=sub][data-v=contas]');await pg0.click('.cdet summary');await pg0.waitForTimeout(100);{const gid=DB.pesc[pid].dados.gastos.find(g=>g.desc==='Gelo').id;await pg0.click(`[data-act=edg][data-v="${gid}"]`);await pg0.fill('#egv','60,00');await pg0.click('[data-act=saveg]');await pg0.waitForTimeout(400);
   ok(DB.pesc[pid].dados.gastos.find(g=>g.id===gid).valor===60,'Mudar um gasto já lançado (Gelo de R$ 45,30 para R$ 60,00)')}
  // licença de pesca
  await pg0.click('[data-act=sub][data-v=turma]');ok((await t(pg0)).includes('a sua não está em dia'),'Aviso de licença aparece para quem não informou a sua');
@@ -122,7 +122,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   const tx=await t(pg0);ok(tx.includes('Licença em dia até 31/12/2027')&&tx.includes('4 pessoas ainda não informaram'),'Licença salva e o aviso passa a mostrar só quem falta')}
  d=DB.pesc[pid].dados;
  // acerto
- await refresh(org);await pg0.click('[data-act=sub][data-v=contas]');
+ await refresh(org);await pg0.click('[data-act=sub][data-v=contas]');if(!(await pg0.$eval('.cdet',d=>d.open)))await pg0.click('.cdet summary');await pg0.waitForTimeout(100);
  const linhas=await pg0.$$eval('[data-act=pixgo],[data-act=pago]',els=>els.filter(e=>e.dataset.act==='pago').map(e=>e.dataset.v));
  const b=saldos(d);const tot=d.gastos.reduce((s,g)=>s+g.valor,0);
  // pega o acerto calculado pelo app
@@ -228,7 +228,10 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   ok(await pg0.evaluate(()=>window.__img===document.querySelector('.hcard .gal .slide')),'Atualizar sem mudança não refaz a tela (sem piscar)');
   await pg0.evaluate(()=>window.__rerender());await pg0.waitForTimeout(100);
   ok(await pg0.evaluate(()=>document.querySelector('.hcard .gal').scrollLeft>0),'Quando a tela é refeita, a foto continua onde estava');
-  await pg0.goto(`http://localhost:${PORT}/#pescarias`);await pg0.waitForTimeout(400);await pg0.click(`[data-act=open][data-v="${pid}"]`);await pg0.waitForTimeout(200)}
+  await pg0.goto(`http://localhost:${PORT}/#pescarias`);await pg0.waitForTimeout(400);await pg0.click(`[data-act=open][data-v="${pid}"]`);await pg0.waitForTimeout(200);
+  await pg0.click('[data-act=sub][data-v=roteiro]');await pg0.fill('#rd','Sáb');await pg0.fill('#rh','05:00');await pg0.fill('#rt','Saída de Bauru');await pg0.click('[data-act=addr]');await pg0.waitForTimeout(400);
+  {const r=DB.pesc[pid].dados.roteiro.slice(-1)[0];ok(r&&r.dia==='Sáb'&&r.hora==='05:00'&&r.txt==='Saída de Bauru','Passo do roteiro guarda dia e hora')}
+  await pg0.click('[data-act=sub][data-v=contas]');await pg0.waitForTimeout(200);await pg0.evaluate(()=>scrollTo(0,0));await pg0.screenshot({path:__dirname+'/saida/contas-nova.png',fullPage:true})}
  // 3f. entrada profissional: tipo de conta, apresentação, áreas e painéis
  {const ctx=await B.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'pt-BR'});await ctx.exposeFunction('__rpc',(u,nm,a)=>rpc(u,nm,a));await ctx.exposeFunction('__upload',(p,d)=>{FOTOS[p]=d;return true});
   await ctx.route(/open-meteo\.com|images\.unsplash\.com/,r=>r.abort());
@@ -241,6 +244,8 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   ok((await t(q)).includes('Seu painel')&&(await t(q)).includes('EXEMPLO')&&(await q.$$('.bars')).length>0,'Painel do dono sem anúncio mostra exemplo com gráfico');await q.screenshot({path:__dirname+'/saida/painel-dono.png',fullPage:true});
   await q.click('#nav a[href="#anuncios"]');await q.waitForTimeout(300);ok((await t(q)).includes('Meus anúncios'),'Aba Anúncios mostra os anúncios do dono');
   await q.click('#nav a[href="#perfil"]');await q.waitForTimeout(300);ok(!(await t(q)).includes('dias de pesca'),'Perfil não mostra indicadores');
+  await q.click('[data-act=exv][data-v="0"]');await q.waitForTimeout(400);{const tx=await t(q);ok(tx.includes('A turma')&&tx.includes('Peixes do diário')&&tx.includes('As contas')&&(await q.$$('.top .gal .slide')).length===6,'Pescaria de exemplo abre com fotos, turma, peixes e contas')}
+  await q.screenshot({path:__dirname+'/saida/viagem-exemplo.png',fullPage:true});await q.click('[data-act=dback]');await q.waitForTimeout(200);
   await q.click('[data-act=area][data-v=pescador]');await q.waitForTimeout(300);await q.click('[data-act=onbskip]').catch(()=>{});await q.waitForTimeout(200);
   ok((await q.textContent('#nav')).includes('Contas'),'Dá para trocar para a área do pescador no Perfil');
   await q.click('#nav a[href="#perfil"]');await q.waitForTimeout(300);ok(!(await t(q)).includes('Administrador'),'Quem não é administrador não vê a área de administrador');await ctx.close();
@@ -259,7 +264,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
    if(r.over)ok(false,p.nome+' ('+r.w+'px) aba '+sub+': tela passa da largura do celular');
    if(r.small.length)results.push('LETRA PEQUENA · '+p.nome+' ('+r.w+'px) aba '+sub+': '+r.small.join(' | '));
    if(r.btn.length)results.push('BOTÃO BAIXO · '+p.nome+' ('+r.w+'px) aba '+sub+': '+r.btn.join(' | '))}
-  await p.pg.screenshot({path:__dirname+'/saida/tela-'+i+'.png',fullPage:false});if(i===0){await p.pg.evaluate(()=>scrollTo(0,0));await p.pg.screenshot({path:__dirname+'/saida/contas-antes.png',fullPage:true})}}
+  await p.pg.screenshot({path:__dirname+'/saida/tela-'+i+'.png',fullPage:false});if(i===0||i===3){await p.pg.evaluate(()=>scrollTo(0,0));await p.pg.screenshot({path:__dirname+'/saida/contas-'+i+'.png',fullPage:true})}}
  ok(!errs.length,'Nenhum erro de programa em nenhum celular'+(errs.length?': '+errs.join(' / '):''));
  results.push('Conflitos resolvidos automaticamente: '+log.length);
  console.log(results.join('\n'));fs.writeFileSync(__dirname+'/saida/resultado.txt',results.join('\n'));
