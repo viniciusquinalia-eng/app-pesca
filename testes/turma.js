@@ -76,6 +76,14 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  ok(d.gastos.length===6,'6 gastos lançados por 5 pessoas diferentes'+(d.gastos.length===6?'':' (veio '+d.gastos.map(g=>g.desc).join(',')+')'));
  // "Combustível" com vírgula
  const comb=d.gastos.find(g=>g.desc==='Combustível');ok(comb&&comb.valor===387.5,'Valor com vírgula (387,50) entendido certo');
+ // mudar um gasto já lançado (Gelo 45,30 -> 60,00)
+ await refresh(org);await pg0.click('[data-act=sub][data-v=contas]');{const gid=DB.pesc[pid].dados.gastos.find(g=>g.desc==='Gelo').id;await pg0.click(`[data-act=edg][data-v="${gid}"]`);await pg0.fill('#egv','60,00');await pg0.click('[data-act=saveg]');await pg0.waitForTimeout(400);
+  ok(DB.pesc[pid].dados.gastos.find(g=>g.id===gid).valor===60,'Mudar um gasto já lançado (Gelo de R$ 45,30 para R$ 60,00)')}
+ // licença de pesca
+ await pg0.click('[data-act=sub][data-v=turma]');ok((await t(pg0)).includes('a sua não está em dia'),'Aviso de licença aparece para quem não informou a sua');
+ {const me=await pg0.evaluate(pid=>JSON.parse(localStorage.getItem('bp_me_'+pid)),pid);await pg0.click(`[data-act=lic][data-v="${me}"]`);await pg0.fill('#lv','2027-12-31');await pg0.click('[data-act=savelic]');await pg0.waitForTimeout(400);
+  const tx=await t(pg0);ok(tx.includes('Licença em dia até 31/12/2027')&&tx.includes('4 pessoas ainda não informaram'),'Licença salva e o aviso passa a mostrar só quem falta')}
+ d=DB.pesc[pid].dados;
  // acerto
  await refresh(org);await pg0.click('[data-act=sub][data-v=contas]');
  const linhas=await pg0.$$eval('[data-act=pixgo],[data-act=pago]',els=>els.filter(e=>e.dataset.act==='pago').map(e=>e.dataset.v));
@@ -89,8 +97,8 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  ok(st.length<=devedores+credores-1,'Número de Pix ('+st.length+') é o mínimo prático (no máximo '+(devedores+credores-1)+')');
  ok(Math.abs(Object.values(b).reduce((s,v)=>s+v,0))<1e-6,'Soma dos saldos dá zero (total gasto R$ '+tot.toFixed(2)+')');
  // conferir o que cada um vê como "você deve / tem a receber"
- for(const [i,p] of P.entries()){await refresh(p);await p.pg.click('[data-act=sub][data-v=contas]');const tx=await t(p.pg);const me=await p.pg.evaluate(pid=>JSON.parse(localStorage.getItem('bp_me_'+pid)),pid);const v=b[me];const brl='R$ '+Math.abs(Math.round(v*100)/100).toLocaleString('pt-BR',{minimumFractionDigits:2});
-  ok(tx.includes(v>=0?'Você tem a receber':'Você deve')&&tx.includes(brl),p.nome+' vê "'+(v>=0?'tem a receber ':'deve ')+brl+'"')}
+ for(const [i,p] of P.entries()){await refresh(p);await p.pg.click('[data-act=sub][data-v=contas]');const tx=await t(p.pg);const me=await p.pg.evaluate(pid=>JSON.parse(localStorage.getItem('bp_me_'+pid)),pid);const v=b[me];const brl='R$ '+(Math.round(Math.abs(v)*100)/100).toLocaleString('pt-BR',{minimumFractionDigits:2});
+  ok(tx.includes(v>=0?'Você tem a receber':'Você deve')&&tx.includes(brl),p.nome+' vê "'+(v>=0?'tem a receber ':'deve ')+brl+'"'+(tx.includes(brl)?'':' (tela: '+tx.slice(tx.indexOf('Você'),tx.indexOf('Você')+40)+')'))}
  // pix copia e cola
  for(const s of st){const [de,para]=s.k.split('>');const rec=d.pessoas.find(x=>x.id===para);await pg0.click(`[data-act=pixgo][data-v="${s.k}"]`);await pg0.waitForTimeout(150);
   if(rec.pix){const code=await pg0.inputValue('#pixcode');const r=pixOk(code);ok(r.crc&&Number(r.valor)===s.v&&r.chave===rec.pix,'Pix de '+d.pessoas.find(x=>x.id===de).nome+' para '+rec.nome+': código válido, valor R$ '+r.valor+' e chave certos')}
