@@ -108,6 +108,15 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  await pg0.click('[data-act=wa][data-v=contas]');const acTxt=await pg0.inputValue('#watxt');ok(st.every(s=>acTxt.includes(s.v.toLocaleString('pt-BR',{minimumFractionDigits:2}))),'Mensagem de acerto pro WhatsApp tem todos os valores');await pg0.keyboard.press('Escape');
  // marcar pago
  const k0=st[0].k;await pg0.click(`[data-act=pago][data-v="${k0}"]`);await pg0.waitForTimeout(300);ok(DB.pesc[pid].dados.pagos[k0]===true,'Marcar como pago fica salvo');
+ // 3b. Explorar (Fase 2): anúncios de exemplo, região e usar roteiro numa pescaria
+ await pg0.goto(`http://localhost:${PORT}/#explorar`);await pg0.waitForTimeout(400);
+ {const tx=await t(pg0);ok(tx.includes('EXEMPLO')&&!/\-?\d{1,2}\.\d{4,}/.test(tx),'Explorar mostra anúncios marcados como EXEMPLO e nenhuma coordenada')}
+ await pg0.selectOption('#reg','Rio Paraná');await pg0.waitForTimeout(150);{const nomes=await pg0.$$eval('[data-act=ad] .t',els=>els.map(e=>e.textContent));ok(nomes.length>0&&nomes.every(n=>/Três Irmãos|Barranco|Zé Dourado|Dourado no Rio|Corredeira/.test(n)),'Filtro de região mostra só o Rio Paraná ('+nomes.length+' anúncios)')}
+ await pg0.selectOption('#reg','Todas');await pg0.click('[data-act=ad][data-v=r1]');await pg0.waitForTimeout(150);await pg0.click('[data-act=usead]');await pg0.waitForTimeout(150);
+ await pg0.click(`[data-act=addad][data-v="${pid}"]`);await pg0.waitForTimeout(500);
+ {const dd=DB.pesc[pid].dados;ok(dd.roteiro.length>=6&&dd.itens.some(i=>i.txt==='Isca artificial'),'Usar roteiro pronto numa pescaria existente: roteiro e lista do que levar entram')}
+ ok((await t(pg0)).includes('cai na piracema'),'Pescaria em janeiro mostra o aviso de piracema')
+ await pg0.click('[data-act=sub][data-v=turma]');
  // 4. tela: rolagem lateral e tamanho das letras em cada celular
  for(const [i,p] of P.entries()){for(const sub of ['turma','datas','levar','roteiro','contas']){await p.pg.click(`[data-act=sub][data-v=${sub}]`);await p.pg.waitForTimeout(80);
    const r=await p.pg.evaluate(()=>{const over=document.documentElement.scrollWidth>window.innerWidth+1;const small=[];for(const el of document.querySelectorAll('#app *, #nav *')){if(!el.childNodes.length)continue;const own=[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());if(!own)continue;const r=el.getBoundingClientRect();if(!r.width)continue;const fs=parseFloat(getComputedStyle(el).fontSize);if(fs<15)small.push(fs+'px "'+el.textContent.trim().slice(0,30)+'"')}

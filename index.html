@@ -155,20 +155,26 @@ const fish=kind==='Pesqueiro'||kind==='Ponto'?`<path d="M150 170c10-12 24-18 38-
 return `<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="320" height="200" fill="${sky}"/><circle cx="250" cy="62" r="24" fill="${sun}"/><path d="M0 100 L45 82 L100 96 L160 74 L220 92 L280 78 L320 88 V200 H0z" fill="${hill}"/><rect y="138" width="320" height="62" fill="${water}"/>${house}${boat}${fish}<path d="M20 176 h36 M110 188 h44 M230 182 h52" stroke="#ffffff" stroke-opacity=".25" stroke-width="3" stroke-linecap="round"/></svg>`};
 
 /* ---------- anúncios de exemplo ---------- */
+const T='Tietê / Barra Bonita',R='Rio Paraná',B='Perto de Bauru';
 const ADS=[
-{id:'a1',cat:'Rancho',nome:'Rancho Beira-Tietê',local:'Barra Bonita, SP',km:120,preco:'R$ 600',un:'/dia',sub:'Rancho inteiro, até 8 pessoas',feat:['Píer e rampa','Piloteiro indicado','Freezer e limpeza de peixe'],peixes:'Tucunaré e corvina',pil:true,livre:'Livre neste fim de semana'},
-{id:'a2',cat:'Pousada',nome:'Pousada Remanso',local:'Barra Bonita, SP',km:122,preco:'R$ 345',un:'/pessoa',sub:'Pacote com barco e piloteiro, café e janta',feat:['Piloteiro incluso','Barco 5 lugares','Café e janta'],peixes:'Tucunaré e corvina',pil:true},
-{id:'a3',cat:'Piloteiro',nome:'Seu Antônio',local:'Represa de Barra Bonita',km:120,preco:'R$ 450',un:'/dia',sub:'20 anos de rio, barco próprio',feat:['Barco próprio','Leva até 3','Conhece as galhadas'],peixes:'Tucunaré',pil:true},
-{id:'a4',cat:'Pesqueiro',nome:'Pesqueiro Águas Claras',local:'Bauru, SP',km:15,preco:'R$ 60',un:'/pessoa',sub:'Bate-volta, aberto o ano todo',feat:['Tanques de tilápia','Lanchonete','Aluga vara'],peixes:'Tilápia e tambaqui',pil:false,livre:'Aberto na piracema'},
-{id:'a5',cat:'Rancho',nome:'Rancho Três Irmãos',local:'Rio Paraná, SP',km:230,preco:'R$ 800',un:'/dia',sub:'Rancho inteiro, até 12 pessoas',feat:['Píer','Barco para alugar','Piloteiro indicado'],peixes:'Dourado e pintado',pil:true},
-{id:'a6',cat:'Pousada',nome:'Pousada Beira-Rio',local:'Rio Paraná, SP',km:240,preco:'R$ 280',un:'/pessoa',sub:'Só hospedagem, pesca de barranco',feat:['Só hospedagem','Pesca de barranco','Estacionamento'],peixes:'Corvina e mandi',pil:false},
-{id:'a7',cat:'Piloteiro',nome:'Zé do Barco',local:'Rio Paraná, SP',km:230,preco:'R$ 500',un:'/dia',sub:'Especialista em dourado',feat:['Barco com motor','Leva até 3','Iscas inclusas'],peixes:'Dourado',pil:true},
-{id:'a8',cat:'Rancho',nome:'Rancho do Lago Azul',local:'Represa de Promissão, SP',km:110,preco:'R$ 450',un:'/dia',sub:'Rancho inteiro, até 6 pessoas',feat:['Rampa','Churrasqueira','Wi-Fi'],peixes:'Tucunaré',pil:false},
-{id:'r1',cat:'Roteiro',nome:'Fim de semana no Tietê',local:'Barra Bonita, SP',km:120,preco:'2 dias',un:'',sub:'Rancho + barco com piloteiro',feat:['2 dias','Com piloteiro','Para turma de 4 a 8'],peixes:'Tucunaré',pil:true,dias:[['Sex','05:00','Saída de Bauru'],['Sex','07:30','Check-in no rancho'],['Sex','08:00','Barco com piloteiro nas galhadas'],['Sáb','06:00','Pesca na saída do sol'],['Sáb','19:00','Churrasco no rancho'],['Dom','12:00','Volta pra casa']]},
-{id:'r2',cat:'Roteiro',nome:'Bate-volta no pesqueiro',local:'Bauru, SP',km:15,preco:'1 dia',un:'',sub:'Ideal na piracema',feat:['1 dia','Sem barco','Boa para iniciantes'],peixes:'Tilápia',pil:false,dias:[['Sáb','06:30','Saída'],['Sáb','07:00','Pesca nos tanques'],['Sáb','12:00','Almoço no pesqueiro'],['Sáb','16:00','Volta']]},
-{id:'r3',cat:'Roteiro',nome:'Dourado no Rio Paraná',local:'Rio Paraná, SP',km:230,preco:'3 dias',un:'',sub:'Rancho + piloteiro especialista',feat:['3 dias','Com piloteiro','Pesca esportiva'],peixes:'Dourado',pil:true,dias:[['Qui','18:00','Saída e chegada no rancho'],['Sex','06:00','Barco com piloteiro'],['Sáb','06:00','Barco com piloteiro'],['Dom','10:00','Volta']]},
-{id:'p1',cat:'Ponto',nome:'Galhadas do braço do rio',local:'Represa de Barra Bonita',km:120,preco:'Dica',un:'',sub:'Bom para tucunaré no começo da manhã',feat:['Isca artificial','Manhã cedo','Precisa de barco'],peixes:'Tucunaré',pil:true},
-{id:'p2',cat:'Ponto',nome:'Corredeira abaixo da barragem',local:'Rio Paraná',km:230,preco:'Dica',un:'',sub:'Respeite a distância mínima da barragem',feat:['Isca natural','Fim de tarde','Barco ou barranco'],peixes:'Dourado e pintado',pil:false}];
+{id:'a1',reg:T,cat:'Rancho',nome:'Rancho Beira-Tietê',local:'Barra Bonita, SP',km:120,preco:'R$ 650',un:'/dia',sub:'Rancho inteiro, até 8 pessoas',feat:['Píer e rampa','Piloteiro indicado','Freezer e limpeza de peixe'],peixes:'Tucunaré, corvina e tilápia',pil:true,txt:'Casa com 3 quartos, varanda virada para o rio, churrasqueira e lugar para 2 barcos.'},
+{id:'a2',reg:T,cat:'Pousada',nome:'Pousada Remanso do Rio',local:'Barra Bonita, SP',km:122,preco:'R$ 390',un:'/pessoa',sub:'Pacote com barco, piloteiro, café e janta',feat:['Piloteiro incluso','Barco 5 lugares','Café e janta'],peixes:'Tucunaré e corvina',pil:true,txt:'Pacote de pesca por dia, com barco saindo do píer da pousada às 6h.'},
+{id:'a3',reg:T,cat:'Piloteiro',nome:'Piloteiro Tonho',local:'Represa de Barra Bonita',km:120,preco:'R$ 500',un:'/dia',sub:'20 anos de rio, barco próprio',feat:['Barco próprio','Leva até 3','Conhece as galhadas'],peixes:'Tucunaré',pil:true,txt:'Saída 5h30, volta 16h. Combustível incluso até 60 km de navegação.'},
+{id:'a4',reg:T,cat:'Rancho',nome:'Rancho Recanto das Garças',local:'Igaraçu do Tietê, SP',km:115,preco:'R$ 480',un:'/dia',sub:'Rancho inteiro, até 6 pessoas',feat:['Rampa','Churrasqueira','Wi-Fi'],peixes:'Tucunaré e traíra',pil:false,txt:'Rancho simples e bem cuidado, bom para turma pequena.'},
+{id:'a5',reg:R,cat:'Rancho',nome:'Rancho Três Irmãos',local:'Rosana, SP',km:390,preco:'R$ 850',un:'/dia',sub:'Rancho inteiro, até 12 pessoas',feat:['Píer','Barco para alugar','Piloteiro indicado'],peixes:'Dourado, pintado e corvina',pil:true,txt:'Rancho grande para turma, com 2 barcos de alumínio para alugar.'},
+{id:'a6',reg:R,cat:'Pousada',nome:'Pousada Barranco Alto',local:'Presidente Epitácio, SP',km:330,preco:'R$ 290',un:'/pessoa',sub:'Hospedagem com café, pesca de barranco',feat:['Só hospedagem','Pesca de barranco','Estacionamento'],peixes:'Corvina e mandi',pil:false,txt:'Quartos para 2 a 4 pessoas e barranco liberado para hóspedes.'},
+{id:'a7',reg:R,cat:'Piloteiro',nome:'Piloteiro Zé Dourado',local:'Rosana, SP',km:390,preco:'R$ 600',un:'/dia',sub:'Especialista em dourado',feat:['Barco com motor 40hp','Leva até 3','Iscas inclusas'],peixes:'Dourado',pil:true,txt:'Pesca esportiva com solta do peixe. Leva colete para todos.'},
+{id:'a8',reg:B,cat:'Pesqueiro',nome:'Pesqueiro Águas Claras',local:'Bauru, SP',km:15,preco:'R$ 60',un:'/pessoa',sub:'Bate-volta, aberto o ano todo',feat:['Tanques de tilápia','Lanchonete','Aluga vara'],peixes:'Tilápia, tambaqui e pintado',pil:false,txt:'Pesqueiro com 4 tanques, quiosques com sombra e banheiro.'},
+{id:'a9',reg:B,cat:'Pesqueiro',nome:'Pesqueiro Lagoa Dourada',local:'Agudos, SP',km:20,preco:'R$ 45',un:'/pessoa',sub:'Pesque e solte ou pesque e pague',feat:['Pesque e solte','Restaurante','Bom para família'],peixes:'Tilápia e pacu',pil:false,txt:'Ótimo para levar quem está começando e para a época da piracema.'},
+{id:'r1',reg:T,cat:'Roteiro',nome:'Fim de semana no Tietê',local:'Barra Bonita, SP',km:120,preco:'2 dias',un:'',sub:'Rancho + barco com piloteiro',feat:['2 dias','Com piloteiro','Turma de 4 a 8'],peixes:'Tucunaré',pil:true,dias:[['Sex','05:00','Saída de Bauru'],['Sex','07:30','Check-in no rancho'],['Sex','08:00','Barco com piloteiro nas galhadas'],['Sáb','06:00','Pesca na saída do sol'],['Sáb','19:00','Churrasco no rancho'],['Dom','12:00','Volta pra casa']],levar:['Gelo','Isca artificial','Carne e carvão','Protetor solar','Licença de pesca']},
+{id:'r2',reg:B,cat:'Roteiro',nome:'Bate-volta no pesqueiro',local:'Bauru, SP',km:15,preco:'1 dia',un:'',sub:'Ideal na piracema',feat:['1 dia','Sem barco','Bom para iniciantes'],peixes:'Tilápia',pil:false,dias:[['Sáb','06:30','Saída'],['Sáb','07:00','Pesca nos tanques'],['Sáb','12:00','Almoço no pesqueiro'],['Sáb','16:00','Volta']],levar:['Vara e molinete','Isca de massa','Cadeira','Protetor solar']},
+{id:'r3',reg:R,cat:'Roteiro',nome:'Dourado no Rio Paraná',local:'Rosana, SP',km:390,preco:'3 dias',un:'',sub:'Rancho + piloteiro especialista',feat:['3 dias','Com piloteiro','Pesca esportiva'],peixes:'Dourado',pil:true,dias:[['Qui','18:00','Saída e chegada no rancho'],['Sex','06:00','Barco com piloteiro'],['Sáb','06:00','Barco com piloteiro'],['Dom','10:00','Volta']],levar:['Gelo','Isca artificial','Capa de chuva','Licença de pesca','Remédios']},
+{id:'p1',reg:T,cat:'Ponto',nome:'Galhadas de braço de represa',local:'Represa de Barra Bonita',km:120,preco:'Dica',un:'',sub:'Bom para tucunaré no começo da manhã',feat:['Isca artificial','Manhã cedo','Precisa de barco'],peixes:'Tucunaré',pil:true,txt:'Procure árvores submersas na beira dos braços da represa. Peça ao piloteiro, ele conhece.'},
+{id:'p2',reg:R,cat:'Ponto',nome:'Corredeira abaixo de barragem',local:'Rio Paraná',km:390,preco:'Dica',un:'',sub:'Respeite a distância mínima da barragem',feat:['Isca natural','Fim de tarde','Barco ou barranco'],peixes:'Dourado e pintado',pil:false,txt:'Perto de barragens a pesca é proibida dentro da distância mínima. Confira a placa e as regras do lugar.'}];
+const REGS=['Todas',T,R,B];
+/* piracema: na bacia do Rio Paraná (inclui o Tietê) vai em geral de 1º de novembro a 28 de fevereiro */
+const emPiracema=d=>{const m=Number(String(d||today()).slice(5,7));return m>=11||m<=2};
+const PIRA_TXT='Piracema na bacia do Rio Paraná (inclui o Tietê): em geral de 1º de novembro a 28 de fevereiro. Nos rios a pesca fica restrita; pesqueiros (tanques) continuam liberados. Confira as regras oficiais antes de ir.';
 const CATS=[['Todos',''],['Ranchos','Rancho'],['Pousadas','Pousada'],['Piloteiros','Piloteiro'],['Pesqueiros','Pesqueiro'],['Roteiros','Roteiro'],['Pontos','Ponto']];
 
 /* ---------- dados ---------- */
@@ -291,26 +297,29 @@ const kindOf=p=>/rancho|pousada/i.test((p.local||'')+(p.nome||''))?'Rancho':'Pil
 const idx=id=>{let h=0;for(const ch of String(id))h=(h*31+ch.charCodeAt(0))>>>0;return h%4};
 function vExplorar(){
 if(S.ad)return vAnuncio(ADS.find(a=>a.id===S.ad));
-const q=norm(S.q);const list=ADS.filter(a=>(!S.cat||a.cat===S.cat)&&(!S.pil||a.pil)&&(!q||norm(a.nome+' '+a.local+' '+a.peixes+' '+a.cat).includes(q)));
-return `<h1>Pra onde vamos pescar?</h1>
+const q=norm(S.q);const reg=S.reg||'Todas';
+const list=ADS.filter(a=>(reg==='Todas'||a.reg===reg)&&(!S.cat||a.cat===S.cat)&&(!S.pil||a.pil)&&(!q||norm(a.nome+' '+a.local+' '+a.peixes+' '+a.cat).includes(q)));
+return `<p class="eyebrow">Explorar</p><h1>Pra onde vamos pescar?</h1>
+${emPiracema()?`<div class="warnbox" style="margin-bottom:14px"><b>Época de piracema</b> (em geral até 28 de fevereiro): nos rios a pesca fica restrita, pesqueiros continuam liberados. Confira as regras oficiais.</div>`:''}
 <label class="search">${I.search}<input id="q" type="search" placeholder="Rio, rancho ou peixe" value="${esc(S.q)}" aria-label="Buscar"></label>
+<label class="f" for="reg">Região</label><select id="reg" data-act="reg">${REGS.map(r=>`<option ${r===reg?'selected':''}>${esc(r)}</option>`).join('')}</select>
 <div class="chips">${CATS.map(([l,v])=>`<button class="chip ${S.cat===v?'on':''}" data-act="cat" data-v="${v}">${l}</button>`).join('')}<button class="chip ${S.pil?'on':''}" data-act="pil">Com piloteiro</button></div>
-${list.length?list.map((a,i)=>`<button class="card" data-act="ad" data-v="${a.id}"><div class="pic">${scene(ADS.indexOf(a),a.cat)}${a.livre?`<span class="tag">${esc(a.livre)}</span>`:`<span class="tag">${esc(a.cat)}</span>`}</div><div class="row"><div><div class="t">${esc(a.nome)}</div><div class="m">${esc(a.local)} · ${a.km} km</div></div><div class="price">${esc(a.preco)}<span class="m" style="font-weight:400">${esc(a.un)}</span></div></div></button>`).join(''):`<div class="box">Nada encontrado. Tente outro nome ou tire um filtro.</div>`}
-<p class="note">Anúncios de exemplo, para testar o app. Distâncias a partir de Bauru.</p>`}
+${list.length?list.map(a=>`<button class="card pcard" data-act="ad" data-v="${a.id}"><div class="pic">${scene(ADS.indexOf(a),a.cat)}<span class="tag" style="background:var(--sun);color:#3a2a00">EXEMPLO</span><span class="tag" style="left:auto;right:12px">${esc(a.cat)}</span></div><div class="body"><div class="row" style="margin:0"><div><div class="t" style="font-size:20px">${esc(a.nome)}</div><div class="meta"><span>${esc(a.local)}</span><span>${a.km} km de Bauru</span></div></div><div class="price" style="font-size:18px">${esc(a.preco)}<span class="m" style="font-weight:500">${esc(a.un)}</span></div></div><div class="m" style="margin-top:6px">${esc(a.sub)}</div></div></button>`).join(''):`<div class="box">Nada encontrado. Tente outra região ou tire um filtro.</div>`}
+<p class="note">Todos os anúncios são <b>EXEMPLO</b>, com nomes inventados e preços de referência, só para testar o app. Distâncias aproximadas a partir de Bauru.</p>`}
 
 function vAnuncio(a){
-const ro=a.cat==='Roteiro';
-return `<button class="back" data-act="unad" aria-label="Voltar">${I.back}</button>
-<div class="pic" style="margin-top:14px">${scene(ADS.indexOf(a),a.cat)}</div>
-<h1 style="margin-top:18px;margin-bottom:4px">${esc(a.nome)}</h1>
-<div class="m">${esc(a.local)} · ${esc(a.sub)}</div>
+const ro=a.cat==='Roteiro',pt=a.cat==='Ponto';
+return `<div class="top"><div class="pic">${scene(ADS.indexOf(a),a.cat)}<span class="count">EXEMPLO</span></div><button class="back" data-act="unad" aria-label="Voltar">${I.back}</button></div>
+<div class="title"><h1>${esc(a.nome)}</h1><div class="meta"><span>${esc(a.cat)}</span><span>${esc(a.local)}</span><span>${a.km} km de Bauru</span></div></div>
+<p style="font-size:18px">${esc(a.sub)}.${a.txt?' '+esc(a.txt):''}</p>
 <div class="feat">${a.feat.map(x=>`<div>${esc(x)}</div>`).join('')}</div>
 <div class="box"><b>Peixes:</b> ${esc(a.peixes)}</div>
-${ro?`<h2>Dia a dia</h2><div class="list">${a.dias.map(d=>`<div class="li"><div class="ic" style="font-size:13px">${esc(d[0])}</div><div class="grow"><div class="t" style="font-size:16px">${esc(d[2])}</div><div class="m">${esc(d[1])}</div></div></div>`).join('')}</div>`:''}
-${a.cat==='Ponto'?`<div class="warnbox">Confira as regras da região e a época de piracema antes de pescar.</div>`:''}
-${!ro&&a.cat!=='Ponto'?`<p class="m" style="margin-top:16px">Falar com o anunciante pelo WhatsApp fica disponível quando os anúncios forem reais.</p>`:''}
-<div style="height:90px"></div>
-<div class="sticky"><div><div><div class="price" style="font-size:19px">${esc(a.preco)} <span class="m" style="font-weight:400">${esc(a.un)}</span></div><div class="pill">${esc(a.livre||a.cat)}</div></div><button class="btn" data-act="usead" data-v="${a.id}">${ro?'Usar roteiro':'Montar pescaria'}</button></div></div>`}
+${emPiracema()&&a.cat!=='Pesqueiro'?`<div class="warnbox"><b>Atenção, piracema.</b> ${PIRA_TXT}</div>`:''}
+${pt?`<div class="box">Por respeito aos pescadores, o app mostra só a região e o tipo de lugar, nunca a localização exata do ponto.</div>`:''}
+${ro?`<h2>Dia a dia</h2><div class="list">${a.dias.map(d=>`<div class="li"><div class="ic">${esc(d[0])}</div><div class="grow"><div class="t" style="font-size:17px">${esc(d[2])}</div><div class="m">${esc(d[1])}</div></div></div>`).join('')}</div>${a.levar?`<h2>Já vem na lista do que levar</h2><p class="m">${esc(a.levar.join(', '))}</p>`:''}`:''}
+${!ro&&!pt?`<button class="btn alt full" disabled style="margin-top:16px">${I.chat}Chamar no WhatsApp</button><p class="m" style="text-align:center;margin-top:6px">Anúncio de exemplo: ainda sem contato real.</p>`:''}
+<div style="height:100px"></div>
+<div class="sticky"><div><div><div class="price" style="font-size:20px">${esc(a.preco)} <span class="m" style="font-weight:500">${esc(a.un)}</span></div><div class="pill">EXEMPLO · ${esc(a.cat)}</div></div>${pt?'':`<button class="btn" data-act="usead" data-v="${a.id}">${ro?'Usar roteiro':'Usar na pescaria'}</button>`}</div></div>`}
 
 function vPescarias(){
 if(S.pid&&getP(S.pid))return vPescaria(getP(S.pid));
@@ -341,12 +350,13 @@ ${eu?'':'<div class="warnbox">Escolha quem você é na aba Turma para votar.</di
 <label class="f">Sugerir datas</label><div style="display:flex;gap:8px"><input id="di" type="date" aria-label="Início"><input id="df" type="date" aria-label="Fim"></div><button class="btn alt full" data-act="adddata" style="margin-top:8px">Sugerir</button>`;
 if(S.sub==='levar'){const falta=(p.itens||[]).filter(i=>!i.ok).length;body=`<p class="m">${falta?'Faltam '+falta+' itens':'Tudo certo!'}</p><div class="list">${(p.itens||[]).map(it=>`<div class="li"><button class="check ${it.ok?'on':''}" data-act="tick" data-v="${it.id}" aria-label="Marcar ${esc(it.txt)}">${it.ok?I.ok:''}</button><div class="grow"><div class="t" style="font-size:16px">${esc(it.txt)}</div><select data-act="quem" data-v="${it.id}" style="height:48px;margin-top:8px" aria-label="Quem leva"><option value="">Sem dono</option>${(p.pessoas||[]).map(x=>`<option value="${x.id}" ${x.id===it.quem?'selected':''}>${esc(x.nome)}</option>`).join('')}</select></div><button class="x" data-act="rmi" data-v="${it.id}" aria-label="Apagar">×</button></div>`).join('')}</div>
 <label class="f" for="ni">Novo item</label><div style="display:flex;gap:8px"><input id="ni" placeholder="Gelo, isca, carvão…"><button class="btn" data-act="addi">Pôr</button></div>`}
-if(S.sub==='roteiro')body=`<div class="list">${(p.roteiro||[]).map(r=>`<div class="li"><div class="ic" style="font-size:13px">${esc(r.dia||'—')}</div><div class="grow"><div class="t" style="font-size:16px">${esc(r.txt)}</div><div class="m">${esc(r.hora)}</div></div><button class="x" data-act="rmr" data-v="${r.id}" aria-label="Apagar">×</button></div>`).join('')}</div>
+if(S.sub==='roteiro')body=`<div class="list">${(p.roteiro||[]).map(r=>`<div class="li"><div class="ic">${esc(r.dia||'—')}</div><div class="grow"><div class="t" style="font-size:16px">${esc(r.txt)}</div><div class="m">${esc(r.hora)}</div></div><button class="x" data-act="rmr" data-v="${r.id}" aria-label="Apagar">×</button></div>`).join('')}</div>
 ${(p.roteiro||[]).length?'':'<p class="m">Monte o passo a passo da viagem, ou escolha um roteiro pronto em Explorar.</p>'}
 <label class="f">Novo passo</label><div style="display:flex;gap:8px"><input id="rd" placeholder="Dia" style="flex:0 0 80px"><input id="rh" type="time" style="flex:0 0 120px" aria-label="Hora"></div><input id="rt" placeholder="O que acontece" style="margin-top:8px"><button class="btn alt full" data-act="addr" style="margin-top:8px">Adicionar passo</button>`;
 if(S.sub==='contas')body=vContasBody(p);
 return `<div class="top"><div class="pic">${scene(idx(p.id),kindOf(p))}<span class="count">${falta(d)}</span></div><button class="back" data-act="close" aria-label="Voltar">${I.back}</button></div>
 <div class="title"><h1>${esc(p.nome)}</h1><div class="meta"><span>${esc(quandoTxt(p))}</span>${p.local?`<span>${esc(p.local)}</span>`:''}<span>${(p.pessoas||[]).length} na turma</span></div></div>
+${p.inicio&&emPiracema(p.inicio)&&daysTo(p.fim||p.inicio)>=0&&!/pesqueiro/i.test(p.local||'')?`<div class="warnbox" style="margin-top:16px"><b>A data cai na piracema.</b> ${PIRA_TXT}</div>`:''}
 ${(()=>{const sl=semLic(p);if(!sl.length||(p.inicio&&daysTo(p.inicio)<0))return '';const euSem=sl.some(x=>x.id===eu);return `<button class="card warnbox" data-act="${euSem?'lic':'sub'}" data-v="${euSem?eu:'turma'}" style="margin-top:16px;padding:14px 16px;font-weight:600"><b>Licença de pesca:</b> ${euSem?'a sua não está em dia para esta viagem. Toque para informar a validade.':sl.length+(sl.length>1?' pessoas ainda não informaram':' pessoa ainda não informou')+' a licença em dia ('+esc(sl.map(x=>x.nome).join(', '))+').'}</button>`})()}
 <div class="tabs">${subs.map(([k,l])=>`<button class="chip ${S.sub===k?'on':''}" data-act="sub" data-v="${k}">${l}</button>`).join('')}</div>
 ${body}
@@ -432,7 +442,7 @@ function curP(){return S.tab==='contas'?getP($('[data-act=cid]')?.value):getP(S.
 function change(fn){const p=curP();if(!p)return;store().change(p.id,fn)}
 
 document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;render()}});
-document.addEventListener('change',e=>{const a=e.target.dataset.act;if(a==='eu'){setMe(S.pid,e.target.value)}else if(a==='quem'){const v=e.target.dataset.v;change(p=>{const it=p.itens.find(i=>i.id===v);if(it)it.quem=e.target.value})}else if(a==='cid'){S.cid=e.target.value;render()}});
+document.addEventListener('change',e=>{const a=e.target.dataset.act;if(a==='eu'){setMe(S.pid,e.target.value)}else if(a==='reg'){S.reg=e.target.value;render()}else if(a==='quem'){const v=e.target.dataset.v;change(p=>{const it=p.itens.find(i=>i.id===v);if(it)it.quem=e.target.value})}else if(a==='cid'){S.cid=e.target.value;render()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#modal').innerHTML)closeModal()});
 document.addEventListener('click',async e=>{
 const el=e.target.closest('[data-act]');if(!el)return;
@@ -444,11 +454,15 @@ if(a==='cat'){S.cat=v;render()}
 else if(a==='pil'){S.pil=!S.pil;render()}
 else if(a==='ad'){S.ad=v;render();scrollTo(0,0)}
 else if(a==='unad'){S.ad=null;render()}
-else if(a==='usead'){const ad=ADS.find(x=>x.id===v);pending=ad;openModal(vNova({nome:ad.cat==='Roteiro'?ad.nome:'Pescaria em '+ad.local.split(',')[0],local:ad.cat==='Roteiro'?ad.local:ad.nome+' · '+ad.local}))}
+else if(a==='usead'){const ad=ADS.find(x=>x.id===v);pending=ad;const fut=P.filter(p=>!p.inicio||daysTo(p.inicio)>=0);
+if(!fut.length){openModal(vNova({nome:ad.cat==='Roteiro'?ad.nome:'Pescaria em '+ad.local.split(',')[0],local:ad.cat==='Roteiro'?ad.local:ad.nome+' · '+ad.local}));return}
+openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">${ad.cat==='Roteiro'?'Usar este roteiro em qual pescaria?':'Pôr em qual pescaria?'}</h2>${fut.map(p=>`<button class="btn alt full" data-act="addad" data-v="${esc(p.id)}" style="margin-top:8px;justify-content:flex-start">${esc(p.nome)}</button>`).join('')}<button class="btn full" data-act="novaad" style="margin-top:14px">${I.plus}Criar pescaria nova</button></div></div>`)}
+else if(a==='novaad'){const ad=pending;closeModal();pending=ad;openModal(vNova({nome:ad.cat==='Roteiro'?ad.nome:'Pescaria em '+ad.local.split(',')[0],local:ad.cat==='Roteiro'?ad.local:ad.nome+' · '+ad.local}))}
+else if(a==='addad'){const ad=pending;if(!ad)return;closeModal();store().change(v,p=>{if(ad.cat==='Roteiro'){p.roteiro=(p.roteiro||[]).concat(ad.dias.map(d=>({id:uid(),dia:d[0],hora:d[1],txt:d[2]})));const tem=(p.itens||[]).map(i=>norm(i.txt));(ad.levar||[]).forEach(t=>{if(!tem.includes(norm(t)))p.itens.push({id:uid(),txt:t,quem:'',ok:false})})}else{p.local=ad.nome+' · '+ad.local}p.anuncios=(p.anuncios||[]).filter(x=>x!==ad.id).concat([ad.id])});S.tab='pescarias';S.pid=v;S.sub=ad.cat==='Roteiro'?'roteiro':'turma';S.ad=null;location.hash='pescarias';render();scrollTo(0,0);flash(ad.cat==='Roteiro'?'Roteiro e lista do que levar adicionados.':'Lugar adicionado na pescaria.')}
 else if(a==='nova'){pending=null;openModal(vNova())}
 else if(a==='criar'){const nome=$('#nn').value.trim();if(!nome){$('#nn').focus();return}const eu=$('#nme').value.trim()||'Eu';ls.set('bp_nome',eu);const pid=uid();const meid=uid();
 const ro=pending&&pending.dias?pending.dias.map(d=>({id:uid(),dia:d[0],hora:d[1],txt:d[2]})):[];
-const p={id:pid,nome,local:$('#nl').value.trim(),inicio:$('#ni1').value||'',fim:$('#ni2').value||$('#ni1').value||'',criado:Date.now(),pessoas:[{id:meid,nome:eu,pix:''}],datas:[],itens:['Gelo','Isca','Carne e carvão','Licença de pesca'].map(t=>({id:uid(),txt:t,quem:'',ok:false})),roteiro:ro,gastos:[],pagos:{}};
+const p={id:pid,nome,local:$('#nl').value.trim(),inicio:$('#ni1').value||'',fim:$('#ni2').value||$('#ni1').value||'',criado:Date.now(),pessoas:[{id:meid,nome:eu,pix:''}],datas:[],itens:((pending&&pending.levar)||['Gelo','Isca','Carne e carvão','Licença de pesca']).map(t=>({id:uid(),txt:t,quem:'',ok:false})),roteiro:ro,gastos:[],pagos:{}};
 closeModal();const nid=await store().create(p);if(!nid)return;ls.set('bp_me_'+nid,meid);S.tab='pescarias';S.pid=nid;S.sub='turma';S.ad=null;location.hash='pescarias';render();scrollTo(0,0)}
 else if(a==='souEu'){setMe(S.pid,v);scrollTo(0,0)}
 else if(a==='souNovo'){const n=$('#nq').value.trim();if(!n){$('#nq').focus();return}const nid=uid();setMe(S.pid,nid);change(p=>{p.pessoas.push({id:nid,nome:n,pix:''})})}
