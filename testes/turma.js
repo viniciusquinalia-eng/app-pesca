@@ -6,7 +6,7 @@ const srv=http.createServer((q,r)=>{let p=decodeURIComponent(q.url.split('?')[0]
  if(p.startsWith('/vendor/')){r.writeHead(200,{'content-type':'text/javascript'});return r.end(fs.readFileSync(__dirname+'/fake-supabase.js'))}
  fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':f.endsWith('.html')?'text/html':f.endsWith('.json')?'application/json':f.endsWith('.svg')?'image/svg+xml':'text/javascript'});r.end(d)})});
 // ---- banco falso (mesmas regras do schema.sql) ----
-const DB={pesc:{},membros:new Set()};let n=0;const log=[];
+const DB={pesc:{},membros:new Set(),ads:[],admins:new Set(['vini@teste.local'])};let n=0;const log=[];
 const M=(pid,u)=>DB.membros.has(pid+'|'+u);
 function rpc(u,name,a){a=a||{};if(!u)return {error:{message:'precisa entrar'}};
  if(name==='criar_pescaria'){const id='p'+(++n)+'-'+Math.random().toString(36).slice(2,8);const conv=Math.random().toString(36).slice(2,14);DB.pesc[id]={id,dono:u,convite:conv,dados:a.p_dados,versao:1,criado:Date.now()};DB.membros.add(id+'|'+u);return {data:[{id,convite:conv}]}}
@@ -14,6 +14,15 @@ function rpc(u,name,a){a=a||{};if(!u)return {error:{message:'precisa entrar'}};
  if(name==='entrar_pescaria'){const p=Object.values(DB.pesc).find(x=>x.convite===a.p_convite);if(!p)return {data:null};DB.membros.add(p.id+'|'+u);return {data:p.id}}
  if(name==='minhas_pescarias'){return {data:Object.values(DB.pesc).filter(p=>M(p.id,u)&&(!a.p_id||p.id===a.p_id)).map(p=>({id:p.id,dados:JSON.parse(JSON.stringify(p.dados)),versao:p.versao,convite:p.convite}))}}
  if(name==='apagar_pescaria'){return {data:null}}
+ // anúncios (mesmas regras do supabase/003_anuncios.sql)
+ const adm=DB.admins.has(u);const out=a=>({id:a.id,status:a.status,motivo:a.motivo,dados:JSON.parse(JSON.stringify(a.dados))});
+ if(name==='sou_admin')return {data:adm};
+ if(name==='enviar_anuncio'){if(a.p_id){const x=DB.ads.find(y=>y.id===a.p_id&&y.dono===u);if(!x)return {data:null};x.dados=a.p_dados;x.status='pendente';return {data:x.id}}const id='ad'+(DB.ads.length+1);DB.ads.push({id,dono:u,status:'pendente',dados:a.p_dados});return {data:id}}
+ if(name==='meus_anuncios')return {data:DB.ads.filter(x=>x.dono===u).map(out)};
+ if(name==='anuncios_publicos')return {data:DB.ads.filter(x=>x.status==='aprovado').map(x=>({id:x.id,dados:x.dados}))};
+ if(name==='anuncios_para_aprovar'){if(!adm)return {error:{message:'sem acesso'}};return {data:DB.ads.filter(x=>x.status==='pendente').map(out)}}
+ if(name==='moderar_anuncio'){if(!adm)return {error:{message:'sem acesso'}};const x=DB.ads.find(y=>y.id===a.p_id);if(x){x.status=a.p_status;x.motivo=a.p_motivo}return {data:null}}
+ if(name==='apagar_anuncio'){DB.ads=DB.ads.filter(x=>!(x.id===a.p_id&&(x.dono===u||adm)));return {data:null}}
  return {error:{message:'funcao desconhecida '+name}}}
 // ---- conferência independente do acerto ----
 function saldos(d){const b={};d.pessoas.forEach(x=>b[x.id]=0);d.gastos.forEach(g=>{b[g.pagou]+=g.valor;g.parts.forEach(id=>b[id]-=g.valor/g.parts.length)});return b}
@@ -117,6 +126,23 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  {const dd=DB.pesc[pid].dados;ok(dd.roteiro.length>=6&&dd.itens.some(i=>i.txt==='Isca artificial'),'Usar roteiro pronto numa pescaria existente: roteiro e lista do que levar entram')}
  ok((await t(pg0)).includes('cai na piracema'),'Pescaria em janeiro mostra o aviso de piracema')
  await pg0.click('[data-act=sub][data-v=turma]');
+ // 3c. dono de rancho anuncia; só aparece depois de aprovado
+ {const c=P[3].pg;await c.goto(`http://localhost:${PORT}/#explorar`);await c.waitForTimeout(400);await c.click('[data-act=anunciar]');
+  await c.fill('#fa-nome','Rancho do Carlão');await c.fill('#fa-local','Barra Bonita, SP');await c.fill('#fa-preco','550');await c.fill('#fa-sub','Rancho inteiro, até 6 pessoas');await c.fill('#fa-feat','Píer, Freezer, Churrasqueira');await c.fill('#fa-peixes','Tucunaré e corvina');
+  await c.fill('#fa-txt','Fica em -22.4912, -48.5583');await c.fill('#fa-wa','(14) 99876-5432');await c.check('#fa-ok');await c.click('[data-act=enviarad]');await c.waitForTimeout(300);
+  ok(DB.ads.length===0,'Anúncio com coordenada no texto é barrado');
+  await c.fill('#fa-txt','Casa com varanda para a represa.');await c.click('[data-act=enviarad]');await c.waitForTimeout(500);
+  ok(DB.ads.length===1&&DB.ads[0].status==='pendente','Dono envia anúncio e ele fica esperando aprovação');
+  ok((await t(c)).includes('Esperando aprovação'),'Dono vê o status "Esperando aprovação" em Meus anúncios');
+  const z=P[2].pg;await z.goto(`http://localhost:${PORT}/#explorar`);await z.waitForTimeout(500);ok(!(await t(z)).includes('Rancho do Carlão'),'Antes de aprovar, ninguém vê o anúncio');
+  ok(!(await t(z)).includes('Aprovar anúncios'),'Quem não é administrador não vê a tela de aprovação');
+  await pg0.goto(`http://localhost:${PORT}/#explorar`);await pg0.waitForTimeout(500);await pg0.click('[data-act=fila]');await pg0.waitForTimeout(300);ok((await t(pg0)).includes('Rancho do Carlão'),'Administrador vê o anúncio na fila');
+  await pg0.click('[data-act=aprovar]');await pg0.waitForTimeout(400);ok(DB.ads[0].status==='aprovado','Administrador aprova');
+  await z.reload();await z.waitForTimeout(600);ok((await t(z)).includes('Rancho do Carlão'),'Depois de aprovado, aparece no Explorar para todos');
+  await z.click('[data-act=ad][data-v=u_ad1]');await z.waitForTimeout(200);const href=await z.getAttribute('#wa-ad','href');
+  ok(href&&href.startsWith('https://wa.me/5514998765432?text='),'Botão do WhatsApp do anúncio real abre a conversa com o dono');
+  ok(!(await z.textContent('.top')).includes('EXEMPLO'),'Anúncio real não leva a etiqueta EXEMPLO');
+  for(const pp of [pg0,c,z]){await pp.goto(`http://localhost:${PORT}/#pescarias`);await pp.waitForTimeout(400);await pp.click(`[data-act=open][data-v="${pid}"]`);await pp.waitForTimeout(200)}}
  // 4. tela: rolagem lateral e tamanho das letras em cada celular
  for(const [i,p] of P.entries()){for(const sub of ['turma','datas','levar','roteiro','contas']){await p.pg.click(`[data-act=sub][data-v=${sub}]`);await p.pg.waitForTimeout(80);
    const r=await p.pg.evaluate(()=>{const over=document.documentElement.scrollWidth>window.innerWidth+1;const small=[];for(const el of document.querySelectorAll('#app *, #nav *')){if(!el.childNodes.length)continue;const own=[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());if(!own)continue;const r=el.getBoundingClientRect();if(!r.width)continue;const fs=parseFloat(getComputedStyle(el).fontSize);if(fs<15)small.push(fs+'px "'+el.textContent.trim().slice(0,30)+'"')}
