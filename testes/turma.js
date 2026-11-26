@@ -124,7 +124,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  ok(Math.abs(Object.values(b).reduce((s,v)=>s+v,0))<1e-6,'Soma dos saldos dá zero (total gasto R$ '+tot.toFixed(2)+')');
  // conferir o que cada um vê como "você deve / tem a receber"
  for(const [i,p] of P.entries()){await refresh(p);await p.pg.click('[data-act=sub][data-v=contas]');const tx=await t(p.pg);const me=await p.pg.evaluate(pid=>JSON.parse(localStorage.getItem('bp_me_'+pid)),pid);const v=b[me];const brl='R$ '+(Math.round(Math.abs(v)*100)/100).toLocaleString('pt-BR',{minimumFractionDigits:2});
-  ok(tx.includes(v>=0?'Você tem a receber':'Você deve')&&tx.includes(brl),p.nome+' vê "'+(v>=0?'tem a receber ':'deve ')+brl+'"'+(tx.includes(brl)?'':' (tela: '+tx.slice(tx.indexOf('Você'),tx.indexOf('Você')+40)+')'))}
+  ok(tx.includes(v>=0?'Você vai receber':'Você precisa pagar')&&tx.includes(brl),p.nome+' vê "'+(v>=0?'vai receber ':'precisa pagar ')+brl+'"'+(tx.includes(brl)?'':' (tela: '+tx.slice(tx.indexOf('Você'),tx.indexOf('Você')+40)+')'))}
  // pix copia e cola
  for(const s of st){const [de,para]=s.k.split('>');const rec=d.pessoas.find(x=>x.id===para);await pg0.click(`[data-act=pixgo][data-v="${s.k}"]`);await pg0.waitForTimeout(150);
   if(rec.pix){const code=await pg0.inputValue('#pixcode');const r=pixOk(code);ok(r.crc&&Number(r.valor)===s.v&&r.chave===rec.pix,'Pix de '+d.pessoas.find(x=>x.id===de).nome+' para '+rec.nome+': código válido, valor R$ '+r.valor+' e chave certos')}
@@ -136,8 +136,8 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  const k0=st[0].k;await pg0.click(`[data-act=pago][data-v="${k0}"]`);await pg0.waitForTimeout(300);ok(DB.pesc[pid].dados.pagos[k0]===true,'Marcar como pago fica salvo');
  // 3b. Explorar (Fase 2): anúncios de exemplo, região e usar roteiro numa pescaria
  await pg0.goto(`http://localhost:${PORT}/#explorar`);await pg0.waitForTimeout(400);
- {const tx=await t(pg0);ok(tx.includes('EXEMPLO')&&!/\-?\d{1,2}\.\d{4,}/.test(tx),'Explorar mostra anúncios marcados como EXEMPLO e nenhuma coordenada')}
- await pg0.selectOption('#reg','Rio Paraná');await pg0.waitForTimeout(150);{const nomes=await pg0.$$eval('[data-act=ad] .t',els=>els.map(e=>e.textContent));ok(nomes.length>0&&nomes.every(n=>/Três Irmãos|Barranco|Zé Dourado|Dourado no Rio|Corredeira/.test(n)),'Filtro de região mostra só o Rio Paraná ('+nomes.length+' anúncios)')}
+ await pg0.screenshot({path:__dirname+'/saida/explorar.png',fullPage:true});{const tx=await t(pg0);ok(tx.includes('EXEMPLO')&&!/\-?\d{1,2}\.\d{4,}/.test(tx),'Explorar mostra anúncios marcados como EXEMPLO e nenhuma coordenada')}
+ await pg0.selectOption('#reg','Rio Paraná');await pg0.waitForTimeout(150);{const nomes=await pg0.$$eval('[data-act=ad]',els=>els.map(e=>e.textContent));ok(nomes.length>0&&nomes.every(n=>/Três Irmãos|Barranco|Zé Dourado|Dourado no Rio|Corredeira/.test(n)),'Filtro de região mostra só o Rio Paraná ('+nomes.length+' anúncios)')}
  await pg0.selectOption('#reg','Todas');await pg0.click('[data-act=ad][data-v=r1]');await pg0.waitForTimeout(150);await pg0.click('[data-act=usead]');await pg0.waitForTimeout(150);
  await pg0.click(`[data-act=addad][data-v="${pid}"]`);await pg0.waitForTimeout(500);
  {const dd=DB.pesc[pid].dados;ok(dd.roteiro.length>=6&&dd.itens.some(i=>i.txt==='Isca artificial'),'Usar roteiro pronto numa pescaria existente: roteiro e lista do que levar entram')}
@@ -163,6 +163,8 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   for(const pp of [pg0,c,z]){await pp.goto(`http://localhost:${PORT}/#pescarias`);await pp.waitForTimeout(400);await pp.click(`[data-act=open][data-v="${pid}"]`);await pp.waitForTimeout(200)}}
  // 3d. perfil, histórico, clima, pontos, diário com foto e avaliação
  {const d0=new Date(Date.now()-40*864e5).toISOString().slice(0,10),d1=new Date(Date.now()-38*864e5).toISOString().slice(0,10),d3=new Date(Date.now()+3*864e5).toISOString().slice(0,10);
+  await pg0.goto(`http://localhost:${PORT}/#perfil`);await pg0.waitForTimeout(700);{const tx=await t(pg0);ok(tx.includes('Assim fica o seu perfil')&&tx.includes('Pintado · 3,1 kg'),'Perfil sem histórico mostra o exemplo com fotos da turma');
+   ok(await pg0.evaluate(()=>[...document.querySelectorAll('img.foto')].filter(i=>i.src.includes('/fotos/')).every(i=>i.naturalWidth>0)),'Fotos da turma carregam');await pg0.screenshot({path:__dirname+'/saida/perfil-exemplo.png',fullPage:true})}
   const mk=(id,dados)=>{DB.pesc[id]={id,dono:org.email,convite:'cv'+id,dados,versao:1,criado:Date.now()};DB.membros.add(id+'|'+org.email)};
   mk('pfeita',{id:'pfeita',nome:'Tucunaré de outubro',local:'Rancho Beira-Tietê · Barra Bonita, SP',inicio:d0,fim:d1,pessoas:[{id:'eu1',nome:'Vinícius'},{id:'ou1',nome:'Carlão'}],datas:[],itens:[],roteiro:[],gastos:[{id:'g1',desc:'Rancho',valor:600,pagou:'eu1',parts:['eu1','ou1']},{id:'g2',desc:'Gelo',valor:40,pagou:'ou1',parts:['eu1','ou1']}],pagos:{},anuncios:['a1']});
   mk('pprox',{id:'pprox',nome:'Corvina de fim de ano',local:'Barra Bonita',inicio:d3,fim:new Date(Date.now()+4*864e5).toISOString().slice(0,10),pessoas:[{id:'eu2',nome:'Vinícius'}],datas:[],itens:[],roteiro:[],gastos:[],pagos:{}});
@@ -213,7 +215,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
    if(r.over)ok(false,p.nome+' ('+r.w+'px) aba '+sub+': tela passa da largura do celular');
    if(r.small.length)results.push('LETRA PEQUENA · '+p.nome+' ('+r.w+'px) aba '+sub+': '+r.small.join(' | '));
    if(r.btn.length)results.push('BOTÃO BAIXO · '+p.nome+' ('+r.w+'px) aba '+sub+': '+r.btn.join(' | '))}
-  await p.pg.screenshot({path:__dirname+'/saida/tela-'+i+'.png',fullPage:false})}
+  await p.pg.screenshot({path:__dirname+'/saida/tela-'+i+'.png',fullPage:false});if(i===0){await p.pg.evaluate(()=>scrollTo(0,0));await p.pg.screenshot({path:__dirname+'/saida/contas-antes.png',fullPage:true})}}
  ok(!errs.length,'Nenhum erro de programa em nenhum celular'+(errs.length?': '+errs.join(' / '):''));
  results.push('Conflitos resolvidos automaticamente: '+log.length);
  console.log(results.join('\n'));fs.writeFileSync(__dirname+'/saida/resultado.txt',results.join('\n'));
