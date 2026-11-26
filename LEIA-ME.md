@@ -6,10 +6,9 @@ Para a turma toda usar, são 3 partes. O Claude faz a parte do código; estas s�
 ## 1. Banco de dados (Supabase, grátis)
 1. Entre em supabase.com e crie um projeto (região: São Paulo). Guarde a senha do banco num lugar seguro, não mande para ninguém.
 2. Menu **SQL Editor** > **New query**: cole todo o arquivo `supabase/schema.sql` e toque em **Run**.
-3. Menu **Authentication** > **Emails** > modelo **Magic Link**: troque o texto por
-   `Seu código para entrar no app de pesca é {{ .Token }}`
-   (assim chega um código de 6 números, mais fácil que link).
-4. **Authentication** > **URL Configuration**: em Site URL, ponha o endereço do app (o Claude passa quando publicar).
+3. (Pulado) No plano grátis o e-mail chega com um link "Sign in" em vez de código. O app já funciona assim.
+   Para usar código de 6 números, é preciso ligar um SMTP próprio e pôr `codigo: true` no `config.js`.
+4. **Authentication** > **URL Configuration**: em Site URL, ponha `https://viniciusquinalia-eng.github.io/app-pesca/` e, em Redirect URLs, `https://viniciusquinalia-eng.github.io/app-pesca/**` (com os dois asteriscos).
 5. **Project Settings** > **API**: mande para o Claude a **Project URL** e a chave **anon public**.
    Nunca mande a chave `service_role` nem a senha do banco.
 

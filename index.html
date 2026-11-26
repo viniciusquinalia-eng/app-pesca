@@ -316,12 +316,14 @@ const conv=S.convidado||ls.get('bp_convite','');
 return `<div style="padding-top:30px"><div class="pic" style="aspect-ratio:16/9">${scene(0,'Piloteiro')}</div>
 <h1>${esc(APP)}</h1>
 <p style="font-size:18px;margin-top:-6px">${conv?'Você foi convidado para uma pescaria. Entre para ver.':'Organize a pescaria com a turma e acerte as contas no Pix.'}</p>
-${S.email?`<h2>Digite o código</h2><p class="m" style="margin-top:0">Mandamos um código de 6 números para <b>${esc(S.email)}</b>. Olhe também no lixo eletrônico.</p>
+${S.email?(CFG.codigo?`<h2>Digite o código</h2><p class="m" style="margin-top:0">Mandamos um código de 6 números para <b>${esc(S.email)}</b>. Olhe também no lixo eletrônico.</p>
 <input id="cod" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" style="font-size:24px;letter-spacing:6px;text-align:center;height:60px">
-<button class="btn full" data-act="confereCodigo" style="margin-top:12px">Entrar</button><button class="btn alt full" data-act="outroEmail" style="margin-top:8px">Usar outro e-mail</button>`
+<button class="btn full" data-act="confereCodigo" style="margin-top:12px">Entrar</button>`:`<h2>Agora abra seu e-mail</h2>
+<div class="box" style="font-size:18px">1. Abra o e-mail <b>${esc(S.email)}</b> <b>neste mesmo celular</b>.<br>2. Procure a mensagem "Your sign-in link" (olhe também no lixo eletrônico).<br>3. Toque em <b>Sign in</b>. O app abre já com você dentro.</div>
+<p class="m">O link vale por pouco tempo e só funciona uma vez. Se não chegar em 2 minutos, peça de novo.</p>`)+`<button class="btn alt full" data-act="outroEmail" style="margin-top:8px">Pedir de novo ou usar outro e-mail</button>`
 :`${CFG.google?`<button class="btn full" data-act="google" style="margin-top:10px;height:58px">Entrar com Google</button>
-<p class="m" style="text-align:center;margin:16px 0 6px">ou receba um código no e-mail</p>`:`<h2>Entre com seu e-mail</h2><p class="m" style="margin-top:0">Vamos mandar um código de 6 números.</p>`}
-<input id="em" type="email" autocomplete="email" placeholder="seu@email.com"><button class="btn ${CFG.google?'alt':''} full" data-act="mandaCodigo" style="margin-top:10px">Mandar código</button>`}
+<p class="m" style="text-align:center;margin:16px 0 6px">ou entre pelo e-mail</p>`:`<h2>Entre com seu e-mail</h2><p class="m" style="margin-top:0">${CFG.codigo?'Vamos mandar um código de 6 números.':'Vamos mandar um link para você entrar, sem senha.'}</p>`}
+<input id="em" type="email" autocomplete="email" placeholder="seu@email.com"><button class="btn ${CFG.google?'alt':''} full" data-act="mandaCodigo" style="margin-top:10px">${CFG.codigo?'Mandar código':'Mandar link de entrada'}</button>`}
 <p class="note">Ao entrar, você concorda com a <a href="privacidade.html" style="color:var(--brand)">política de privacidade</a>. Organizar e dividir as contas é grátis.</p></div>`}
 function vRodape(){
 return `<div style="margin-top:34px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px">
@@ -367,7 +369,7 @@ closeModal();const nid=await store().create(p);if(!nid)return;ls.set('bp_me_'+ni
 else if(a==='souEu'){setMe(S.pid,v);scrollTo(0,0)}
 else if(a==='souNovo'){const n=$('#nq').value.trim();if(!n){$('#nq').focus();return}const nid=uid();setMe(S.pid,nid);change(p=>{p.pessoas.push({id:nid,nome:n,pix:''})})}
 else if(a==='google'){const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)flash('Não deu para entrar com Google agora.')}
-else if(a==='mandaCodigo'){const em=$('#em').value.trim();if(!/^\S+@\S+\.\S+$/.test(em)){flash('Confira o e-mail.');return}el.disabled=true;const {error}=await sb.auth.signInWithOtp({email:em,options:{shouldCreateUser:true}});el.disabled=false;if(error){flash('Não deu para mandar o código. Tente daqui a 1 minuto.');return}S.email=em;render()}
+else if(a==='mandaCodigo'){const em=$('#em').value.trim();if(!/^\S+@\S+\.\S+$/.test(em)){flash('Confira o e-mail.');return}el.disabled=true;const conv=ls.get('bp_convite','');const {error}=await sb.auth.signInWithOtp({email:em,options:{shouldCreateUser:true,emailRedirectTo:location.origin+location.pathname+(conv?'?c='+encodeURIComponent(conv):'')}});el.disabled=false;if(error){flash('Não deu para mandar o código. Tente daqui a 1 minuto.');return}S.email=em;render()}
 else if(a==='confereCodigo'){const tk=$('#cod').value.replace(/\D/g,'');const {error}=await sb.auth.verifyOtp({email:S.email,token:tk,type:'email'});if(error)flash('Código errado ou vencido. Confira o e-mail.')}
 else if(a==='outroEmail'){S.email='';render()}
 else if(a==='sair'){await sb.auth.signOut();P=[];S.pid=null;render()}
@@ -402,6 +404,7 @@ else if(a==='convite'){const p=curP();const txt=`Bora pescar? ${p.nome}${p.local
 else if(a==='delp'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Apagar esta pescaria?</h2><p>Some para toda a turma, com gastos e lista.</p><button class="btn full" data-act="delok" style="background:var(--warn)">Apagar</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
 else if(a==='delok'){store().del(S.pid);S.pid=null;closeModal()}
 });
+(()=>{const q=new URLSearchParams(location.search);const c=q.get('c');if(c){ls.set('bp_convite',c);history.replaceState(null,'',location.pathname+location.hash)}})();
 const route=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=['explorar','pescarias','contas'].includes(h)?h:'pescarias';if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
 addEventListener('hashchange',route);route();
 }
