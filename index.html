@@ -76,7 +76,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:24px 0}
 .av.s{width:36px;height:36px;font-size:15px}
 /* cabeçalho da pescaria */
 .top{position:relative;margin:0 -18px}
-.top .pic{border-radius:0 0 28px 28px;aspect-ratio:16/9}
+.top .pic{border-radius:0 0 28px 28px;aspect-ratio:16/9}.top .pic.adtop{aspect-ratio:4/3}
 .top .back{position:absolute;left:14px;top:14px;margin:0;background:rgba(255,255,255,.92);box-shadow:var(--sh)}
 .title{margin:18px 0 0}
 .title h1{margin:0 0 6px}
@@ -89,7 +89,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:24px 0}
 .li .grow{flex:1}
 .ic{width:48px;height:48px;border-radius:14px;background:var(--brandsoft);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:none;font-weight:800;font-size:15px}
 .nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 8px calc(12px + env(safe-area-inset-bottom));z-index:5}
-.nav a{flex:1 1 0;max-width:150px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px;font-weight:600;color:var(--mute);text-decoration:none;padding:2px 0;min-height:56px}
+.nav a{flex:1 1 0;max-width:150px;min-width:0;white-space:nowrap;letter-spacing:-.01em;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px;font-weight:600;color:var(--mute);text-decoration:none;padding:2px 0;min-height:56px}
 .nav a i{display:flex;align-items:center;justify-content:center;width:60px;height:32px;border-radius:16px;font-style:normal}
 .nav a.on{color:var(--brand)}.nav a.on i{background:var(--brandsoft)}
 .back{width:48px;height:48px;border-radius:24px;border:0;background:var(--soft);display:inline-flex;align-items:center;justify-content:center;margin-top:18px;color:var(--ink)}
@@ -110,6 +110,18 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:24px 0}
 .tipos{display:flex;flex-direction:column;gap:10px;margin:8px 0 6px}.tipo{display:flex;gap:14px;align-items:center;text-align:left;width:100%;padding:16px;border:2px solid var(--line);border-radius:18px;background:#fff;color:inherit;font-size:17px;cursor:pointer;min-height:76px}.tipo b{display:block;font-size:18px}.tipo .m{display:block;font-size:16px}.tipo.on{border-color:var(--brand);background:var(--brandsoft)}.tipo .ti{width:48px;height:48px;border-radius:14px;background:var(--brandsoft);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:none}.tipo.on .ti{background:var(--brand);color:#fff}
 .onb{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:30px 0}.onbic{width:120px;height:120px;border-radius:32px;background:var(--brandsoft);color:var(--brand);display:flex;align-items:center;justify-content:center;margin-bottom:22px}.onbdots{display:flex;gap:8px;margin:10px 0 22px}.onbdots i{width:10px;height:10px;border-radius:50%;background:var(--line)}.onbdots i.on{background:var(--brand);width:28px;border-radius:5px}
 .areas{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}.areab{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid var(--line);border-radius:16px;background:#fff;color:var(--ink,inherit);font-size:16px;font-weight:700;cursor:pointer;min-height:84px}.areab.on{border-color:var(--brand);background:var(--brandsoft);color:var(--brand)}
+.exhead{position:sticky;top:0;z-index:4;background:rgba(255,255,255,.97);margin:0 -20px;padding:10px 20px 6px;border-bottom:1px solid var(--line)}
+.search.big{height:64px;border-radius:32px;justify-content:center;box-shadow:0 6px 20px rgba(16,40,36,.12);border:1px solid var(--line)}.search.big input{text-align:center;font-size:18px;font-weight:600}
+.cats{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:10px -20px 0;padding:0 20px 4px}.cats::-webkit-scrollbar{display:none}
+.catb{flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:84px;padding:6px 8px 8px;border:0;background:none;color:var(--mute);font-size:15px;font-weight:600;border-bottom:3px solid transparent;cursor:pointer}.catb.on{color:var(--brand);border-bottom-color:var(--brand)}
+.hrow{display:flex;align-items:flex-start;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 20px;scrollbar-width:none;margin:0 -20px;padding:4px 20px 6px}.hrow::-webkit-scrollbar{display:none}
+.hcard{flex:0 0 78%;max-width:320px;margin:0;scroll-snap-align:start;cursor:pointer}.hcard .pic{border-radius:18px;aspect-ratio:4/3}.hcard .gal{border-radius:18px}
+.dest .destb{display:flex;flex-direction:column;align-items:stretch;flex:0 0 40%;max-width:170px;border:0;background:none;padding:0;text-align:left;color:inherit;scroll-snap-align:start;cursor:pointer}.dimg{display:block;aspect-ratio:1;border-radius:20px;overflow:hidden;background:var(--brandsoft);margin-bottom:8px}.dimg img{width:100%;height:100%;object-fit:cover;display:block}.destb b{display:block;font-size:17px}.destb .m{font-size:15px}
+.sechead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 0 10px}.sechead h2{margin:0;font-size:21px}.seta{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--brandsoft);color:var(--brand);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.heart{position:absolute;top:10px;right:10px;width:44px;height:44px;border:0;background:none;color:#fff;display:flex;align-items:center;justify-content:center;z-index:3;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5));cursor:pointer}.heart svg{width:30px;height:30px}.heart.on{color:#d64545}.heart.on svg{fill:#d64545}
+.tag.badge{background:rgba(255,255,255,.96);color:#0F5A50;font-weight:700}
+.pira{margin:14px 0 0;background:var(--sunsoft);border-radius:16px;padding:4px 14px}.pira summary{display:flex;gap:10px;align-items:center;min-height:52px;cursor:pointer;font-size:16px;list-style:none}.pira summary::-webkit-details-marker{display:none}.pira p{margin:4px 0 12px;font-size:16px}
+.navav{width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
 .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
 .feat div{border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;font-size:15px;font-weight:600}
 .sticky{position:fixed;left:0;right:0;bottom:84px;background:var(--bg);border-top:1px solid var(--line)}
@@ -191,8 +203,8 @@ const imgF=(u,eager)=>`<img class="foto" src="${esc(u)}" alt="" ${eager?'':'load
 const galSync=g=>{const i=Math.round(g.scrollLeft/Math.max(1,g.clientWidth));const p=g.parentElement;const n=p.querySelector('.galn');if(n)n.textContent=(i+1)+' de '+g.dataset.n;p.querySelectorAll('.dots i').forEach((d,k)=>d.classList.toggle('on',k===i))};
 const cardGal=a=>{const f=adFotos(a,720);if(f.length<2)return picA(a,720);return `<div class="gal" data-k="c_${esc(a.id)}" data-n="${f.length}">${f.map((u,i)=>`<div class="slide">${scene(adIdx(a),a.cat)}${imgF(u,i===0)}</div>`).join('')}</div>`};
 const picA=(a,w)=>{const f=adFotos(a,w);return scene(adIdx(a),a.cat)+(f[0]?imgF(f[0]):'')};
-const galA=a=>{const f=adFotos(a,1000);if(f.length<2)return `<div class="pic">${picA(a,1000)}`;
- return `<div class="pic gal-wrap"><div class="gal" data-k="a_${esc(a.id)}" data-n="${f.length}">${f.map((u,i)=>`<div class="slide">${scene(adIdx(a),a.cat)}${imgF(u,i===0)}</div>`).join('')}</div><button class="galbtn" data-act="gal" data-v="-1" aria-label="Foto anterior" style="left:10px">‹</button><button class="galbtn" data-act="gal" data-v="1" aria-label="Próxima foto" style="right:10px">›</button><span class="galn">1 de ${f.length}</span>`};
+const galA=a=>{const f=adFotos(a,1000);if(f.length<2)return `<div class="pic adtop">${picA(a,1000)}`;
+ return `<div class="pic adtop gal-wrap"><div class="gal" data-k="a_${esc(a.id)}" data-n="${f.length}">${f.map((u,i)=>`<div class="slide">${scene(adIdx(a),a.cat)}${imgF(u,i===0)}</div>`).join('')}</div><button class="galbtn" data-act="gal" data-v="-1" aria-label="Foto anterior" style="left:10px">‹</button><button class="galbtn" data-act="gal" data-v="1" aria-label="Próxima foto" style="right:10px">›</button><span class="galn">1 de ${f.length}</span>`};
 const credA=a=>{if(a.real)return '';const ks=exKeys(a);if(!ks.length)return '';const loc=ks.some(k=>FOTOS[k][0]==='L');const ns=[...new Set(ks.filter(k=>FOTOS[k][0]!=='L'))];if(!ns.length)return `<p class="note" style="margin-top:6px;font-size:16px">Fotos de pescarias da turma do app, só para ilustrar. Não é o local anunciado.</p>`;return `<p class="note" style="margin-top:6px;font-size:16px">${loc?'Fotos da turma do app e de':'Fotos ilustrativas:'} ${ns.map(k=>`<a href="https://unsplash.com/photos/${FOTOS[k][2]}" target="_blank" rel="noopener" style="color:inherit">${esc(FOTOS[k][1])}</a>`).join(', ')} / Unsplash. Não é o local anunciado.</p>`};
 const ADS=[
 {id:'a1',fotos:["por-do-sol-represa", "varas-barranco", "turma-acampamento", "disco-linguica"],pontos:["Galhadas no braço da represa, boas para tucunaré", "Píer do rancho com luz para pesca à noite", "Barranco com sombra para corvina"],foto:'cabana',agua:'represa',reg:T,cat:'Rancho',nome:'Rancho Beira-Tietê',local:'Barra Bonita, SP',km:120,preco:'R$ 650',un:'/dia',sub:'Rancho inteiro, até 8 pessoas',feat:['Píer e rampa','Piloteiro indicado','Freezer e limpeza de peixe'],peixes:'Tucunaré, corvina e tilápia',pil:true,txt:'Casa com 3 quartos, varanda virada para o rio, churrasqueira e lugar para 2 barcos.'},
@@ -302,7 +314,7 @@ async function afterLogin(){
  const pend=ls.get('bp_convite','');
  if(pend){ls.set('bp_convite','');const id=await cloud.join(pend);if(id){S.tab='pescarias';S.pid=id;S.sub='turma';history.replaceState(null,'','#pescarias')}}
  else await cloud.list();
- {const ks=AREAS[area()].map(x=>x[0]);if(!S.pid&&!ks.includes(S.tab)){S.tab=ks[0];history.replaceState(null,'','#'+S.tab)}}
+ {const ks=AREAS[area()].map(x=>x[0]);if(!S.pid&&!ks.includes(S.tab)){S.tab=DEFTAB[area()];history.replaceState(null,'','#'+S.tab)}}
  loadAds();render()}
 
 /* ---------- estado da tela ---------- */
@@ -344,6 +356,12 @@ const waOpen=txt=>{const u='https://wa.me/?text='+encodeURIComponent(txt);const 
 
 /* ---------- ícones ---------- */
 const I={
+heart:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg>',
+grid:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>',
+house:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>',
+bed:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18V6M3 13h18v5M21 18v-3a3 3 0 0 0-3-3h-7v1"/><circle cx="7" cy="10" r="2"/></svg>',
+map:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>',
+arrow:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
 chart:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
 store:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v7h14v-7"/></svg>',
 shield:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
@@ -370,23 +388,43 @@ const falta=d=>d===null?'Sem data':d>1?'Faltam '+d+' dias':d===1?'É amanhã!':d
 const quandoTxt=p=>p.inicio?fmtD(p.inicio)+(p.fim&&p.fim!==p.inicio?' a '+fmtD(p.fim):''):'Data a combinar';
 const kindOf=p=>/rancho|pousada/i.test((p.local||'')+(p.nome||''))?'Rancho':'Piloteiro';
 const idx=id=>{let h=0;for(const ch of String(id))h=(h*31+ch.charCodeAt(0))>>>0;return h%4};
+const DEST=[[T,'Represa de Barra Bonita','Tucunaré e corvina','por-do-sol-represa'],[R,'Rio Paraná','Dourado e pintado','piranha-rio'],[B,'Perto de Bauru','Pesqueiros e bate-volta','piaus']];
+const CATI={'':'grid',Rancho:'house',Pousada:'bed',Piloteiro:'boat',Pesqueiro:'fish',Roteiro:'map',Ponto:'pin'};
+const favs=()=>ls.get('bp_favs',[]);const isFav=id=>favs().includes(id);
+const preferido=a=>{const r=notaDe(a.id);return r&&r.m>=4.5&&r.n>=3};
+const precoTxt=a=>`<b>${esc(a.preco)}</b>${a.un?' por '+esc(a.un.replace('/','')):''}`;
+const heartB=a=>`<button class="heart ${isFav(a.id)?'on':''}" data-act="fav" data-v="${esc(a.id)}" aria-label="${isFav(a.id)?'Tirar dos favoritos':'Guardar nos favoritos'}">${I.heart}</button>`;
+function picCard(a){const n=adFotos(a,10).length;return `<div class="pic">${cardGal(a)}${a.real?(preferido(a)?'<span class="tag badge">Preferido dos pescadores</span>':''):'<span class="tag badge">EXEMPLO</span>'}${heartB(a)}${n>1?`<span class="dots">${Array(n).fill(0).map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</span>`:''}</div>`}
+function cardRow(a){const r=notaDe(a.id);return `<div class="card hcard" role="button" tabindex="0" data-act="ad" data-v="${a.id}">${picCard(a)}<div class="t" style="font-size:18px;margin-top:10px">${esc(a.cat)} · ${esc(cidade(a.local))}</div><div class="m">${esc(a.nome)}</div><div class="m">${precoTxt(a)}${r?` · ★ ${r.m.toFixed(1).replace('.',',')}`:''}</div></div>`}
+function cardList(a){const r=notaDe(a.id);return `<div class="card abcard" role="button" tabindex="0" data-act="ad" data-v="${a.id}">${picCard(a)}
+<div class="abrow"><span class="t">${esc(a.cat)} · ${esc(cidade(a.local))}</span>${r?`<span class="abnota">★ ${r.m.toFixed(1).replace('.',',')} <span class="m">(${r.n})</span></span>`:''}</div><div class="m">${esc(a.nome)}</div><div class="m">${esc(a.sub)}</div>${a.km?`<div class="m">${a.km} km de Bauru</div>`:''}<div class="abprice">${precoTxt(a)}</div></div>`}
+function exHead(){return `<div class="exhead"><label class="search big">${I.search}<input id="q" type="search" placeholder="Para onde vai pescar?" value="${esc(S.q||'')}" aria-label="Buscar rio, cidade, rancho ou peixe"></label>
+<div class="cats">${CATS.map(([l,v])=>`<button class="catb ${(S.cat||'')===v?'on':''}" data-act="cat" data-v="${v}">${I[CATI[v]]}<span>${l}</span></button>`).join('')}</div></div>`}
 function vExplorar(){
 if(S.ex==='form')return vFormAd();if(S.ex==='meus')return vMeus();if(S.ex==='fila')return vFila();
 if(S.ad&&findAd(S.ad))return vAnuncio(findAd(S.ad));
-const q=norm(S.q);const reg=S.reg||'Todas';
-const list=allAds().filter(a=>(reg==='Todas'||a.reg===reg)&&(!S.cat||a.cat===S.cat)&&(!S.pil||a.pil)&&(!q||norm(a.nome+' '+a.local+' '+a.peixes+' '+a.cat).includes(q)));
-return `<p class="eyebrow">Explorar</p><h1>Pra onde vamos pescar?</h1>
-${emPiracema()?`<div class="warnbox" style="margin-bottom:14px">${PIRA_CURTO}</div>`:''}
-<label class="search">${I.search}<input id="q" type="search" placeholder="Rio, rancho ou peixe" value="${esc(S.q)}" aria-label="Buscar"></label>
-<label class="f" for="reg">Região</label><select id="reg" data-act="reg">${REGS.map(r=>`<option ${r===reg?'selected':''}>${esc(r)}</option>`).join('')}</select>
-<div class="chips">${CATS.map(([l,v])=>`<button class="chip ${S.cat===v?'on':''}" data-act="cat" data-v="${v}">${l}</button>`).join('')}<button class="chip ${S.pil?'on':''}" data-act="pil">Com piloteiro</button></div>
-${list.length?list.map(a=>{const r=notaDe(a.id);return `<div class="card abcard" role="button" tabindex="0" data-act="ad" data-v="${a.id}"><div class="pic">${cardGal(a)}${a.real?'':'<span class="tag" style="background:rgba(255,255,255,.95);color:#0F5A50">EXEMPLO</span>'}${adFotos(a,10).length>1?`<span class="dots">${adFotos(a,10).map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</span>`:''}</div>
-<div class="abrow"><span class="t">${esc(a.local)}</span>${r?`<span class="abnota">★ ${r.m.toFixed(1).replace('.',',')} <span class="m">(${r.n})</span></span>`:''}</div><div class="m">${esc(a.cat)} · ${esc(a.nome)}</div><div class="m">${esc(a.sub)}</div>${a.km?`<div class="m">${a.km} km de Bauru</div>`:''}<div class="abprice"><b>${esc(a.preco)}</b> ${esc(a.un.replace('/',''))}</div></div>`}).join(''):`<div class="box">Nada encontrado. Tente outra região ou tire um filtro.</div>`}
-<p class="note">Anúncios com a etiqueta <b>EXEMPLO</b> têm nomes inventados e preços de referência, só para testar o app.</p>
-<div class="share"><h2>Tem rancho, pousada, pesqueiro ou é piloteiro?</h2><p class="m" style="margin:0 0 14px">Anuncie grátis. O anúncio aparece aqui depois de aprovado.</p>
+const q=norm(S.q||'');const reg=S.reg||'Todas';
+const filtro=!!(q||S.cat||S.pil||reg!=='Todas');
+const list=allAds().filter(a=>(reg==='Todas'||a.reg===reg)&&(!S.cat||a.cat===S.cat)&&(!S.pil||a.pil)&&(!q||norm(a.nome+' '+a.local+' '+a.peixes+' '+a.cat+' '+a.reg).includes(q)));
+const pira=emPiracema()?`<details class="pira"><summary>${I.fish}<span><b>Piracema até 28 de fevereiro.</b> Toque para ver o que pode.</span></summary><p>${PIRA_CURTO}</p></details>`:'';
+const anunciar=`<div class="share"><h2>Tem rancho, pousada, pesqueiro ou é piloteiro?</h2><p class="m" style="margin:0 0 14px">Anuncie grátis. O anúncio aparece aqui depois de aprovado.</p>
 <button class="btn full" data-act="anunciar">${I.plus}Anunciar grátis</button>
 ${MEUS.length?`<button class="btn alt full" data-act="meus" style="margin-top:8px;background:#fff">Meus anúncios (${MEUS.length})</button>`:''}
-${ADMIN?`<button class="btn alt full" data-act="fila" style="margin-top:8px;background:#fff">Aprovar anúncios (${FILA.length})</button>`:''}</div>`}
+${ADMIN?`<button class="btn alt full" data-act="fila" style="margin-top:8px;background:#fff">Aprovar anúncios (${FILA.length})</button>`:''}</div>
+<p class="note">Anúncios com a etiqueta <b>EXEMPLO</b> têm nomes inventados e preços de referência, só para mostrar como o app funciona.</p>`;
+if(filtro){const titulo=reg!=='Todas'?(DEST.find(d=>d[0]===reg)||[0,reg])[1]:S.cat?(CATS.find(c=>c[1]===S.cat)||['Resultados'])[0]:'Resultados';
+ return exHead()+pira+`<div class="row" style="margin:18px 0 0;align-items:center"><h2 style="margin:0">${esc(titulo)}</h2><button class="btn sm alt" data-act="limpafiltro">Limpar</button></div>
+<p class="m" style="margin:4px 0 0">${list.length} ${list.length===1?'lugar':'lugares'}${q?' para "'+esc(S.q)+'"':''}</p>
+${list.length?list.map(cardList).join(''):`<div class="box" style="margin-top:14px">Nada encontrado. Tente outra palavra ou toque em Limpar.</div>`}${anunciar}`}
+const lugares=a=>a.cat!=='Roteiro'&&a.cat!=='Ponto';
+const sec=(tit,itens,act,v)=>itens.length?`<div class="sechead"><h2>${tit}</h2>${act?`<button class="seta" data-act="${act}" data-v="${esc(v)}" aria-label="Ver todos">${I.arrow}</button>`:''}</div><div class="hrow">${itens.map(cardRow).join('')}</div>`:'';
+return exHead()+pira+`<h2 style="margin-top:22px">Destinos para você</h2><div class="hrow dest">${DEST.map(([k,n,d,f])=>`<button class="destb" data-act="dest" data-v="${esc(k)}"><span class="dimg"><img src="${fotoUrl(f,720)}" alt="" loading="lazy"></span><b>${esc(n)}</b><span class="m">${esc(d)}</span></button>`).join('')}</div>
+${DEST.map(([k,n])=>sec(`Ranchos e pousadas · ${n}`,allAds().filter(a=>a.reg===k&&lugares(a)),'dest',k)).join('')}
+${sec('Roteiros prontos',allAds().filter(a=>a.cat==='Roteiro'),'cat','Roteiro')}
+${sec('Dicas de pontos de pesca',allAds().filter(a=>a.cat==='Ponto'),'cat','Ponto')}
+${anunciar}`}
+function vFavs(){const fs=favs().map(id=>findAd(id)).filter(Boolean);
+return `<p class="eyebrow">Favoritos</p><h1>Lugares guardados</h1>${fs.length?fs.map(cardList).join(''):`<div class="box" style="margin-top:14px;font-size:18px">Toque no ${I.heart.replace('width="22" height="22"','width="20" height="20" style="vertical-align:-4px"')} de um anúncio para guardar aqui e achar fácil depois.</div><a class="btn full" href="#explorar" style="margin-top:14px;text-decoration:none">${I.search}Explorar lugares</a>`}`}
 
 const STATUS={pendente:['Esperando aprovação','var(--sun)','#3a2a00'],aprovado:['Aprovado, já aparece','var(--brand)','#fff'],recusado:['Recusado','var(--warn)','#fff']};
 const stPill=st=>{const [t,bg,fg]=STATUS[st]||STATUS.pendente;return `<span style="display:inline-block;background:${bg};color:${fg};font-weight:700;font-size:15px;padding:4px 12px;border-radius:999px">${t}</span>`};
@@ -528,7 +566,7 @@ return `<div class="modal" data-act="mclose"><div class="sheet" role="dialog" ar
 
 function vLogin(){
 const conv=S.convidado||ls.get('bp_convite','');
-return `<div style="padding-top:30px"><div class="pic" style="aspect-ratio:16/9">${scene(0,'Piloteiro')}</div>
+return `<div style="padding-top:30px"><div class="pic" style="aspect-ratio:4/3">${scene(0,'Piloteiro')}<img class="foto" src="fotos/g/por-do-sol-represa.jpg" alt=""></div>
 <h1>${esc(APP)}</h1>
 <p style="font-size:18px;margin-top:-6px">${conv?'Você foi convidado para uma pescaria. Entre para ver.':'Organize a pescaria com a turma e acerte as contas no Pix.'}</p>
 ${S.email?(CFG.codigo?`<h2>Agora olhe seu e-mail</h2><p style="margin-top:0">Mandamos um e-mail para <b>${esc(S.email)}</b> (olhe também no lixo eletrônico). Nele tem um <b>código de números</b>. Digite aqui:</p>
@@ -660,12 +698,12 @@ function modalAvaliar(id){const a=findAd(id);if(!a)return;const L=LUG[id]||{aval
  <label class="f" for="av-txt">Comentário</label><textarea id="av-txt" maxlength="600" style="width:100%;height:100px;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;font-size:17px" placeholder="Como foi a pesca, a estrutura, o atendimento…">${esc(mi.comentario||'')}</textarea>
  <button class="btn full" data-act="salvaraval" data-v="${esc(id)}" style="margin-top:12px">Enviar avaliação</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
 /* ---------- áreas: pescador, anunciante, administrador ---------- */
-const AREAS={pescador:[['pescarias','Pescarias','boat'],['contas','Contas','cash'],['explorar','Explorar','search'],['perfil','Perfil','user']],
+const AREAS={pescador:[['explorar','Explorar','search'],['favoritos','Favoritos','heart'],['pescarias','Pescarias','boat'],['contas','Contas','cash'],['perfil','Perfil','user']],
  dono:[['painel','Painel','chart'],['anuncios','Anúncios','store'],['explorar','Explorar','search'],['perfil','Perfil','user']],
  admin:[['admin','Painel','shield'],['explorar','Explorar','search'],['pescarias','Pescarias','boat'],['perfil','Perfil','user']]};
-const TABS=['pescarias','contas','explorar','perfil','painel','anuncios','admin'];
+const TABS=['pescarias','contas','explorar','perfil','painel','anuncios','admin','favoritos'];const DEFTAB={pescador:'pescarias',dono:'painel',admin:'admin'};
 const area=()=>{const a=ls.get('bp_area','pescador');return a==='admin'&&!ADMIN?'pescador':AREAS[a]?a:'pescador'};
-const setArea=(a,manual)=>{PDO=null;PAD=null;ls.set('bp_area',a);if(manual)ls.set('bp_area_manual',1);S.tab=AREAS[a][0][0];S.pid=null;S.ad=null;S.ex=null;S.pv=null;S.av=null;history.replaceState(null,'','#'+S.tab);render();scrollTo(0,0)};
+const setArea=(a,manual)=>{PDO=null;PAD=null;ls.set('bp_area',a);if(manual)ls.set('bp_area_manual',1);S.tab=DEFTAB[a];S.pid=null;S.ad=null;S.ex=null;S.pv=null;S.av=null;history.replaceState(null,'','#'+S.tab);render();scrollTo(0,0)};
 function vTrocaArea(){const temAds=MEUS.length>0;const op=[['pescador','Pescador','fish'],['dono','Anunciante','store']].concat(ADMIN?[['admin','Administrador','shield']]:[]);
  return `<h2>Área do app</h2><p class="m" style="margin-top:-4px">Você pode trocar quando quiser.</p><div class="areas">${op.map(([k,l,i])=>`<button class="areab ${area()===k?'on':''}" data-act="area" data-v="${k}">${I[i]}<span>${l}</span></button>`).join('')}</div>`}
 const ONB={pescador:[['boat','Organize a pescaria','Crie a pescaria, chame a turma pelo WhatsApp e combine data, roteiro e quem leva o quê.'],['cash','Divida as contas sem briga','Cada um lança o que pagou. O app diz quem paga quem e gera o Pix.'],['fish','Descubra e registre','Ache ranchos, pousadas e piloteiros, veja a previsão do tempo e guarde seus peixes no diário.']],
@@ -733,11 +771,11 @@ function render(){try{renderInner()}catch(e){console.error(e);const a=$('#app');
 const onbAtivo=()=>mode==='cloud'&&!!user&&area()!=='admin'&&!ls.get('bp_onb_'+area(),false);
 function vAnuncios(){if(S.ex==='form')return vFormAd();return vMeus(true)}
 let LASTH='';window.__render=()=>render();window.__rerender=()=>{LASTH='';render()};
-function fixNav(){$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=AREAS[area()].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}"${S.tab===k?' aria-current="page"':''}><i>${I[i]}</i>${l}</a>`).join('');if(onbAtivo())$('#nav').style.display='none';}
+function fixNav(){$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=AREAS[area()].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}"${S.tab===k?' aria-current="page"':''}><i>${i==='user'&&user?`<span class="navav">${esc((ls.get('bp_nome','')||user.email||'?').trim().charAt(0).toUpperCase())}</span>`:I[i]}</i>${l}</a>`).join('');if(onbAtivo())$('#nav').style.display='none';}
 function renderInner(){
 const app=$('#app');if(!app)return;
 const fx=document.activeElement&&document.activeElement.id;
-let h=!authReady?SPLASH():(mode==='cloud'&&!user)?vLogin():onbAtivo()?vOnb(area()):S.tab==='explorar'?vExplorar():S.tab==='pescarias'?vPescarias():S.tab==='perfil'?vPerfil():S.tab==='painel'?vDono(true):S.tab==='anuncios'?vAnuncios():S.tab==='admin'?(S.av==='fila'?vFila():vAdmin(true)):vContas();
+let h=!authReady?SPLASH():(mode==='cloud'&&!user)?vLogin():onbAtivo()?vOnb(area()):S.tab==='explorar'?vExplorar():S.tab==='pescarias'?vPescarias():S.tab==='perfil'?vPerfil():S.tab==='favoritos'?vFavs():S.tab==='painel'?vDono(true):S.tab==='anuncios'?vAnuncios():S.tab==='admin'?(S.av==='fila'?vFila():vAdmin(true)):vContas();
 if(flashMsg)h+=`<div class="warnbox" role="status" style="position:fixed;left:18px;right:18px;bottom:96px;max-width:484px;margin:0 auto;z-index:8">${esc(flashMsg)}</div>`;
 /* guarda o que a pessoa está digitando, para uma atualização da tela não apagar */
 const keep={};if(!window.__limpar)app.querySelectorAll('input[id]:not([type=file]),select[id]:not([data-act])').forEach(el=>{if(el.type!=='checkbox'&&el.value)keep[el.id]=el.value});
@@ -847,9 +885,12 @@ else if(a==='responder'){openModal(`<div class="modal" data-act="mclose"><div cl
 else if(a==='salvaresp'){const {error}=await sb.rpc('responder_avaliacao',{p_id:v,p_resposta:($('#rsp').value||'').trim()});if(error){flash('Não deu agora.');return}closeModal();if(S.ad)lugarDados(S.ad,true)}
 else if(a==='gal'){const g=el.parentElement.querySelector('.gal');if(g)g.scrollBy({left:Number(v)*g.clientWidth,behavior:'smooth'})}
 else if(a==='rmfad'){ADF.splice(Number(v),1);render()}
+else if(a==='fav'){const f=favs();const k=f.indexOf(v);if(k>=0)f.splice(k,1);else f.push(v);ls.set('bp_favs',f);render();flash(k>=0?'Tirado dos favoritos.':'Guardado nos favoritos.')}
+else if(a==='dest'){S.reg=v;S.cat='';render();scrollTo(0,0)}
+else if(a==='limpafiltro'){S.reg='Todas';S.cat='';S.q='';S.pil=false;render();scrollTo(0,0)}
 else if(a==='area'){setArea(v,true)}
 else if(a==='tipo'){ls.set('bp_area',v);render()}
-else if(a==='onbnext'){const st=ONB[area()]||[];if((S.onb||0)>=st.length-1){ls.set('bp_onb_'+area(),true);S.onb=0;const ks=AREAS[area()].map(x=>x[0]);if(!ks.includes(S.tab)){S.tab=ks[0];history.replaceState(null,'','#'+S.tab)}}else S.onb=(S.onb||0)+1;render();scrollTo(0,0)}
+else if(a==='onbnext'){const st=ONB[area()]||[];if((S.onb||0)>=st.length-1){ls.set('bp_onb_'+area(),true);S.onb=0;const ks=AREAS[area()].map(x=>x[0]);if(!ks.includes(S.tab)){S.tab=DEFTAB[area()];history.replaceState(null,'','#'+S.tab)}}else S.onb=(S.onb||0)+1;render();scrollTo(0,0)}
 else if(a==='onbskip'){ls.set('bp_onb_'+area(),true);S.onb=0;render();scrollTo(0,0)}
 else if(a==='painel'){S.pv=v;if(v==='admin')PAD=null;if(v==='dono')PDO=null;render();scrollTo(0,0)}
 else if(a==='padre'){PAD=null;render()}
@@ -899,7 +940,7 @@ else if(a==='delp'){openModal(`<div class="modal" data-act="mclose"><div class="
 else if(a==='delok'){store().del(S.pid);S.pid=null;closeModal()}
 });
 (()=>{const q=new URLSearchParams(location.search);const c=q.get('c');if(c){ls.set('bp_convite',c);history.replaceState(null,'',location.pathname+location.hash)}})();
-const route0=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=TABS.includes(h)?h:AREAS[area()][0][0];if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
+const route0=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=TABS.includes(h)?h:DEFTAB[area()];if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
 const route=()=>{route0();if(S.tab==='explorar'){S.ex=S.ex||null;loadAds()}};
 addEventListener('hashchange',route);route();
 }

@@ -148,8 +148,8 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
  // 3b. Explorar (Fase 2): anúncios de exemplo, região e usar roteiro numa pescaria
  await pg0.goto(`http://localhost:${PORT}/#explorar`);await pg0.waitForTimeout(400);
  await pg0.screenshot({path:__dirname+'/saida/explorar.png',fullPage:true});{const tx=await t(pg0);ok(tx.includes('EXEMPLO')&&!/\-?\d{1,2}\.\d{4,}/.test(tx),'Explorar mostra anúncios marcados como EXEMPLO e nenhuma coordenada')}
- await pg0.selectOption('#reg','Rio Paraná');await pg0.waitForTimeout(150);{const nomes=await pg0.$$eval('[data-act=ad]',els=>els.map(e=>e.textContent));ok(nomes.length>0&&nomes.every(n=>/Três Irmãos|Barranco|Zé Dourado|Dourado no Rio|Corredeira/.test(n)),'Filtro de região mostra só o Rio Paraná ('+nomes.length+' anúncios)')}
- await pg0.selectOption('#reg','Todas');await pg0.click('[data-act=ad][data-v=r1]');await pg0.waitForTimeout(150);await pg0.click('[data-act=usead]');await pg0.waitForTimeout(150);
+ await pg0.click('[data-act=dest][data-v="Rio Paraná"]');await pg0.waitForTimeout(150);{const nomes=await pg0.$$eval('[data-act=ad]',els=>els.map(e=>e.textContent));ok(nomes.length>0&&nomes.every(n=>/Três Irmãos|Barranco|Zé Dourado|Dourado no Rio|Corredeira/.test(n)),'Filtro de região mostra só o Rio Paraná ('+nomes.length+' anúncios)')}
+ await pg0.click('[data-act=limpafiltro]');await pg0.waitForTimeout(150);await pg0.click('[data-act=ad][data-v=r1]');await pg0.waitForTimeout(150);await pg0.click('[data-act=usead]');await pg0.waitForTimeout(150);
  await pg0.click(`[data-act=addad][data-v="${pid}"]`);await pg0.waitForTimeout(500);
  {const dd=DB.pesc[pid].dados;ok(dd.roteiro.length>=6&&dd.itens.some(i=>i.txt==='Isca artificial'),'Usar roteiro pronto numa pescaria existente: roteiro e lista do que levar entram')}
  ok((await t(pg0)).includes('cai na piracema'),'Pescaria em janeiro mostra o aviso de piracema')
@@ -221,13 +221,13 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   await z.goto(`http://localhost:${PORT}/#pescarias`);await z.waitForTimeout(400);await z.click(`[data-act=open][data-v="${pid}"]`);await z.waitForTimeout(200)}
  // 3e. fotos: carrossel nos cards e tela que não pisca
  {await pg0.goto(`http://localhost:${PORT}/#explorar`);await pg0.waitForTimeout(500);
-  ok((await pg0.$$('.abcard .gal')).length>=5,'Cards do Explorar têm carrossel de fotos');
-  const g0=await pg0.$('.abcard .gal');await g0.evaluate(g=>{g.scrollLeft=g.clientWidth});await pg0.waitForTimeout(300);
-  ok(await pg0.evaluate(()=>document.querySelector('.abcard .dots i:nth-child(2)').classList.contains('on')),'Deslizar a foto no card muda a bolinha');
-  await pg0.evaluate(()=>{window.__img=document.querySelector('.abcard .gal .slide')});await pg0.evaluate(()=>window.__render());await pg0.waitForTimeout(100);
-  ok(await pg0.evaluate(()=>window.__img===document.querySelector('.abcard .gal .slide')),'Atualizar sem mudança não refaz a tela (sem piscar)');
+  ok((await pg0.$$('.hcard .gal')).length>=5,'Cards do Explorar têm carrossel de fotos');
+  const g0=await pg0.$('.hcard .gal');await g0.evaluate(g=>{g.scrollLeft=g.clientWidth});await pg0.waitForTimeout(300);
+  ok(await pg0.evaluate(()=>document.querySelector('.hcard .dots i:nth-child(2)').classList.contains('on')),'Deslizar a foto no card muda a bolinha');
+  await pg0.evaluate(()=>{window.__img=document.querySelector('.hcard .gal .slide')});await pg0.evaluate(()=>window.__render());await pg0.waitForTimeout(100);
+  ok(await pg0.evaluate(()=>window.__img===document.querySelector('.hcard .gal .slide')),'Atualizar sem mudança não refaz a tela (sem piscar)');
   await pg0.evaluate(()=>window.__rerender());await pg0.waitForTimeout(100);
-  ok(await pg0.evaluate(()=>document.querySelector('.abcard .gal').scrollLeft>0),'Quando a tela é refeita, a foto continua onde estava');
+  ok(await pg0.evaluate(()=>document.querySelector('.hcard .gal').scrollLeft>0),'Quando a tela é refeita, a foto continua onde estava');
   await pg0.goto(`http://localhost:${PORT}/#pescarias`);await pg0.waitForTimeout(400);await pg0.click(`[data-act=open][data-v="${pid}"]`);await pg0.waitForTimeout(200)}
  // 3f. entrada profissional: tipo de conta, apresentação, áreas e painéis
  {const ctx=await B.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'pt-BR'});await ctx.exposeFunction('__rpc',(u,nm,a)=>rpc(u,nm,a));await ctx.exposeFunction('__upload',(p,d)=>{FOTOS[p]=d;return true});
