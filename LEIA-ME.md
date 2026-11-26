@@ -1,4 +1,4 @@
-# App de Pesca: como ligar o app (passo a passo)
+# Turma da Pesca: como ligar o app (passo a passo)
 
 O app já funciona em **modo de teste** (salvo só no aparelho) enquanto o banco não está ligado.
 Para a turma toda usar, são 3 partes. O Claude faz a parte do código; estas são as que precisam de você.

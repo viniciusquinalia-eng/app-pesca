@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>App de Pesca</title>
+<title>Turma da Pesca</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0F5A50">
 <meta name="color-scheme" content="light">
@@ -16,62 +16,108 @@
    COLOUR and TYPE: branco, verde-rio #0F5A50 dominante, amarelo-tucunaré só em detalhes; Inter
    LAYOUT: coluna de celular, menu de 3 abas embaixo, um assunto por tela */
 :root{color-scheme:light;
---bg:#ffffff;--card:#ffffff;--soft:#f2f1ec;
---ink:#0b2e33;--mute:#5f6b69;--line:#ecebe5;
---brand:#0f5a50;--onbrand:#ffffff;--sun:#f2b035;--warn:#a9470f;--warnbg:#fbe6d3}
-
+--bg:#ffffff;--card:#ffffff;--soft:#f4f6f5;--soft2:#eef2f0;
+--ink:#0b2e33;--ink2:#2c4a4e;--mute:#5a6b68;--line:#e4eae8;
+--brand:#0f5a50;--brand2:#0b463e;--brandsoft:#e6f0ed;--onbrand:#ffffff;--sun:#f2b035;--sunsoft:#fdf1d6;
+--warn:#a33f0b;--warnbg:#fdeee3;--wa:#1d7a4c;
+--sh:0 1px 2px rgba(11,46,51,.05),0 6px 20px rgba(11,46,51,.07);--r:22px}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
-#app{max-width:520px;margin:0 auto;min-height:100vh;padding:0 18px 110px}
-h1{font-size:30px;line-height:1.1;letter-spacing:-.02em;margin:26px 0 18px;font-weight:800;text-wrap:balance}
-h2{font-size:19px;margin:26px 0 10px;font-weight:700}
-button,input,select{font:inherit;color:inherit}
-button{cursor:pointer}
-.btn{height:52px;padding:0 22px;border-radius:14px;border:0;background:var(--brand);color:var(--onbrand);font-weight:700;font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.btn.alt{background:var(--soft);color:var(--ink)}.btn.full{width:100%}.btn.sm{height:48px;padding:0 16px;font-size:16px;border-radius:12px}
-.btn.wa{background:#1f7a4d;color:#fff}
-.btn:focus-visible,.chip:focus-visible,.card:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
-input,select{width:100%;height:50px;border:1px solid var(--line);border-radius:12px;padding:0 14px;background:var(--card);font-size:16px}
-label.f{display:block;font-size:16px;color:var(--mute);margin:12px 0 6px}
-.search{display:flex;align-items:center;gap:10px;height:56px;border-radius:28px;padding:0 18px;background:var(--card);box-shadow:0 2px 12px rgba(11,46,51,.13)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 Inter,system-ui,sans-serif;overflow-x:clip;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+#app{max-width:520px;margin:0 auto;min-height:100vh;padding:0 18px 120px}
+h1{font-size:32px;line-height:1.08;letter-spacing:-.03em;margin:22px 0 16px;font-weight:800;text-wrap:balance}
+h2{font-size:20px;letter-spacing:-.01em;margin:28px 0 12px;font-weight:700}
+.eyebrow{font-size:15px;font-weight:600;color:var(--mute);margin:26px 0 -14px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{min-height:56px;padding:0 22px;border-radius:16px;border:0;background:var(--brand);color:var(--onbrand);font-weight:700;font-size:17px;display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:transform .08s,background .15s}
+.btn:active{transform:scale(.98)}
+.btn.alt{background:var(--soft);color:var(--ink)}.btn.full{width:100%}
+.btn.ghost{background:none;color:var(--warn);min-height:52px}
+.btn.sm{min-height:48px;padding:0 18px;font-size:16px;border-radius:14px}
+.btn.wa{background:var(--wa);color:#fff}
+.btn[disabled]{opacity:.45}
+.btn:focus-visible,.chip:focus-visible,.card:focus-visible,input:focus-visible,select:focus-visible,.back:focus-visible,.check:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+input,select{width:100%;height:56px;border:1.5px solid var(--line);border-radius:14px;padding:0 16px;background:var(--card);font-size:17px;transition:border-color .15s}
+input:focus,select:focus{border-color:var(--brand);outline:none}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--brand)}
+label.f{display:block;font-size:16px;font-weight:600;color:var(--ink2);margin:16px 0 8px}
+.search{display:flex;align-items:center;gap:10px;height:58px;border-radius:29px;padding:0 20px;background:var(--card);box-shadow:var(--sh);border:1px solid var(--line)}
 .search input{border:0;height:auto;padding:0;background:transparent;outline:none}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:16px 0 4px;scrollbar-width:none}
-.chip{flex:none;height:48px;padding:0 18px;border-radius:24px;border:1px solid var(--line);background:var(--card);font-size:16px;font-weight:600}
-.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.card{display:block;width:100%;text-align:left;border:0;background:none;padding:0;margin:18px 0 6px}
-.pic{border-radius:20px;overflow:hidden;position:relative;aspect-ratio:16/10;background:#f4c46e}
+.chip{flex:none;min-height:48px;padding:0 18px;border-radius:24px;border:0;background:var(--soft);font-size:16px;font-weight:600;color:var(--ink2)}
+.chip.on{background:var(--brand);color:var(--onbrand)}
+.card{display:block;width:100%;text-align:left;border:0;background:none;padding:0;margin:18px 0 6px;color:inherit}
+.pic{border-radius:var(--r);overflow:hidden;position:relative;aspect-ratio:16/10;background:#f4c46e}
 .pic svg{position:absolute;inset:0;width:100%;height:100%}
-.tag{position:absolute;left:12px;top:12px;background:#fff;color:#0b2e33;font-size:15px;font-weight:700;padding:5px 11px;border-radius:14px}
+.tag{position:absolute;left:12px;top:12px;background:#fff;color:#0b2e33;font-size:15px;font-weight:700;padding:6px 12px;border-radius:14px}
 .row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-top:10px}
-.t{font-size:18px;font-weight:700}.m{color:var(--mute);font-size:16px}.price{font-weight:700;white-space:nowrap}
+.t{font-size:18px;font-weight:700;letter-spacing:-.01em}.m{color:var(--mute);font-size:16px}.price{font-weight:700;white-space:nowrap}
 .note{font-size:15px;color:var(--mute);margin:14px 0 0}
-.box{background:var(--soft);border-radius:16px;padding:14px 16px;margin:12px 0}
-.warnbox{background:var(--warnbg);color:var(--warn);border-radius:14px;padding:12px 14px;font-size:16px;margin-top:14px}
-.hero{background:var(--brand);color:var(--onbrand);border-radius:24px;padding:22px;margin:4px 0 8px}
-.hero .big{font-size:38px;font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:4px 0}
-.list{border-top:1px solid var(--line)}
-.li{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.box{background:var(--soft);border-radius:18px;padding:16px 18px;margin:12px 0}
+.warnbox{background:var(--warnbg);color:var(--warn);border-radius:16px;padding:14px 16px;font-size:16px;margin-top:14px}
+.money,.big,.num{font-variant-numeric:tabular-nums}
+/* cartão de pescaria */
+.pcard{background:var(--card);border-radius:26px;box-shadow:var(--sh);border:1px solid var(--line);overflow:hidden}
+.pcard .pic{border-radius:0;aspect-ratio:16/7}
+.pcard .body{padding:16px 18px 18px}
+.count{position:absolute;left:14px;bottom:14px;background:var(--sun);color:#3a2a00;font-weight:800;font-size:16px;padding:7px 14px;border-radius:999px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;color:var(--mute);font-size:16px;margin-top:2px}
+.faces{display:flex;align-items:center;margin-top:14px}
+.faces .av{margin-left:-8px;box-shadow:0 0 0 3px #fff}.faces .av:first-child{margin-left:0}
+.faces span.m{margin-left:10px}
+.av{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;font-weight:800;font-size:17px;color:#fff}
+.av.s{width:36px;height:36px;font-size:15px}
+/* cabeçalho da pescaria */
+.top{position:relative;margin:0 -18px}
+.top .pic{border-radius:0 0 28px 28px;aspect-ratio:16/9}
+.top .back{position:absolute;left:14px;top:14px;margin:0;background:rgba(255,255,255,.92);box-shadow:var(--sh)}
+.title{margin:18px 0 0}
+.title h1{margin:0 0 6px}
+/* abas da pescaria */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 6px}
+/* listas agrupadas */
+.list{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.li{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
 .li .grow{flex:1}
-.ic{width:46px;height:46px;border-radius:23px;background:var(--soft);display:flex;align-items:center;justify-content:center;flex:none;font-weight:800}
-.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
-.nav{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 8px calc(14px + env(safe-area-inset-bottom))}
-.nav a{flex:0 1 150px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:15px;color:var(--mute);text-decoration:none;padding:4px 0;min-height:52px}
-.nav a.on{color:var(--brand);font-weight:700}
-.back{width:44px;height:44px;border-radius:22px;border:0;background:var(--soft);display:inline-flex;align-items:center;justify-content:center;margin-top:18px}
+.ic{width:48px;height:48px;border-radius:14px;background:var(--brandsoft);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:none;font-weight:800;font-size:15px}
+.nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 8px calc(12px + env(safe-area-inset-bottom));z-index:5}
+.nav a{flex:0 1 150px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px;font-weight:600;color:var(--mute);text-decoration:none;padding:2px 0;min-height:56px}
+.nav a i{display:flex;align-items:center;justify-content:center;width:60px;height:32px;border-radius:16px;font-style:normal}
+.nav a.on{color:var(--brand)}.nav a.on i{background:var(--brandsoft)}
+.back{width:48px;height:48px;border-radius:24px;border:0;background:var(--soft);display:inline-flex;align-items:center;justify-content:center;margin-top:18px;color:var(--ink)}
 .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
-.feat div{border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;font-size:14px;font-weight:600}
-.sticky{position:fixed;left:0;right:0;bottom:78px;background:var(--bg);border-top:1px solid var(--line)}
+.feat div{border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;font-size:15px;font-weight:600}
+.sticky{position:fixed;left:0;right:0;bottom:84px;background:var(--bg);border-top:1px solid var(--line)}
 .sticky>div{max-width:520px;margin:0 auto;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.check{width:44px;height:44px;border-radius:10px;border:2px solid var(--brand);background:none;flex:none;display:flex;align-items:center;justify-content:center;color:var(--onbrand)}
-.check.on{background:var(--brand)}
-.x{border:0;background:none;color:var(--mute);font-size:26px;width:48px;height:48px}
-.money{font-weight:700;white-space:nowrap}
+.check{width:44px;height:44px;border-radius:12px;border:2px solid #b9c9c5;background:#fff;flex:none;display:flex;align-items:center;justify-content:center;color:var(--onbrand)}
+.check.on{background:var(--brand);border-color:var(--brand)}
+.x{border:0;background:none;color:var(--mute);font-size:26px;width:48px;height:48px;border-radius:24px;flex:none}
+.money{font-weight:800;white-space:nowrap}
 .pill{font-size:15px;font-weight:700;color:var(--brand)}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:9}
-.sheet{background:var(--bg);width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:22px 18px 30px;max-height:90vh;overflow:auto}
-textarea.code{width:100%;height:110px;border-radius:12px;border:1px solid var(--line);padding:12px;font:14px/1.4 ui-monospace,monospace;background:var(--soft);color:var(--ink);overflow-wrap:anywhere}
-.status{font-size:15px;color:var(--mute);text-align:center;margin-top:8px}
+/* contas */
+.saldo{background:var(--brand);color:var(--onbrand);border-radius:26px;padding:22px 22px 20px;margin:16px 0 4px}
+.saldo .lbl{display:inline-flex;align-items:center;gap:8px;font-weight:600;opacity:.92}
+.saldo .lbl:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--sun)}
+.saldo .big{font-size:42px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:6px 0 4px}
+.saldo .sub{opacity:.85;font-size:16px}
+.tr{padding:16px}
+.tr .who{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tr .arrow{color:var(--mute)}
+.tr .acts{display:flex;gap:8px;margin-top:12px}.tr .acts .btn{flex:1}
+.tr.pago .who,.tr.pago .money{opacity:.5}
+.hero{background:var(--brand);color:var(--onbrand);border-radius:26px;padding:22px;margin:4px 0 8px}
+.hero .big{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:4px 0}
+.share{background:var(--brandsoft);border-radius:var(--r);padding:18px;margin-top:28px}
+.share h2{margin:0 0 4px}
+.modal{position:fixed;inset:0;background:rgba(6,24,22,.5);display:flex;align-items:flex-end;justify-content:center;z-index:9}
+.sheet{background:var(--bg);width:100%;max-width:520px;border-radius:28px 28px 0 0;padding:12px 20px 30px;max-height:90vh;overflow:auto}
+.sheet:before{content:"";display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 14px}
+textarea.code{width:100%;height:110px;border-radius:14px;border:1.5px solid var(--line);padding:12px;font:15px/1.45 ui-monospace,monospace;background:var(--soft);color:var(--ink);overflow-wrap:anywhere}
+.status{font-size:15px;color:var(--mute);text-align:center;margin-top:10px}
 .parts{display:flex;flex-wrap:wrap;gap:8px}
+.parts .chip{background:var(--card);border:1.5px solid var(--line)}
+.parts .chip:has(input:checked){background:var(--brandsoft);border-color:var(--brand);color:var(--brand)}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(40px);opacity:.4}}}
 </style>
 </head>
@@ -89,7 +135,7 @@ setTimeout(function(){var a=document.getElementById('app');if(a&&!a.innerHTML.tr
 <script src="vendor/supabase-2.79.0.js"></script>
 <script>
 {
-const APP=(window.BORA_CONFIG&&window.BORA_CONFIG.nome)||'App de Pesca';
+const APP=(window.BORA_CONFIG&&window.BORA_CONFIG.nome)||'Turma da Pesca';
 document.title=APP;
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -227,9 +273,17 @@ search:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="curr
 boat:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15h18l-3 5H6z"/><path d="M12 15V3l6 9"/></svg>',
 cash:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/></svg>',
 back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>',
+plus:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+chat:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5 5.3 16A8 8 0 1 1 8 18.7z"/></svg>',
 ok:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>'};
 
 /* ---------- telas ---------- */
+const AVC=['#0f5a50','#a9470f','#1e5f74','#6b4a2b','#4e6a2e','#7a3e6b'];
+const av=(nome,cls)=>{const n=String(nome||'?');let h=0;for(const ch of n)h=(h*31+ch.charCodeAt(0))>>>0;return `<span class="av ${cls||''}" style="background:${AVC[h%AVC.length]}" aria-hidden="true">${esc(n.trim().slice(0,1).toUpperCase())}</span>`};
+const falta=d=>d===null?'Sem data':d>1?'Faltam '+d+' dias':d===1?'É amanhã!':d===0?'É hoje!':'Já foi';
+const quandoTxt=p=>p.inicio?fmtD(p.inicio)+(p.fim&&p.fim!==p.inicio?' a '+fmtD(p.fim):''):'Data a combinar';
+const kindOf=p=>/rancho|pousada/i.test((p.local||'')+(p.nome||''))?'Rancho':'Piloteiro';
+const idx=id=>{let h=0;for(const ch of String(id))h=(h*31+ch.charCodeAt(0))>>>0;return h%4};
 function vExplorar(){
 if(S.ad)return vAnuncio(ADS.find(a=>a.id===S.ad));
 const q=norm(S.q);const list=ADS.filter(a=>(!S.cat||a.cat===S.cat)&&(!S.pil||a.pil)&&(!q||norm(a.nome+' '+a.local+' '+a.peixes+' '+a.cat).includes(q)));
@@ -255,12 +309,13 @@ ${!ro&&a.cat!=='Ponto'?`<p class="m" style="margin-top:16px">Falar com o anuncia
 
 function vPescarias(){
 if(S.pid&&getP(S.pid))return vPescaria(getP(S.pid));
-const list=[...P].sort((a,b)=>(a.inicio||'').localeCompare(b.inicio||''));
-return `<h1>Pescarias</h1>
+const list=[...P].sort((a,b)=>(a.inicio||'9').localeCompare(b.inicio||'9'));
+const nome=(ls.get('bp_nome','')||'').split(' ')[0];
+return `<p class="eyebrow">${nome?'Olá, '+esc(nome):esc(APP)}</p><h1>Suas pescarias</h1>
 ${loading?'<div class="box">Carregando as pescarias…</div>':''}${loadNote?`<div class="warnbox">${esc(loadNote)}</div>`:''}
-${list.map(p=>{const d=p.inicio?daysTo(p.inicio):null;return `<button class="card" data-act="open" data-v="${esc(p.id)}" style="margin:12px 0"><div class="hero" style="margin:0"><div style="opacity:.85;font-size:15px">${esc(p.nome)}</div><div class="big" style="font-size:30px">${d===null?'Sem data':d>1?'Faltam '+d+' dias':d===1?'É amanhã':d===0?'É hoje!':'Já foi'}</div><div>${esc(fmtD(p.inicio))}${p.fim&&p.fim!==p.inicio?' a '+esc(fmtD(p.fim)):''}${p.local?' · '+esc(p.local):''}</div><div style="margin-top:10px;font-size:15px">${(p.pessoas||[]).length} na turma</div></div></button>`}).join('')}
-${!list.length&&!loading?'<div class="box">Nenhuma pescaria ainda. Crie a primeira e chame a turma.</div><div class="box"><b>Recebeu um convite?</b> Volte no WhatsApp e toque de novo no link do convite. Agora que você entrou, ele abre direto.</div>':''}
-<button class="btn full" data-act="nova" style="margin-top:14px">+ Nova pescaria</button>
+${list.map(p=>{const d=p.inicio?daysTo(p.inicio):null;const ppl=p.pessoas||[];return `<button class="card pcard" data-act="open" data-v="${esc(p.id)}"><div class="pic">${scene(idx(p.id),kindOf(p))}<span class="count">${falta(d)}</span></div><div class="body"><div class="t" style="font-size:21px">${esc(p.nome)}</div><div class="meta"><span>${esc(quandoTxt(p))}</span>${p.local?`<span>${esc(p.local)}</span>`:''}</div><div class="faces">${ppl.slice(0,5).map(x=>av(x.nome,'s')).join('')}<span class="m">${ppl.length} na turma</span></div></div></button>`}).join('')}
+${!list.length&&!loading?'<div class="box" style="font-size:18px"><b>Nenhuma pescaria ainda.</b><br>Crie a primeira e chame a turma pelo WhatsApp.</div><div class="box"><b>Recebeu um convite?</b> Volte no WhatsApp e toque de novo no link do convite. Agora que você entrou, ele abre direto.</div>':''}
+<button class="btn full" data-act="nova" style="margin-top:18px">${I.plus}Nova pescaria</button>
 <p class="status">${mode==='cloud'?'Só quem você convidar vê cada pescaria.':'Modo de teste: salvo só neste aparelho.'}</p>${vRodape()}`}
 
 function vQuem(p){
@@ -273,38 +328,38 @@ if(!me(p.id))return vQuem(p);
 const d=p.inicio?daysTo(p.inicio):null;const eu=me(p.id);
 const subs=[['turma','Turma'],['datas','Datas'],['levar','Quem leva'],['roteiro','Roteiro'],['contas','Contas']];
 let body='';
-if(S.sub==='turma')body=`<div class="list">${(p.pessoas||[]).map(x=>`<div class="li"><div class="ic">${esc(x.nome.slice(0,1).toUpperCase())}</div><div class="grow"><div class="t" style="font-size:16px">${esc(x.nome)}${x.id===eu?' (você)':''}</div><div class="m">${x.pix?'Pix: '+esc(x.pix):'Sem chave Pix'}</div></div><button class="btn sm alt" data-act="pixkey" data-v="${x.id}">Pix</button><button class="x" data-act="rmp" data-v="${x.id}" aria-label="Tirar ${esc(x.nome)}">×</button></div>`).join('')}</div>
+if(S.sub==='turma')body=`<div class="list">${(p.pessoas||[]).map(x=>`<div class="li">${av(x.nome)}<div class="grow"><div class="t" style="font-size:16px">${esc(x.nome)}${x.id===eu?' (você)':''}</div><div class="m">${x.pix?'Pix: '+esc(x.pix):'Sem chave Pix'}</div></div><button class="btn sm alt" data-act="pixkey" data-v="${x.id}">Pix</button><button class="x" data-act="rmp" data-v="${x.id}" aria-label="Tirar ${esc(x.nome)}">×</button></div>`).join('')}</div>
 <label class="f" for="np">Adicionar pescador</label><div style="display:flex;gap:8px"><input id="np" placeholder="Nome"><button class="btn" data-act="addp">Adicionar</button></div>
 <label class="f" for="eu">Quem é você neste aparelho?</label><select id="eu" data-act="eu"><option value="">Escolha</option>${(p.pessoas||[]).map(x=>`<option value="${x.id}" ${x.id===eu?'selected':''}>${esc(x.nome)}</option>`).join('')}</select>`;
 if(S.sub==='datas')body=`<p class="m">Sugira datas e cada um marca as que pode ir.</p><div class="list">${(p.datas||[]).map(o=>{const v=(o.votos||[]).includes(eu);return `<div class="li"><div class="grow"><div class="t" style="font-size:16px">${esc(fmtD(o.ini))}${o.fim&&o.fim!==o.ini?' a '+esc(fmtD(o.fim)):''}</div><div class="m">${(o.votos||[]).length} pode(m): ${esc((o.votos||[]).map(id=>pname(p,id)).join(', ')||'ninguém ainda')}</div></div><button class="btn sm ${v?'':'alt'}" data-act="vote" data-v="${o.id}" ${eu?'':'disabled'}>${v?'Vou':'Posso?'}</button><button class="btn sm alt" data-act="pick" data-v="${o.id}">Fechar</button></div>`}).join('')}</div>
 ${eu?'':'<div class="warnbox">Escolha quem você é na aba Turma para votar.</div>'}
 <label class="f">Sugerir datas</label><div style="display:flex;gap:8px"><input id="di" type="date" aria-label="Início"><input id="df" type="date" aria-label="Fim"></div><button class="btn alt full" data-act="adddata" style="margin-top:8px">Sugerir</button>`;
-if(S.sub==='levar'){const falta=(p.itens||[]).filter(i=>!i.ok).length;body=`<p class="m">${falta?'Faltam '+falta+' itens':'Tudo certo!'}</p><div class="list">${(p.itens||[]).map(it=>`<div class="li"><button class="check ${it.ok?'on':''}" data-act="tick" data-v="${it.id}" aria-label="Marcar ${esc(it.txt)}">${it.ok?I.ok:''}</button><div class="grow"><div class="t" style="font-size:16px">${esc(it.txt)}</div><select data-act="quem" data-v="${it.id}" style="height:40px;margin-top:6px" aria-label="Quem leva"><option value="">Sem dono</option>${(p.pessoas||[]).map(x=>`<option value="${x.id}" ${x.id===it.quem?'selected':''}>${esc(x.nome)}</option>`).join('')}</select></div><button class="x" data-act="rmi" data-v="${it.id}" aria-label="Apagar">×</button></div>`).join('')}</div>
+if(S.sub==='levar'){const falta=(p.itens||[]).filter(i=>!i.ok).length;body=`<p class="m">${falta?'Faltam '+falta+' itens':'Tudo certo!'}</p><div class="list">${(p.itens||[]).map(it=>`<div class="li"><button class="check ${it.ok?'on':''}" data-act="tick" data-v="${it.id}" aria-label="Marcar ${esc(it.txt)}">${it.ok?I.ok:''}</button><div class="grow"><div class="t" style="font-size:16px">${esc(it.txt)}</div><select data-act="quem" data-v="${it.id}" style="height:48px;margin-top:8px" aria-label="Quem leva"><option value="">Sem dono</option>${(p.pessoas||[]).map(x=>`<option value="${x.id}" ${x.id===it.quem?'selected':''}>${esc(x.nome)}</option>`).join('')}</select></div><button class="x" data-act="rmi" data-v="${it.id}" aria-label="Apagar">×</button></div>`).join('')}</div>
 <label class="f" for="ni">Novo item</label><div style="display:flex;gap:8px"><input id="ni" placeholder="Gelo, isca, carvão…"><button class="btn" data-act="addi">Pôr</button></div>`}
 if(S.sub==='roteiro')body=`<div class="list">${(p.roteiro||[]).map(r=>`<div class="li"><div class="ic" style="font-size:13px">${esc(r.dia||'—')}</div><div class="grow"><div class="t" style="font-size:16px">${esc(r.txt)}</div><div class="m">${esc(r.hora)}</div></div><button class="x" data-act="rmr" data-v="${r.id}" aria-label="Apagar">×</button></div>`).join('')}</div>
 ${(p.roteiro||[]).length?'':'<p class="m">Monte o passo a passo da viagem, ou escolha um roteiro pronto em Explorar.</p>'}
 <label class="f">Novo passo</label><div style="display:flex;gap:8px"><input id="rd" placeholder="Dia" style="flex:0 0 80px"><input id="rh" type="time" style="flex:0 0 120px" aria-label="Hora"></div><input id="rt" placeholder="O que acontece" style="margin-top:8px"><button class="btn alt full" data-act="addr" style="margin-top:8px">Adicionar passo</button>`;
 if(S.sub==='contas')body=vContasBody(p);
-return `<button class="back" data-act="close" aria-label="Voltar">${I.back}</button>
-<div class="hero" style="margin-top:14px"><div style="opacity:.85">${esc(p.nome)}</div><div class="big">${d===null?'Sem data':d>1?'Faltam '+d+' dias':d===1?'É amanhã':d===0?'É hoje!':'Já foi'}</div><div>${esc(fmtD(p.inicio))}${p.fim&&p.fim!==p.inicio?' a '+esc(fmtD(p.fim)):''}${p.local?' · '+esc(p.local):''}</div></div>
+return `<div class="top"><div class="pic">${scene(idx(p.id),kindOf(p))}<span class="count">${falta(d)}</span></div><button class="back" data-act="close" aria-label="Voltar">${I.back}</button></div>
+<div class="title"><h1>${esc(p.nome)}</h1><div class="meta"><span>${esc(quandoTxt(p))}</span>${p.local?`<span>${esc(p.local)}</span>`:''}<span>${(p.pessoas||[]).length} na turma</span></div></div>
 <div class="tabs">${subs.map(([k,l])=>`<button class="chip ${S.sub===k?'on':''}" data-act="sub" data-v="${k}">${l}</button>`).join('')}</div>
 ${body}
-<h2>Mandar para o grupo</h2><p class="m" style="margin-top:0">Abre o WhatsApp com a mensagem pronta. É só escolher o grupo da turma.</p>
-<button class="btn wa full" data-act="wa" data-v="${S.sub==='turma'?'convite':S.sub}">${WA_LABEL[S.sub]}</button>
-${S.sub!=='turma'?`<button class="btn alt full" data-act="wa" data-v="convite" style="margin-top:8px">Mandar convite</button>`:''}
-<button class="btn alt full" data-act="delp" style="margin-top:8px;color:var(--warn)">Apagar pescaria</button>`}
+<div class="share"><h2>Mandar para o grupo</h2><p class="m" style="margin:0 0 14px">Abre o WhatsApp com a mensagem pronta. É só escolher o grupo da turma.</p>
+<button class="btn wa full" data-act="wa" data-v="${S.sub==='turma'?'convite':S.sub}">${I.chat}${WA_LABEL[S.sub]}</button>
+${S.sub!=='turma'?`<button class="btn alt full" data-act="wa" data-v="convite" style="margin-top:8px;background:#fff">Mandar convite</button>`:''}</div>
+<button class="btn ghost full" data-act="delp" style="margin-top:14px">Apagar pescaria</button>`}
 
 function vContasBody(p){
 const ppl=p.pessoas||[];
 if(ppl.length<2)return `<div class="box">Adicione pelo menos 2 pescadores na aba Turma para dividir as contas.</div>`;
 const eu=me(p.id);const st=settle(p);const b=balances(p);const pagos=p.pagos||{};
 const meu=eu?b[eu]||0:null;
-return `<div class="box" style="background:var(--brand);color:var(--onbrand)"><div style="opacity:.85">${eu?(meu>=0?'Você tem a receber':'Você deve'):'Total da pescaria'}</div><div style="font-size:34px;font-weight:800">${eu?brl(Math.abs(meu)):brl(total(p))}</div>${eu?`<div style="opacity:.85">Total da pescaria: ${brl(total(p))}</div>`:''}</div>
-<h2>Acerto</h2>${st.length?`<div class="list">${st.map(s=>{const k=s.de+'>'+s.para;const pg=!!pagos[k];return `<div class="li"><div class="grow"><div class="t" style="font-size:16px;${pg?'color:var(--mute)':''}">${esc(pname(p,s.de))} paga ${esc(pname(p,s.para))}</div><div class="money">${brl(s.v)}</div></div>${pg?`<button class="btn sm alt" data-act="unpago" data-v="${esc(k)}">Pago ✓</button>`:`<button class="btn sm" data-act="pixgo" data-v="${esc(k)}" data-n="${s.v}">Pix</button><button class="btn sm alt" data-act="pago" data-v="${esc(k)}">Pago</button>`}</div>`}).join('')}</div>`:'<p class="m">Ninguém deve nada. Lance os gastos abaixo.</p>'}
-<h2>Gastos</h2><div class="list">${(p.gastos||[]).map(g=>`<div class="li"><div class="grow"><div class="t" style="font-size:16px">${esc(g.desc)}</div><div class="m">${esc(pname(p,g.pagou))} pagou · divide por ${(g.parts||[]).length}</div></div><div class="money">${brl(g.valor)}</div><button class="x" data-act="rmg" data-v="${g.id}" aria-label="Apagar gasto">×</button></div>`).join('')}</div>
-<label class="f" for="gd">Novo gasto</label><input id="gd" placeholder="Combustível, rancho, mercado…">
+return `<div class="saldo"><div class="lbl">${eu?(meu>=0?'Você tem a receber':'Você deve'):'Total da pescaria'}</div><div class="big">${eu?brl(Math.abs(meu)):brl(total(p))}</div>${eu?`<div class="sub">Total da pescaria: ${brl(total(p))} · ${ppl.length} pessoas</div>`:''}</div>
+<h2>Acerto</h2>${st.length?`<div class="list">${st.map(s=>{const k=s.de+'>'+s.para;const pg=!!pagos[k];return `<div class="tr ${pg?'pago':''}" style="border-bottom:1px solid var(--line)"><div class="who" style="flex-wrap:nowrap;gap:12px"><span class="faces" style="margin:0;flex:none">${av(pname(p,s.de),'s')}${av(pname(p,s.para),'s')}</span><div style="flex:1"><div style="font-size:17px"><b>${esc(pname(p,s.de))}</b> <span class="arrow">paga</span> <b>${esc(pname(p,s.para))}</b></div><div class="money" style="font-size:22px">${brl(s.v)}</div></div></div><div class="acts">${pg?`<button class="btn sm alt" data-act="unpago" data-v="${esc(k)}">${I.ok} Pago</button>`:`<button class="btn sm" data-act="pixgo" data-v="${esc(k)}" data-n="${s.v}">Gerar Pix</button><button class="btn sm alt" data-act="pago" data-v="${esc(k)}">Já paguei</button>`}</div></div>`}).join('')}</div>`:'<p class="m">Ninguém deve nada. Lance os gastos abaixo.</p>'}
+<h2>Gastos</h2><div class="list">${(p.gastos||[]).map(g=>`<div class="li">${av(pname(p,g.pagou),'s')}<div class="grow"><div class="t" style="font-size:17px">${esc(g.desc)}</div><div class="m">${esc(pname(p,g.pagou))} pagou · divide por ${(g.parts||[]).length}</div></div><div class="money">${brl(g.valor)}</div><button class="x" data-act="rmg" data-v="${g.id}" aria-label="Apagar gasto">×</button></div>`).join('')}</div>
+<h2>Lançar um gasto</h2><label class="f" for="gd" style="margin-top:0">O que foi</label><input id="gd" placeholder="Combustível, rancho, mercado…">
 <div style="display:flex;gap:8px;margin-top:8px"><input id="gv" type="text" inputmode="decimal" autocomplete="off" placeholder="Valor (R$)"><select id="gp" aria-label="Quem pagou">${ppl.map(x=>`<option value="${x.id}" ${x.id===eu?'selected':''}>${esc(x.nome)} pagou</option>`).join('')}</select></div>
-<label class="f">Divide entre</label><div class="parts">${ppl.map(x=>`<label class="chip on" style="display:inline-flex;align-items:center;gap:6px"><input type="checkbox" class="gpart" value="${x.id}" checked style="width:18px;height:18px">${esc(x.nome)}</label>`).join('')}</div>
+<label class="f">Divide entre</label><div class="parts">${ppl.map(x=>`<label class="chip" style="display:inline-flex;align-items:center;gap:8px"><input type="checkbox" class="gpart" value="${x.id}" checked>${esc(x.nome)}</label>`).join('')}</div>
 <button class="btn full" data-act="addg" style="margin-top:12px">Lançar gasto</button>`}
 
 function vContas(){
@@ -351,8 +406,15 @@ const app=$('#app');if(!app)return;
 const fx=document.activeElement&&document.activeElement.id;
 let h=!authReady?'<h1>'+esc(APP)+'</h1><div class="box">Abrindo…</div>':(mode==='cloud'&&!user)?vLogin():S.tab==='explorar'?vExplorar():S.tab==='pescarias'?vPescarias():vContas();
 if(flashMsg)h+=`<div class="warnbox" role="status" style="position:fixed;left:18px;right:18px;bottom:96px;max-width:484px;margin:0 auto;z-index:8">${esc(flashMsg)}</div>`;
+/* guarda o que a pessoa está digitando, para uma atualização da tela não apagar */
+const keep={};if(!window.__limpar)app.querySelectorAll('input[id],select[id]:not([data-act])').forEach(el=>{if(el.type!=='checkbox'&&el.value)keep[el.id]=el.value});
+const keepChk={};let hadChk=false;app.querySelectorAll('input.gpart').forEach(el=>{hadChk=true;keepChk[el.value]=el.checked});
+const pos=fx&&document.activeElement&&document.activeElement.selectionStart;
 app.innerHTML=h;app.setAttribute('data-ok','1');
-$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=[['pescarias','Pescarias',I.boat],['contas','Contas',I.cash],['explorar','Explorar',I.search]].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}">${i}${l}</a>`).join('');
+Object.entries(keep).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&el.closest('#app')&&!el.value)el.value=v});
+if(hadChk)app.querySelectorAll('input.gpart').forEach(el=>{if(el.value in keepChk)el.checked=keepChk[el.value]});
+if(fx&&fx!=='q'){const el=document.getElementById(fx);if(el&&el.closest('#app')){el.focus();try{if(pos!=null)el.setSelectionRange(pos,pos)}catch(e){}}}
+$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=[['pescarias','Pescarias',I.boat],['contas','Contas',I.cash],['explorar','Explorar',I.search]].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}"${S.tab===k?' aria-current="page"':''}><i>${i}</i>${l}</a>`).join('');
 if(fx==='q'){const q=$('#q');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
 }
 const openModal=h=>{$('#modal').innerHTML=h;const i=$('#modal input');if(i)i.focus()};
@@ -370,6 +432,7 @@ document.addEventListener('click',async e=>{
 const el=e.target.closest('[data-act]');if(!el)return;
 if(el.dataset.stop&&!e.target.closest('[data-act]:not([data-stop])'))return;
 const a=el.dataset.act,v=el.dataset.v;
+if(['addp','addi','addr','addg','adddata','souNovo'].includes(a)){window.__limpar=true;setTimeout(()=>{window.__limpar=false},0)}
 if(a==='mclose'){if(e.target===el||el.tagName==='BUTTON')closeModal();return}
 if(a==='cat'){S.cat=v;render()}
 else if(a==='pil'){S.pil=!S.pil;render()}

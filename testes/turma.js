@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');const http=require('http');const fs=require('fs');const path=require('path');
 const ROOT=path.join(__dirname,'..');const PORT=8765;
 const srv=http.createServer((q,r)=>{let p=decodeURIComponent(q.url.split('?')[0].split('#')[0]);if(p.endsWith('/'))p+='index.html';const f=path.join(ROOT,p);
- if(p==='/config.js'){r.writeHead(200,{'content-type':'text/javascript'});return r.end("window.BORA_CONFIG={nome:'App de Pesca',supabaseUrl:'http://fake',supabaseAnonKey:'fake',codigo:true}")}
+ if(p==='/config.js'){r.writeHead(200,{'content-type':'text/javascript'});return r.end("window.BORA_CONFIG={nome:'Turma da Pesca',supabaseUrl:'http://fake',supabaseAnonKey:'fake',codigo:true}")}
  if(p.startsWith('/vendor/')){r.writeHead(200,{'content-type':'text/javascript'});return r.end(fs.readFileSync(__dirname+'/fake-supabase.js'))}
  fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':f.endsWith('.html')?'text/html':f.endsWith('.json')?'application/json':f.endsWith('.svg')?'image/svg+xml':'text/javascript'});r.end(d)})});
 // ---- banco falso (mesmas regras do schema.sql) ----
@@ -73,7 +73,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   if(parts){d=DB.pesc[pid].dados;const ids=d.pessoas.map(x=>x.id);for(const cb of await a.pg.$$('.gpart')){const v=await cb.getAttribute('value');const want=parts.map(k=>ids[k]).includes(v);if((await cb.isChecked())!==want)await cb.click()}}
   await a.pg.click('[data-act=addg]');await a.pg.waitForTimeout(300)}
  await Promise.all(P.map(p=>p.pg.waitForTimeout(500)));d=DB.pesc[pid].dados;
- ok(d.gastos.length===6,'6 gastos lançados por 5 pessoas diferentes');
+ ok(d.gastos.length===6,'6 gastos lançados por 5 pessoas diferentes'+(d.gastos.length===6?'':' (veio '+d.gastos.map(g=>g.desc).join(',')+')'));
  // "Combustível" com vírgula
  const comb=d.gastos.find(g=>g.desc==='Combustível');ok(comb&&comb.valor===387.5,'Valor com vírgula (387,50) entendido certo');
  // acerto
