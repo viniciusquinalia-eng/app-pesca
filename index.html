@@ -141,25 +141,30 @@ const local={
  change(id,fn){const p=getP(id);if(!p)return;const c=clone(p);fn(c);putLocal(c);ls.set('bp_pescarias',P);render()},
  del(id){P=P.filter(x=>x.id!==id);ls.set('bp_pescarias',P);render()}};
 const queue={};
+/* base = última versão confirmada pelo banco; pend = mudanças desta pessoa ainda a caminho.
+   A tela mostra base + pend, assim uma atualização vinda do banco nunca apaga o que a pessoa acabou de fazer. */
+const base={};const pend={};
+const rowToP=r=>({...r.dados,id:r.id,_v:r.versao,_convite:r.convite});
+const view=id=>{const c=clone(base[id]);(pend[id]||[]).forEach(f=>{try{f(c)}catch(e){console.error(e)}});return c};
 const cloud={
  async list(){if(!user)return;loading=!P.length;render();
   const {data,error}=await sb.rpc('minhas_pescarias');
   loading=false;if(error){console.error('minhas_pescarias',error);loadNote='Não deu para carregar as pescarias. Confira a internet.';render();return}
-  loadNote='';P=data.map(r=>({...r.dados,id:r.id,_v:r.versao,_convite:r.convite}));render()},
+  loadNote='';data.forEach(r=>{base[r.id]=rowToP(r)});P=data.map(r=>view(r.id));render()},
  async create(p){const {id,_v,_convite,...dados}=p;const {data,error}=await sb.rpc('criar_pescaria',{p_dados:dados});
   if(error||!data||!data.length){flash('Não deu para criar agora. Tente de novo.');return null}
-  const r=data[0];putLocal({...dados,id:r.id,_v:1,_convite:r.convite});render();return r.id},
- change(id,fn){const p=getP(id);if(!p)return;const c=clone(p);fn(c);putLocal(c);render();
-  queue[id]=(queue[id]||Promise.resolve()).then(()=>cloud._send(id,fn)).catch(()=>flash('Não salvou agora. Confira a internet e tente de novo.'))},
+  const r=data[0];base[r.id]={...clone(dados),id:r.id,_v:1,_convite:r.convite};putLocal(view(r.id));render();return r.id},
+ change(id,fn){if(!base[id])return;(pend[id]=pend[id]||[]).push(fn);putLocal(view(id));render();
+  queue[id]=(queue[id]||Promise.resolve()).then(()=>cloud._send(id,fn)).catch(e=>{console.error(e);pend[id]=(pend[id]||[]).filter(f=>f!==fn);putLocal(view(id));render();flash('Não salvou agora. Confira a internet e tente de novo.')})},
  async _send(id,fn){
-  for(let t=0;t<4;t++){
-   const cur=getP(id);const {id:_i,_v,_convite,...dados}=cur;
-   const {data,error}=await sb.rpc('salvar_pescaria',{p_id:id,p_dados:dados,p_versao:_v});
+  for(let t=0;t<6;t++){
+   const c=clone(base[id]);fn(c);const {id:_i,_v,_convite,...dados}=c;
+   const {data,error}=await sb.rpc('salvar_pescaria',{p_id:id,p_dados:dados,p_versao:base[id]._v});
    if(error)throw error;
-   if(data>0){cur._v=data;return}
+   if(data>0){c._v=data;base[id]=c;pend[id]=(pend[id]||[]).filter(f=>f!==fn);putLocal(view(id));render();return}
    /* outra pessoa mexeu ao mesmo tempo: busca a versão nova e refaz a mudança em cima dela */
    const r=await sb.rpc('minhas_pescarias',{p_id:id});
-   if(r.error||!r.data||!r.data.length)throw r.error||new Error('sumiu');const row=r.data[0];const fresh={...row.dados,id,_v:row.versao,_convite:row.convite};fn(fresh);putLocal(fresh);render()}
+   if(r.error||!r.data||!r.data.length)throw r.error||new Error('sumiu');base[id]=rowToP(r.data[0]);putLocal(view(id));render()}
   throw new Error('conflito')},
  async del(id){P=P.filter(x=>x.id!==id);render();const {error}=await sb.rpc('apagar_pescaria',{p_id:id});if(error)flash('Não apagou agora.')},
  async join(convite){const {data,error}=await sb.rpc('entrar_pescaria',{p_convite:convite});if(error||!data){flash('Convite não encontrado. Peça o link de novo para quem organizou.');return null}await cloud.list();return data}};
