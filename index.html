@@ -53,7 +53,7 @@ label.f{display:block;font-size:16px;color:var(--mute);margin:12px 0 6px}
 .li{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
 .li .grow{flex:1}
 .ic{width:46px;height:46px;border-radius:23px;background:var(--soft);display:flex;align-items:center;justify-content:center;flex:none;font-weight:800}
-.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:14px 0 4px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
 .nav{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 8px calc(14px + env(safe-area-inset-bottom))}
 .nav a{flex:0 1 150px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:15px;color:var(--mute);text-decoration:none;padding:4px 0;min-height:52px}
 .nav a.on{color:var(--brand);font-weight:700}
@@ -62,7 +62,7 @@ label.f{display:block;font-size:16px;color:var(--mute);margin:12px 0 6px}
 .feat div{border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;font-size:14px;font-weight:600}
 .sticky{position:fixed;left:0;right:0;bottom:78px;background:var(--bg);border-top:1px solid var(--line)}
 .sticky>div{max-width:520px;margin:0 auto;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.check{width:28px;height:28px;border-radius:8px;border:2px solid var(--brand);background:none;flex:none;display:flex;align-items:center;justify-content:center;color:var(--onbrand)}
+.check{width:44px;height:44px;border-radius:10px;border:2px solid var(--brand);background:none;flex:none;display:flex;align-items:center;justify-content:center;color:var(--onbrand)}
 .check.on{background:var(--brand)}
 .x{border:0;background:none;color:var(--mute);font-size:26px;width:48px;height:48px}
 .money{font-weight:700;white-space:nowrap}
@@ -190,6 +190,7 @@ let flashMsg='';const flash=m=>{flashMsg=m;render();setTimeout(()=>{flashMsg='';
 /* ---------- contas ---------- */
 const balances=p=>{const b={};(p.pessoas||[]).forEach(x=>b[x.id]=0);(p.gastos||[]).forEach(g=>{const parts=(g.parts||[]).filter(id=>id in b);if(!parts.length||!(g.pagou in b))return;b[g.pagou]+=g.valor;const share=g.valor/parts.length;parts.forEach(id=>b[id]-=share)});return b};
 const settle=p=>{const b=balances(p);const cred=[],deb=[];Object.entries(b).forEach(([id,v])=>{if(v>0.009)cred.push([id,v]);else if(v<-0.009)deb.push([id,-v])});cred.sort((a,c)=>c[1]-a[1]);deb.sort((a,c)=>c[1]-a[1]);const out=[];let i=0,j=0;while(i<deb.length&&j<cred.length){const v=Math.min(deb[i][1],cred[j][1]);out.push({de:deb[i][0],para:cred[j][0],v:Math.round(v*100)/100});deb[i][1]-=v;cred[j][1]-=v;if(deb[i][1]<0.009)i++;if(cred[j][1]<0.009)j++}return out};
+const valorBR=t=>{t=String(t||'').replace(/[^0-9.,]/g,'');if(!t)return NaN;const c=t.lastIndexOf(','),d=t.lastIndexOf('.');let dec=c>d?',':(d>c&&t.length-d-1!==3?'.':null);if(dec===null&&c<0&&d>=0&&(t.match(/\./g)||[]).length===1&&t.length-d-1!==3)dec='.';let n=dec?t.slice(0,t.lastIndexOf(dec)).replace(/[.,]/g,'')+'.'+t.slice(t.lastIndexOf(dec)+1):t.replace(/[.,]/g,'');return Math.round(parseFloat(n)*100)/100};
 const total=p=>(p.gastos||[]).reduce((s,g)=>s+g.valor,0);
 
 /* ---------- Pix copia e cola (BR Code estático) ---------- */
@@ -297,7 +298,7 @@ return `<div class="box" style="background:var(--brand);color:var(--onbrand)"><d
 <h2>Acerto</h2>${st.length?`<div class="list">${st.map(s=>{const k=s.de+'>'+s.para;const pg=!!pagos[k];return `<div class="li"><div class="grow"><div class="t" style="font-size:16px;${pg?'color:var(--mute)':''}">${esc(pname(p,s.de))} paga ${esc(pname(p,s.para))}</div><div class="money">${brl(s.v)}</div></div>${pg?`<button class="btn sm alt" data-act="unpago" data-v="${esc(k)}">Pago ✓</button>`:`<button class="btn sm" data-act="pixgo" data-v="${esc(k)}" data-n="${s.v}">Pix</button><button class="btn sm alt" data-act="pago" data-v="${esc(k)}">Pago</button>`}</div>`}).join('')}</div>`:'<p class="m">Ninguém deve nada. Lance os gastos abaixo.</p>'}
 <h2>Gastos</h2><div class="list">${(p.gastos||[]).map(g=>`<div class="li"><div class="grow"><div class="t" style="font-size:16px">${esc(g.desc)}</div><div class="m">${esc(pname(p,g.pagou))} pagou · divide por ${(g.parts||[]).length}</div></div><div class="money">${brl(g.valor)}</div><button class="x" data-act="rmg" data-v="${g.id}" aria-label="Apagar gasto">×</button></div>`).join('')}</div>
 <label class="f" for="gd">Novo gasto</label><input id="gd" placeholder="Combustível, rancho, mercado…">
-<div style="display:flex;gap:8px;margin-top:8px"><input id="gv" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Valor (R$)"><select id="gp" aria-label="Quem pagou">${ppl.map(x=>`<option value="${x.id}" ${x.id===eu?'selected':''}>${esc(x.nome)} pagou</option>`).join('')}</select></div>
+<div style="display:flex;gap:8px;margin-top:8px"><input id="gv" type="text" inputmode="decimal" autocomplete="off" placeholder="Valor (R$)"><select id="gp" aria-label="Quem pagou">${ppl.map(x=>`<option value="${x.id}" ${x.id===eu?'selected':''}>${esc(x.nome)} pagou</option>`).join('')}</select></div>
 <label class="f">Divide entre</label><div class="parts">${ppl.map(x=>`<label class="chip on" style="display:inline-flex;align-items:center;gap:6px"><input type="checkbox" class="gpart" value="${x.id}" checked style="width:18px;height:18px">${esc(x.nome)}</label>`).join('')}</div>
 <button class="btn full" data-act="addg" style="margin-top:12px">Lançar gasto</button>`}
 
@@ -399,7 +400,7 @@ else if(a==='rmi'){change(p=>{p.itens=p.itens.filter(i=>i.id!==v)})}
 else if(a==='addi'){const t=$('#ni').value.trim();if(!t)return;change(p=>{p.itens.push({id:uid(),txt:t,quem:'',ok:false})})}
 else if(a==='addr'){const t=$('#rt').value.trim();if(!t)return;change(p=>{p.roteiro=p.roteiro||[];p.roteiro.push({id:uid(),dia:$('#rd').value.trim(),hora:$('#rh').value,txt:t})})}
 else if(a==='rmr'){change(p=>{p.roteiro=p.roteiro.filter(r=>r.id!==v)})}
-else if(a==='addg'){const d=$('#gd').value.trim();const val=parseFloat(String($('#gv').value).replace(',','.'));const parts=[...document.querySelectorAll('.gpart:checked')].map(x=>x.value);if(!d||!(val>0)){flash('Preencha o gasto e o valor.');return}if(!parts.length){flash('Escolha quem divide.');return}change(p=>{p.gastos=p.gastos||[];p.gastos.push({id:uid(),desc:d,valor:Math.round(val*100)/100,pagou:$('#gp').value,parts})})}
+else if(a==='addg'){const d=$('#gd').value.trim();const val=valorBR($('#gv').value);const parts=[...document.querySelectorAll('.gpart:checked')].map(x=>x.value);if(!d||!(val>0)){flash('Preencha o gasto e o valor.');return}if(!parts.length){flash('Escolha quem divide.');return}change(p=>{p.gastos=p.gastos||[];p.gastos.push({id:uid(),desc:d,valor:Math.round(val*100)/100,pagou:$('#gp').value,parts})})}
 else if(a==='rmg'){change(p=>{p.gastos=p.gastos.filter(g=>g.id!==v)})}
 else if(a==='pago'){change(p=>{p.pagos=p.pagos||{};p.pagos[v]=true})}
 else if(a==='unpago'){change(p=>{p.pagos=p.pagos||{};delete p.pagos[v]})}
