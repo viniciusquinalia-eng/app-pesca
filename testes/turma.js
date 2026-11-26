@@ -34,6 +34,16 @@ function rpc(u,name,a){a=a||{};if(!u)return {error:{message:'precisa entrar'}};
  if(name==='avaliacoes_do_lugar')return {data:DB.aval.filter(x=>x.lugar===a.p_lugar).map(x=>({id:x.id,autor_nome:x.autor_nome,nota:x.nota,notas:x.notas,comentario:x.comentario,resposta:x.resposta||null,criado:x.criado,minha:x.autor===u}))};
  if(name==='responder_avaliacao'){const x=DB.aval.find(y=>y.id===a.p_id);if(x&&DB.ads.some(d=>'u_'+d.id===x.lugar&&d.dono===u))x.resposta=a.p_resposta;return {data:null}}
  if(name==='apagar_avaliacao'){DB.aval=DB.aval.filter(x=>!(x.id===a.p_id&&(x.autor===u||adm)));return {data:null}}
+ if(name==='registrar_evento'){DB.ev=DB.ev||[];DB.ev.push({lugar:a.p_lugar,tipo:a.p_tipo,quem:u});return {data:null}}
+ if(name==='ocultar_avaliacao'){if(!adm)return {error:{message:'sem acesso'}};const x=DB.aval.find(y=>y.id===a.p_id);if(x)x.oculto=a.p_oculto;return {data:null}}
+ if(name==='ocultar_diario'){if(!adm)return {error:{message:'sem acesso'}};const x=DB.diario.find(y=>y.id===a.p_id);if(x)x.oculto=a.p_oculto;return {data:null}}
+ if(name==='painel_admin'){if(!adm)return {error:{message:'sem acesso'}};const ev=DB.ev||[];const vis={};ev.filter(e=>e.tipo==='visita').forEach(e=>vis[e.lugar]=(vis[e.lugar]||0)+1);
+  const users=new Set([...DB.membros].map(m=>m.split('|')[1]));return {data:{usuarios:users.size,novos7:users.size,novos30:users.size,ativos7:users.size,semanas:[1,0,2,1,0,3,2,5].map((n,i)=>({s:new Date(Date.now()-(7-i)*7*864e5).toISOString().slice(0,10),n})),
+  pescarias:Object.keys(DB.pesc).length,pescarias30:Object.keys(DB.pesc).length,pescadores:users.size,dividido:Object.values(DB.pesc).reduce((s,p)=>s+(p.dados.gastos||[]).reduce((t,g)=>t+g.valor,0),0),
+  anuncios:DB.ads.reduce((o,x)=>(o[x.status]=(o[x.status]||0)+1,o),{}),diario:DB.diario.length,fotos:DB.diario.filter(x=>x.dados.foto).length,avaliacoes:DB.aval.length,nota_media:DB.aval.length?DB.aval.reduce((s,x)=>s+x.nota,0)/DB.aval.length:null,
+  visitas30:ev.filter(e=>e.tipo==='visita').length,whats30:ev.filter(e=>e.tipo==='whatsapp').length,mais_vistos:Object.entries(vis).map(([lugar,n])=>({lugar,n})).sort((x,y)=>y.n-x.n).slice(0,5),
+  mais_bem_avaliados:DB.aval.map(x=>({lugar:x.lugar,m:x.nota,n:1})),ult_avaliacoes:DB.aval.map(x=>({id:x.id,lugar:x.lugar,autor_nome:x.autor_nome,nota:x.nota,comentario:x.comentario,oculto:!!x.oculto})),ult_diario:DB.diario.map(x=>({id:x.id,lugar:x.lugar,autor_nome:x.autor_nome,dados:x.dados,oculto:!!x.oculto}))}}}
+ if(name==='painel_dono')return {data:DB.ads.filter(x=>x.dono===u).map(x=>({id:x.id,lugar:'u_'+x.id,nome:x.dados.nome,status:x.status,visitas30:(DB.ev||[]).filter(e=>e.lugar==='u_'+x.id&&e.tipo==='visita').length,whats30:(DB.ev||[]).filter(e=>e.lugar==='u_'+x.id&&e.tipo==='whatsapp').length,dias:Array(14).fill(0),nota:null,n_aval:0,n_diario:0}))};
  return {error:{message:'funcao desconhecida '+name}}}
 // ---- conferência independente do acerto ----
 function saldos(d){const b={};d.pessoas.forEach(x=>b[x.id]=0);d.gastos.forEach(g=>{b[g.pagou]+=g.valor;g.parts.forEach(id=>b[id]-=g.valor/g.parts.length)});return b}
@@ -57,6 +67,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   await ctx.route(/images\.unsplash\.com/,r=>r.abort());
   if(VIEW[i].old)await ctx.addInitScript(()=>{delete Array.prototype.at});
   await ctx.addInitScript(()=>{window.open=(u)=>{window.__aberto=u;return {}}});
+  await ctx.addInitScript(()=>{if(!localStorage.getItem('teste_areas')){localStorage.setItem('teste_areas','1');localStorage.setItem('bp_onb_pescador','true');localStorage.setItem('bp_area_manual','1')}});
   const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(NOMES[i]+': '+e.message));P.push({pg,email,nome:NOMES[i]})}
  const [org,...amigos]=P;const pg0=org.pg;
  const login=async(p)=>{await p.pg.fill('#em',p.email);await p.pg.click('[data-act=mandaCodigo]');await p.pg.fill('#cod','123456');await p.pg.click('[data-act=confereCodigo]');await p.pg.waitForTimeout(300)};
@@ -170,7 +181,7 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   mk('pprox',{id:'pprox',nome:'Corvina de fim de ano',local:'Barra Bonita',inicio:d3,fim:new Date(Date.now()+4*864e5).toISOString().slice(0,10),pessoas:[{id:'eu2',nome:'Vinícius'}],datas:[],itens:[],roteiro:[],gastos:[],pagos:{}});
   await pg0.evaluate(()=>{localStorage.setItem('bp_me_pfeita','"eu1"');localStorage.setItem('bp_me_pprox','"eu2"')});
   await pg0.goto(`http://localhost:${PORT}/#perfil`);await pg0.reload();await pg0.waitForTimeout(600);let tx=await t(pg0);
-  ok(tx.includes('Seu perfil')&&tx.includes('1pescaria feita')&&tx.includes('3dias de pesca'),'Perfil mostra pescarias feitas e dias de pesca');
+  ok(tx.includes('Seu perfil')&&tx.includes('3 dias')&&!tx.includes('dias de pesca'),'Perfil mostra o histórico, sem indicadores');
   ok(tx.includes('R$ 320,00')&&tx.includes('Tucunaré de outubro'),'Perfil mostra o histórico e a sua parte nos gastos (R$ 320)');
   await pg0.screenshot({path:__dirname+'/saida/perfil.png',fullPage:true});
   await pg0.goto(`http://localhost:${PORT}/#pescarias`);await pg0.waitForTimeout(300);await pg0.click('[data-act=open][data-v=pprox]');await pg0.waitForTimeout(600);tx=await t(pg0);
@@ -208,6 +219,39 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   await z.screenshot({path:__dirname+'/saida/avaliacao.png',fullPage:true});
   delete DB.pesc.pfeita;delete DB.pesc.pprox;await pg0.goto(`http://localhost:${PORT}/#pescarias`);await pg0.reload();await pg0.waitForTimeout(400);await pg0.click(`[data-act=open][data-v="${pid}"]`);await pg0.waitForTimeout(200);
   await z.goto(`http://localhost:${PORT}/#pescarias`);await z.waitForTimeout(400);await z.click(`[data-act=open][data-v="${pid}"]`);await z.waitForTimeout(200)}
+ // 3e. fotos: carrossel nos cards e tela que não pisca
+ {await pg0.goto(`http://localhost:${PORT}/#explorar`);await pg0.waitForTimeout(500);
+  ok((await pg0.$$('.abcard .gal')).length>=5,'Cards do Explorar têm carrossel de fotos');
+  const g0=await pg0.$('.abcard .gal');await g0.evaluate(g=>{g.scrollLeft=g.clientWidth});await pg0.waitForTimeout(300);
+  ok(await pg0.evaluate(()=>document.querySelector('.abcard .dots i:nth-child(2)').classList.contains('on')),'Deslizar a foto no card muda a bolinha');
+  await pg0.evaluate(()=>{window.__img=document.querySelector('.abcard .gal .slide')});await pg0.evaluate(()=>window.__render());await pg0.waitForTimeout(100);
+  ok(await pg0.evaluate(()=>window.__img===document.querySelector('.abcard .gal .slide')),'Atualizar sem mudança não refaz a tela (sem piscar)');
+  await pg0.evaluate(()=>window.__rerender());await pg0.waitForTimeout(100);
+  ok(await pg0.evaluate(()=>document.querySelector('.abcard .gal').scrollLeft>0),'Quando a tela é refeita, a foto continua onde estava');
+  await pg0.goto(`http://localhost:${PORT}/#pescarias`);await pg0.waitForTimeout(400);await pg0.click(`[data-act=open][data-v="${pid}"]`);await pg0.waitForTimeout(200)}
+ // 3f. entrada profissional: tipo de conta, apresentação, áreas e painéis
+ {const ctx=await B.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'pt-BR'});await ctx.exposeFunction('__rpc',(u,nm,a)=>rpc(u,nm,a));await ctx.exposeFunction('__upload',(p,d)=>{FOTOS[p]=d;return true});
+  await ctx.route(/open-meteo\.com|images\.unsplash\.com/,r=>r.abort());
+  const q=await ctx.newPage();q.on('pageerror',e=>errs.push('dono: '+e.message));await q.goto(`http://localhost:${PORT}/`);await q.waitForTimeout(400);
+  ok((await t(q)).includes('Como você vai usar o app?'),'Tela de entrada pergunta se é pescador ou dono de rancho');await q.screenshot({path:__dirname+'/saida/entrada.png',fullPage:true});
+  await q.click('[data-act=tipo][data-v=dono]');await q.fill('#em','dono@teste.local');await q.click('[data-act=mandaCodigo]');await q.fill('#cod','123456');await q.click('[data-act=confereCodigo]');await q.waitForTimeout(500);
+  ok((await t(q)).includes('Anuncie grátis')&&(await t(q)).includes('1 de 3'),'Dono vê a apresentação curta do app');await q.screenshot({path:__dirname+'/saida/onboarding.png'});
+  await q.click('[data-act=onbnext]');await q.click('[data-act=onbnext]');await q.click('[data-act=onbnext]');await q.waitForTimeout(500);
+  const navTx=await q.textContent('#nav');ok(navTx.includes('Painel')&&navTx.includes('Anúncios')&&!navTx.includes('Contas'),'Dono tem menu próprio: Painel, Anúncios, Explorar, Perfil');
+  ok((await t(q)).includes('Seu painel')&&(await t(q)).includes('EXEMPLO')&&(await q.$$('.bars')).length>0,'Painel do dono sem anúncio mostra exemplo com gráfico');await q.screenshot({path:__dirname+'/saida/painel-dono.png',fullPage:true});
+  await q.click('#nav a[href="#anuncios"]');await q.waitForTimeout(300);ok((await t(q)).includes('Meus anúncios'),'Aba Anúncios mostra os anúncios do dono');
+  await q.click('#nav a[href="#perfil"]');await q.waitForTimeout(300);ok(!(await t(q)).includes('dias de pesca'),'Perfil não mostra indicadores');
+  await q.click('[data-act=area][data-v=pescador]');await q.waitForTimeout(300);await q.click('[data-act=onbskip]').catch(()=>{});await q.waitForTimeout(200);
+  ok((await q.textContent('#nav')).includes('Contas'),'Dá para trocar para a área do pescador no Perfil');
+  await q.click('#nav a[href="#perfil"]');await q.waitForTimeout(300);ok(!(await t(q)).includes('Administrador'),'Quem não é administrador não vê a área de administrador');await ctx.close();
+  const ctx2=await B.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'pt-BR'});await ctx2.exposeFunction('__rpc',(u,nm,a)=>rpc(u,nm,a));await ctx2.route(/open-meteo\.com|images\.unsplash\.com/,r=>r.abort());
+  const w=await ctx2.newPage();w.on('pageerror',e=>errs.push('admin: '+e.message));await w.goto(`http://localhost:${PORT}/`);await w.waitForTimeout(400);
+  await w.fill('#em','vini@teste.local');await w.click('[data-act=mandaCodigo]');await w.fill('#cod','123456');await w.click('[data-act=confereCodigo]');await w.waitForTimeout(900);
+  const tx=await t(w);ok(tx.includes('Painel do administrador')&&tx.includes('cadastrados'),'Administrador entra direto no painel de administração');
+  ok((await w.$$('.bars')).length>0&&tx.includes('Mais bem avaliados')&&tx.includes('Últimas avaliações'),'Painel do administrador tem gráfico, ranking e moderação');
+  await w.screenshot({path:__dirname+'/saida/painel-admin.png',fullPage:true});
+  const av0=DB.aval[0];if(av0){await w.click(`[data-act=modav][data-v="${av0.id}"]`);await w.waitForTimeout(400);ok(av0.oculto===true,'Administrador esconde uma avaliação')}
+  await ctx2.close()}
  // 4. tela: rolagem lateral e tamanho das letras em cada celular
  for(const [i,p] of P.entries()){for(const sub of ['turma','datas','levar','roteiro','contas']){await p.pg.click(`[data-act=sub][data-v=${sub}]`);await p.pg.waitForTimeout(80);
    const r=await p.pg.evaluate(()=>{const over=document.documentElement.scrollWidth>window.innerWidth+1;const small=[];for(const el of document.querySelectorAll('#app *, #nav *')){if(!el.childNodes.length)continue;const own=[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());if(!own)continue;const r=el.getBoundingClientRect();if(!r.width)continue;const fs=parseFloat(getComputedStyle(el).fontSize);if(fs<15)small.push(fs+'px "'+el.textContent.trim().slice(0,30)+'"')}

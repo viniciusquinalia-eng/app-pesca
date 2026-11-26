@@ -58,7 +58,7 @@ label.f{display:block;font-size:16px;font-weight:600;color:var(--ink2);margin:16
 .warnbox{background:var(--warnbg);color:var(--warn);border-radius:16px;padding:14px 16px;font-size:16px;margin-top:14px}
 .money,.big,.num{font-variant-numeric:tabular-nums}
 /* cartão de pescaria */
-.abcard{margin:24px 0 4px}.abcard .pic{border-radius:18px;aspect-ratio:4/3}
+.abcard{margin:24px 0 4px;cursor:pointer}.abcard .gal{border-radius:18px}.abcard .pic{border-radius:18px;aspect-ratio:4/3}
 .abrow{display:flex;justify-content:space-between;gap:10px;margin-top:12px;align-items:baseline}.abrow .t{font-size:18px;font-weight:700}.abnota{font-weight:700;font-size:17px;white-space:nowrap}.abcard .m{font-size:16px;margin-top:2px}.abprice{font-size:17px;margin-top:6px}.abprice b{font-weight:800}
 .dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:6px}.dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.6)}.dots i.on{background:#fff}
 hr.sep{border:0;border-top:1px solid var(--line);margin:24px 0}
@@ -103,6 +103,13 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:24px 0}
 .galbtn{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#0F5A50;font-size:30px;line-height:1;font-weight:700;cursor:pointer;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 .galn{position:absolute;right:14px;bottom:14px;background:rgba(0,0,0,.6);color:#fff;font-size:16px;font-weight:700;padding:6px 12px;border-radius:999px;z-index:2}
 .fthumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}.fthumbs div{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--line)}.fthumbs img{width:100%;height:100%;object-fit:cover;display:block}.fthumbs button{position:absolute;top:4px;right:4px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.95);color:var(--warn);font-size:22px;font-weight:800}
+.bars{display:flex;align-items:flex-end;gap:6px;height:150px;margin:8px 0 4px;padding:8px 4px 0;border-bottom:1px solid var(--line)}.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px}.bar i{display:block;width:100%;max-width:34px;background:var(--brand);border-radius:6px 6px 0 0}.bv{font-size:15px;font-weight:700;color:var(--brand)}.bl{font-size:15px;color:var(--mute);height:20px;white-space:nowrap}
+.h3{font-size:18px;margin:20px 0 8px}
+.saldo.ano{margin-top:18px}.saldo.ano .big{font-size:32px}.anogrid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-top:10px;font-size:16px}.anogrid b{font-weight:800}
+.splash{position:fixed;inset:0;background:var(--brand);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:20}.splash img{border-radius:24px;box-shadow:0 8px 30px rgba(0,0,0,.25)}.sname{font-size:32px;font-weight:800;letter-spacing:-.02em}.stag{font-size:17px;opacity:.85}
+.tipos{display:flex;flex-direction:column;gap:10px;margin:8px 0 6px}.tipo{display:flex;gap:14px;align-items:center;text-align:left;width:100%;padding:16px;border:2px solid var(--line);border-radius:18px;background:#fff;color:inherit;font-size:17px;cursor:pointer;min-height:76px}.tipo b{display:block;font-size:18px}.tipo .m{display:block;font-size:16px}.tipo.on{border-color:var(--brand);background:var(--brandsoft)}.tipo .ti{width:48px;height:48px;border-radius:14px;background:var(--brandsoft);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:none}.tipo.on .ti{background:var(--brand);color:#fff}
+.onb{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:30px 0}.onbic{width:120px;height:120px;border-radius:32px;background:var(--brandsoft);color:var(--brand);display:flex;align-items:center;justify-content:center;margin-bottom:22px}.onbdots{display:flex;gap:8px;margin:10px 0 22px}.onbdots i{width:10px;height:10px;border-radius:50%;background:var(--line)}.onbdots i.on{background:var(--brand);width:28px;border-radius:5px}
+.areas{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}.areab{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid var(--line);border-radius:16px;background:#fff;color:var(--ink,inherit);font-size:16px;font-weight:700;cursor:pointer;min-height:84px}.areab.on{border-color:var(--brand);background:var(--brandsoft);color:var(--brand)}
 .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
 .feat div{border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;font-size:15px;font-weight:600}
 .sticky{position:fixed;left:0;right:0;bottom:84px;background:var(--bg);border-top:1px solid var(--line)}
@@ -180,10 +187,12 @@ const FOTOS={"cabana": ["1629609197514-6a0a03d30dc9", "Jonas Allert", "VE3TeDTYS
 const fotoUrl=(f,w)=>FOTOS[f][0]==='L'?'fotos/'+(w<=720?'p':'g')+'/'+f+'.jpg':'https://images.unsplash.com/photo-'+FOTOS[f][0]+'?auto=format&fit=crop&w='+w+'&q=70';
 const exKeys=a=>(a.fotos&&!a.real?a.fotos:a.foto?[a.foto]:[]).filter(k=>FOTOS[k]);
 const adFotos=(a,w)=>a.real?(a.fotos||[]).map(f=>fotoUrl2(f)):exKeys(a).map(k=>fotoUrl(k,w));
-const imgF=u=>`<img class="foto" src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;
+const imgF=(u,eager)=>`<img class="foto" src="${esc(u)}" alt="" ${eager?'':'loading="lazy" '}decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`;
+const galSync=g=>{const i=Math.round(g.scrollLeft/Math.max(1,g.clientWidth));const p=g.parentElement;const n=p.querySelector('.galn');if(n)n.textContent=(i+1)+' de '+g.dataset.n;p.querySelectorAll('.dots i').forEach((d,k)=>d.classList.toggle('on',k===i))};
+const cardGal=a=>{const f=adFotos(a,720);if(f.length<2)return picA(a,720);return `<div class="gal" data-k="c_${esc(a.id)}" data-n="${f.length}">${f.map((u,i)=>`<div class="slide">${scene(adIdx(a),a.cat)}${imgF(u,i===0)}</div>`).join('')}</div>`};
 const picA=(a,w)=>{const f=adFotos(a,w);return scene(adIdx(a),a.cat)+(f[0]?imgF(f[0]):'')};
 const galA=a=>{const f=adFotos(a,1000);if(f.length<2)return `<div class="pic">${picA(a,1000)}`;
- return `<div class="pic gal-wrap"><div class="gal" data-n="${f.length}">${f.map(u=>`<div class="slide">${scene(adIdx(a),a.cat)}${imgF(u)}</div>`).join('')}</div><button class="galbtn" data-act="gal" data-v="-1" aria-label="Foto anterior" style="left:10px">‹</button><button class="galbtn" data-act="gal" data-v="1" aria-label="Próxima foto" style="right:10px">›</button><span class="galn">1 de ${f.length}</span>`};
+ return `<div class="pic gal-wrap"><div class="gal" data-k="a_${esc(a.id)}" data-n="${f.length}">${f.map((u,i)=>`<div class="slide">${scene(adIdx(a),a.cat)}${imgF(u,i===0)}</div>`).join('')}</div><button class="galbtn" data-act="gal" data-v="-1" aria-label="Foto anterior" style="left:10px">‹</button><button class="galbtn" data-act="gal" data-v="1" aria-label="Próxima foto" style="right:10px">›</button><span class="galn">1 de ${f.length}</span>`};
 const credA=a=>{if(a.real)return '';const ks=exKeys(a);if(!ks.length)return '';const loc=ks.some(k=>FOTOS[k][0]==='L');const ns=[...new Set(ks.filter(k=>FOTOS[k][0]!=='L'))];if(!ns.length)return `<p class="note" style="margin-top:6px;font-size:16px">Fotos de pescarias da turma do app, só para ilustrar. Não é o local anunciado.</p>`;return `<p class="note" style="margin-top:6px;font-size:16px">${loc?'Fotos da turma do app e de':'Fotos ilustrativas:'} ${ns.map(k=>`<a href="https://unsplash.com/photos/${FOTOS[k][2]}" target="_blank" rel="noopener" style="color:inherit">${esc(FOTOS[k][1])}</a>`).join(', ')} / Unsplash. Não é o local anunciado.</p>`};
 const ADS=[
 {id:'a1',fotos:["por-do-sol-represa", "varas-barranco", "turma-acampamento", "disco-linguica"],pontos:["Galhadas no braço da represa, boas para tucunaré", "Píer do rancho com luz para pesca à noite", "Barranco com sombra para corvina"],foto:'cabana',agua:'represa',reg:T,cat:'Rancho',nome:'Rancho Beira-Tietê',local:'Barra Bonita, SP',km:120,preco:'R$ 650',un:'/dia',sub:'Rancho inteiro, até 8 pessoas',feat:['Píer e rampa','Piloteiro indicado','Freezer e limpeza de peixe'],peixes:'Tucunaré, corvina e tilápia',pil:true,txt:'Casa com 3 quartos, varanda virada para o rio, churrasqueira e lugar para 2 barcos.'},
@@ -210,6 +219,7 @@ const adIdx=a=>{const i=ADS.indexOf(a);return i>=0?i:idx(a.id)};
 async function loadAds(){if(mode!=='cloud'||!user)return;
  const [pub,me,adm]=await Promise.all([sb.rpc('anuncios_publicos'),sb.rpc('meus_anuncios'),sb.rpc('sou_admin')]);
  if(!pub.error)REAL=(pub.data||[]).map(toAd);if(!me.error)MEUS=(me.data||[]).map(toAd);ADMIN=!adm.error&&adm.data===true;
+ if(ADMIN&&!S.admAuto){S.admAuto=true;if(!ls.get('bp_area_manual',0)&&area()!=='admin'){ls.set('bp_area','admin');if(!S.pid)S.tab='admin';history.replaceState(null,'','#'+S.tab)}}
  if(ADMIN){const f=await sb.rpc('anuncios_para_aprovar');if(!f.error)FILA=(f.data||[]).map(toAd)}
  render()}
 const temCoord=t=>/-?\d{1,3}[.,]\d{4,}/.test(t)||/\d{1,3}°/.test(t);
@@ -292,6 +302,7 @@ async function afterLogin(){
  const pend=ls.get('bp_convite','');
  if(pend){ls.set('bp_convite','');const id=await cloud.join(pend);if(id){S.tab='pescarias';S.pid=id;S.sub='turma';history.replaceState(null,'','#pescarias')}}
  else await cloud.list();
+ {const ks=AREAS[area()].map(x=>x[0]);if(!S.pid&&!ks.includes(S.tab)){S.tab=ks[0];history.replaceState(null,'','#'+S.tab)}}
  loadAds();render()}
 
 /* ---------- estado da tela ---------- */
@@ -333,6 +344,10 @@ const waOpen=txt=>{const u='https://wa.me/?text='+encodeURIComponent(txt);const 
 
 /* ---------- ícones ---------- */
 const I={
+chart:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+store:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v7h14v-7"/></svg>',
+shield:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+fish:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c3-4 7-6 11-6 3 0 5 2 7 4l2-2v8l-2-2c-2 2-4 4-7 4-4 0-8-2-11-6z"/><circle cx="8" cy="11" r="1"/></svg>',
 pin:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>',
 user:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
 search:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
@@ -365,8 +380,8 @@ ${emPiracema()?`<div class="warnbox" style="margin-bottom:14px">${PIRA_CURTO}</d
 <label class="search">${I.search}<input id="q" type="search" placeholder="Rio, rancho ou peixe" value="${esc(S.q)}" aria-label="Buscar"></label>
 <label class="f" for="reg">Região</label><select id="reg" data-act="reg">${REGS.map(r=>`<option ${r===reg?'selected':''}>${esc(r)}</option>`).join('')}</select>
 <div class="chips">${CATS.map(([l,v])=>`<button class="chip ${S.cat===v?'on':''}" data-act="cat" data-v="${v}">${l}</button>`).join('')}<button class="chip ${S.pil?'on':''}" data-act="pil">Com piloteiro</button></div>
-${list.length?list.map(a=>{const r=notaDe(a.id);return `<button class="card abcard" data-act="ad" data-v="${a.id}"><div class="pic">${picA(a,720)}${a.real?'':'<span class="tag" style="background:rgba(255,255,255,.95);color:#0F5A50">EXEMPLO</span>'}${adFotos(a,10).length>1?`<span class="dots">${adFotos(a,10).map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</span>`:''}</div>
-<div class="abrow"><span class="t">${esc(a.local)}</span>${r?`<span class="abnota">★ ${r.m.toFixed(1).replace('.',',')} <span class="m">(${r.n})</span></span>`:''}</div><div class="m">${esc(a.cat)} · ${esc(a.nome)}</div><div class="m">${esc(a.sub)}</div>${a.km?`<div class="m">${a.km} km de Bauru</div>`:''}<div class="abprice"><b>${esc(a.preco)}</b> ${esc(a.un.replace('/',''))}</div></button>`}).join(''):`<div class="box">Nada encontrado. Tente outra região ou tire um filtro.</div>`}
+${list.length?list.map(a=>{const r=notaDe(a.id);return `<div class="card abcard" role="button" tabindex="0" data-act="ad" data-v="${a.id}"><div class="pic">${cardGal(a)}${a.real?'':'<span class="tag" style="background:rgba(255,255,255,.95);color:#0F5A50">EXEMPLO</span>'}${adFotos(a,10).length>1?`<span class="dots">${adFotos(a,10).map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</span>`:''}</div>
+<div class="abrow"><span class="t">${esc(a.local)}</span>${r?`<span class="abnota">★ ${r.m.toFixed(1).replace('.',',')} <span class="m">(${r.n})</span></span>`:''}</div><div class="m">${esc(a.cat)} · ${esc(a.nome)}</div><div class="m">${esc(a.sub)}</div>${a.km?`<div class="m">${a.km} km de Bauru</div>`:''}<div class="abprice"><b>${esc(a.preco)}</b> ${esc(a.un.replace('/',''))}</div></div>`}).join(''):`<div class="box">Nada encontrado. Tente outra região ou tire um filtro.</div>`}
 <p class="note">Anúncios com a etiqueta <b>EXEMPLO</b> têm nomes inventados e preços de referência, só para testar o app.</p>
 <div class="share"><h2>Tem rancho, pousada, pesqueiro ou é piloteiro?</h2><p class="m" style="margin:0 0 14px">Anuncie grátis. O anúncio aparece aqui depois de aprovado.</p>
 <button class="btn full" data-act="anunciar">${I.plus}Anunciar grátis</button>
@@ -400,7 +415,7 @@ ${ADF.length<5?`<label class="fotobox" for="fa-fotos" style="min-height:90px;mar
 <label class="chip" style="display:flex;align-items:center;gap:10px;margin-top:14px;min-height:56px;height:auto;padding:10px 16px"><input type="checkbox" id="fa-ok"> Autorizo mostrar este WhatsApp no anúncio e li a <a href="privacidade.html" style="color:var(--brand)">política de privacidade</a>.</label>
 <div class="box" style="margin-top:14px">Não coloque a localização exata de pontos de pesca. Mostre só a cidade e o tipo de lugar.</div>
 <button class="btn full" data-act="enviarad" style="margin-top:8px">${e?'Salvar e mandar para aprovação':'Enviar para aprovação'}</button>`}
-function vMeus(){return `<button class="back" data-act="exback" aria-label="Voltar">${I.back}</button><h1>Meus anúncios</h1>
+function vMeus(tab){return `${tab?'<p class="eyebrow">Anunciante</p>':`<button class="back" data-act="exback" aria-label="Voltar">${I.back}</button>`}<h1>Meus anúncios</h1>
 ${MEUS.length?`<div class="list">${MEUS.map(a=>`<div class="li" style="flex-wrap:wrap"><div class="grow"><div class="t">${esc(a.nome)}</div><div class="m">${esc(a.cat)} · ${esc(a.local)}</div><div style="margin-top:6px">${stPill(a.status)}</div>${a.motivo?`<div class="m" style="margin-top:6px">Motivo: ${esc(a.motivo)}</div>`:''}</div><div style="display:flex;gap:8px;width:100%"><button class="btn sm alt" style="flex:1" data-act="editad" data-v="${a.id}">Mudar</button><button class="btn sm ghost" style="flex:1" data-act="rmad" data-v="${a.uid}">Apagar</button></div></div>`).join('')}</div>`:'<div class="box">Você ainda não tem anúncios.</div>'}
 <button class="btn full" data-act="anunciar" style="margin-top:16px">${I.plus}Novo anúncio</button>`}
 function vFila(){if(!ADMIN)return '';return `<button class="back" data-act="exback" aria-label="Voltar">${I.back}</button><h1>Aprovar anúncios</h1>
@@ -422,7 +437,7 @@ ${emPiracema()?piraBox(a.agua,a.peixes):''}${!emPiracema()&&a.agua!=='tanque'?`<
 ${pt?`<div class="box">Por respeito aos pescadores, o app mostra só a região e o tipo de lugar, nunca a localização exata do ponto.</div>`:''}
 ${!ro&&!pt?vAvaliacoes(a)+vDiarioLugar(a):''}
 ${ro?`<h2>Dia a dia</h2><div class="list">${a.dias.map(d=>`<div class="li"><div class="ic">${esc(d[0])}</div><div class="grow"><div class="t" style="font-size:17px">${esc(d[2])}</div><div class="m">${esc(d[1])}</div></div></div>`).join('')}</div>${a.levar?`<h2>Já vem na lista do que levar</h2><p class="m">${esc(a.levar.join(', '))}</p>`:''}`:''}
-${!ro&&!pt?(a.real&&a.wa?`<a class="btn wa full" id="wa-ad" href="https://wa.me/55${esc(String(a.wa).replace(/\D/g,'').replace(/^55(?=\d{10,11}$)/,''))}?text=${encodeURIComponent('Olá! Vi seu anúncio "'+a.nome+'" no '+APP+' e queria saber mais.')}" target="_blank" rel="noopener" style="margin-top:16px;text-decoration:none">${I.chat}Chamar no WhatsApp</a>`:`<button class="btn alt full" disabled style="margin-top:16px">${I.chat}Chamar no WhatsApp</button><p class="m" style="text-align:center;margin-top:6px">Anúncio de exemplo: ainda sem contato real.</p>`):''}
+${!ro&&!pt?(a.real&&a.wa?`<a class="btn wa full" id="wa-ad" data-act="waad" data-v="${esc(a.id)}" href="https://wa.me/55${esc(String(a.wa).replace(/\D/g,'').replace(/^55(?=\d{10,11}$)/,''))}?text=${encodeURIComponent('Olá! Vi seu anúncio "'+a.nome+'" no '+APP+' e queria saber mais.')}" target="_blank" rel="noopener" style="margin-top:16px;text-decoration:none">${I.chat}Chamar no WhatsApp</a>`:`<button class="btn alt full" disabled style="margin-top:16px">${I.chat}Chamar no WhatsApp</button><p class="m" style="text-align:center;margin-top:6px">Anúncio de exemplo: ainda sem contato real.</p>`):''}
 <div style="height:100px"></div>
 <div class="sticky"><div><div><div class="price" style="font-size:20px">${esc(a.preco)} <span class="m" style="font-weight:500">${esc(a.un)}</span></div><div class="pill">${a.real?'':'EXEMPLO · '}${esc(a.cat)}</div></div>${pt?'':`<button class="btn" data-act="usead" data-v="${a.id}">${ro?'Usar roteiro':'Usar na pescaria'}</button>`}</div></div>`}
 
@@ -523,7 +538,7 @@ ${S.email?(CFG.codigo?`<h2>Agora olhe seu e-mail</h2><p style="margin-top:0">Man
 <div class="box" style="font-size:18px">1. Abra o e-mail <b>${esc(S.email)}</b> <b>neste mesmo celular</b>.<br>2. Procure o e-mail com o link de entrada (olhe também no lixo eletrônico).<br>3. Toque em <b>Entrar no app</b> (ou <b>Sign in</b>). O app abre já com você dentro.</div>
 <p class="m">O link vale por pouco tempo e só funciona uma vez. Se não chegar em 2 minutos, peça de novo.</p>`)+`<button class="btn alt full" data-act="outroEmail" style="margin-top:8px">Pedir de novo ou usar outro e-mail</button>`
 :`${CFG.google?`<button class="btn full" data-act="google" style="margin-top:10px;height:58px">Entrar com Google</button>
-<p class="m" style="text-align:center;margin:16px 0 6px">ou entre pelo e-mail</p>`:`<h2>Entre com seu e-mail</h2><p class="m" style="margin-top:0">${CFG.codigo?'Vamos mandar um código de 6 números.':'Vamos mandar um link para você entrar, sem senha.'}</p>`}
+<p class="m" style="text-align:center;margin:16px 0 6px">ou entre pelo e-mail</p>`:`<h2>Como você vai usar o app?</h2><div class="tipos">${[['pescador','fish','Sou pescador','Organizo pescarias com a turma'],['dono','store','Tenho rancho, pousada, pesqueiro ou sou piloteiro','Quero anunciar e receber pescadores']].map(([k,i,t,d])=>`<button class="tipo ${ls.get('bp_area','pescador')===k||(k==='pescador'&&ls.get('bp_area','pescador')==='admin')?'on':''}" data-act="tipo" data-v="${k}"><span class="ti">${I[i]}</span><span><b>${t}</b><span class="m">${d}</span></span></button>`).join('')}</div><h2>Entre com seu e-mail</h2><p class="m" style="margin-top:0">${CFG.codigo?'Vamos mandar um código de 6 números.':'Vamos mandar um link para você entrar, sem senha.'}</p>`}
 <input id="em" type="email" autocomplete="email" placeholder="seu@email.com"><button class="btn ${CFG.google?'alt':''} full" data-act="mandaCodigo" style="margin-top:10px">${CFG.codigo?'Mandar código':'Mandar link de entrada'}</button>`}
 <p class="note">Ao entrar, você concorda com a <a href="privacidade.html" style="color:var(--brand)">política de privacidade</a>. Organizar e dividir as contas é grátis.</p></div>`}
 /* ---------- perfil e histórico ---------- */
@@ -543,15 +558,15 @@ const EXD=[{especie:'Piranha',peso:0.8,isca:'Pedaço de peixe',data:'2026-08-08'
 function vPerfilExemplo(nome){const dias=EXP.reduce((s,p)=>s+diasDe(p),0);const stat=(n,l)=>`<div class="stat"><div class="n">${n}</div><div class="m">${l}</div></div>`;
 return `<div style="display:flex;align-items:center;gap:14px;margin-top:8px">${av(nome||'?')}<div><p class="eyebrow" style="margin:0">Seu perfil</p><h1 style="margin:0">${esc(nome||'Pescador')}</h1></div></div>
 <div class="box" style="margin-top:14px"><span class="tag2" style="margin:0 0 6px">EXEMPLO</span><br>Assim fica o seu perfil depois das primeiras pescarias. Os dados abaixo são de exemplo e somem quando você tiver os seus.</div>
-<div class="stats">${stat(EXP.length,'pescarias feitas')}${stat(dias,'dias de pesca')}${stat(EXP.length,'lugares')}${stat(brl(EXP.reduce((s,p)=>s+p.gasto,0)),'sua parte nos gastos')}</div>
-<h2>Meu diário de pesca</h2><p class="m" style="margin-top:0">${EXD.length} registros · maior: Pintado de 3,1 kg</p>
+<h2>Meu diário de pesca</h2>
 <button class="btn full" data-act="novodiario">${I.plus}Registrar pesca</button>
 <div class="revs" style="margin-top:12px">${EXD.map(x=>`<div style="padding:0;overflow:hidden"><div class="pic" style="aspect-ratio:4/3;border-radius:0"><img class="foto" src="fotos/p/${x.foto}.jpg" alt="${esc(x.especie)}" loading="lazy"><span class="tag" style="background:rgba(255,255,255,.95);color:#0F5A50">EXEMPLO</span></div><div style="padding:12px 14px"><div class="t" style="font-size:18px">${esc(x.especie)}${x.peso?' · '+esc(pesoTxt(x.peso)):''}</div><div class="m">${esc(x.lugar)} · ${esc(fmtD(x.data))}</div><div class="m">Isca: ${esc(x.isca)}${x.ponto?' · Ponto: '+esc(x.ponto):''}</div>${x.obs?`<div style="font-size:16px;margin-top:4px">${esc(x.obs)}</div>`:''}</div></div>`).join('')}</div>
 <h2>Histórico</h2>${EXP.map(p=>`<div class="card abcard" style="margin-top:14px"><div class="pic" style="aspect-ratio:16/9"><img class="foto" src="fotos/p/${p.foto}.jpg" alt="" loading="lazy"><span class="tag" style="background:rgba(255,255,255,.95);color:#0F5A50">EXEMPLO</span></div><div class="abrow"><span class="t">${esc(p.nome)}</span></div><div class="m">${esc(quandoTxt(p))} ${p.inicio.slice(0,4)} · ${esc(p.local)}</div><div class="m">${diasDe(p)} dias · ${p.n} na turma · você gastou ${brl(p.gasto)}</div></div>`).join('')}
 <h2>Lugares onde já pescou</h2><div class="chips">${EXP.map(p=>`<span class="chip" style="cursor:default">${esc(cidade(p.local))}</span>`).join('')}</div>
+${vTrocaArea()}
 ${vRodape()}`}
 function vPerfil(){
-if(S.pv==='novo')return vNovoDiario();
+if(S.pv==='novo')return vNovoDiario();if(S.pv==='admin')return vAdmin();if(S.pv==='dono')return vDono();
 if(mode==='cloud'&&DLOAD&&!DIARIO.length&&!P.some(feita)&&!loading)return vPerfilExemplo(ls.get('bp_nome','')||(user&&user.email?user.email.split('@')[0]:''));
 const nome=ls.get('bp_nome','')||(user&&user.email?user.email.split('@')[0]:'');
 const feitas=P.filter(feita).sort((a,b)=>b.inicio.localeCompare(a.inicio));const prox=P.filter(p=>!feita(p));
@@ -559,12 +574,12 @@ const dias=feitas.reduce((s,p)=>s+diasDe(p),0);const lugares=[...new Set(feitas.
 const gasto=feitas.reduce((s,p)=>s+minhaParte(p),0);
 const stat=(n,l)=>`<div class="stat"><div class="n">${n}</div><div class="m">${l}</div></div>`;
 return `<div style="display:flex;align-items:center;gap:14px;margin-top:8px">${av(nome||'?')}<div><p class="eyebrow" style="margin:0">Seu perfil</p><h1 style="margin:0">${esc(nome||'Pescador')}</h1></div></div>
-<div class="stats">${stat(feitas.length,feitas.length===1?'pescaria feita':'pescarias feitas')}${stat(dias,dias===1?'dia de pesca':'dias de pesca')}${stat(lugares.length,lugares.length===1?'lugar':'lugares')}${stat(brl(gasto),'sua parte nos gastos')}</div>
 ${typeof vDiarioResumo==='function'?vDiarioResumo():''}
 <h2>Histórico</h2>
 ${feitas.length?`<div class="list">${feitas.map(p=>`<button class="li card" data-act="openp" data-v="${esc(p.id)}" style="text-align:left;width:100%"><div class="ic" style="width:auto;padding:0 10px">${esc(p.inicio.slice(0,4))}</div><div class="grow"><div class="t" style="font-size:17px">${esc(p.nome)}</div><div class="m">${esc(quandoTxt(p))}${p.local?' · '+esc(p.local):''}</div><div class="m">${diasDe(p)} ${diasDe(p)===1?'dia':'dias'} · ${(p.pessoas||[]).length} na turma${minhaParte(p)?' · você gastou '+brl(minhaParte(p)):''}</div></div></button>`).join('')}</div>`:'<div class="box">Quando uma pescaria passar da data de volta, ela aparece aqui, com os dias, o lugar e quanto você gastou.</div>'}
 ${lugares.length?`<h2>Lugares onde já pescou</h2><div class="chips">${lugares.map(l=>`<span class="chip" style="cursor:default">${esc(l)}</span>`).join('')}</div>`:''}
 ${prox.length?`<div class="box" style="margin-top:18px">Você tem <b>${prox.length} ${prox.length===1?'pescaria':'pescarias'}</b> pela frente. <a href="#pescarias" style="color:var(--brand);font-weight:700">Ver</a></div>`:''}
+${vTrocaArea()}
 ${vRodape()}`}
 
 /* ---------- clima (Open-Meteo, grátis, sem cadastro) ---------- */
@@ -644,6 +659,70 @@ function modalAvaliar(id){const a=findAd(id);if(!a)return;const L=LUG[id]||{aval
  openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Avaliar ${esc(a.nome)}</h2>${row('geral','Nota geral',mi.nota)}${CRIT.map(([k,l])=>row(k,l,Number(mi.notas[k])||0)).join('')}
  <label class="f" for="av-txt">Comentário</label><textarea id="av-txt" maxlength="600" style="width:100%;height:100px;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;font-size:17px" placeholder="Como foi a pesca, a estrutura, o atendimento…">${esc(mi.comentario||'')}</textarea>
  <button class="btn full" data-act="salvaraval" data-v="${esc(id)}" style="margin-top:12px">Enviar avaliação</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
+/* ---------- áreas: pescador, anunciante, administrador ---------- */
+const AREAS={pescador:[['pescarias','Pescarias','boat'],['contas','Contas','cash'],['explorar','Explorar','search'],['perfil','Perfil','user']],
+ dono:[['painel','Painel','chart'],['anuncios','Anúncios','store'],['explorar','Explorar','search'],['perfil','Perfil','user']],
+ admin:[['admin','Painel','shield'],['explorar','Explorar','search'],['pescarias','Pescarias','boat'],['perfil','Perfil','user']]};
+const TABS=['pescarias','contas','explorar','perfil','painel','anuncios','admin'];
+const area=()=>{const a=ls.get('bp_area','pescador');return a==='admin'&&!ADMIN?'pescador':AREAS[a]?a:'pescador'};
+const setArea=(a,manual)=>{PDO=null;PAD=null;ls.set('bp_area',a);if(manual)ls.set('bp_area_manual',1);S.tab=AREAS[a][0][0];S.pid=null;S.ad=null;S.ex=null;S.pv=null;S.av=null;history.replaceState(null,'','#'+S.tab);render();scrollTo(0,0)};
+function vTrocaArea(){const temAds=MEUS.length>0;const op=[['pescador','Pescador','fish'],['dono','Anunciante','store']].concat(ADMIN?[['admin','Administrador','shield']]:[]);
+ return `<h2>Área do app</h2><p class="m" style="margin-top:-4px">Você pode trocar quando quiser.</p><div class="areas">${op.map(([k,l,i])=>`<button class="areab ${area()===k?'on':''}" data-act="area" data-v="${k}">${I[i]}<span>${l}</span></button>`).join('')}</div>`}
+const ONB={pescador:[['boat','Organize a pescaria','Crie a pescaria, chame a turma pelo WhatsApp e combine data, roteiro e quem leva o quê.'],['cash','Divida as contas sem briga','Cada um lança o que pagou. O app diz quem paga quem e gera o Pix.'],['fish','Descubra e registre','Ache ranchos, pousadas e piloteiros, veja a previsão do tempo e guarde seus peixes no diário.']],
+ dono:[['store','Anuncie grátis','Mostre seu rancho, pousada, pesqueiro ou barco com fotos, preço e o que oferece.'],['chat','Pescadores no seu WhatsApp','Quem se interessa chama você direto, sem intermediário.'],['chart','Acompanhe os resultados','Veja quantos visitaram, quantos chamaram e o que os pescadores acharam.']]};
+function vOnb(t){const st=ONB[t];const i=Math.min(S.onb||0,st.length-1);const [ic,ti,tx]=st[i];
+ return `<div class="onb"><div class="onbic">${I[ic].replace(/width="\d+" height="\d+"/,'width="64" height="64"')}</div><p class="eyebrow">${t==='dono'?'Para quem anuncia':'Para o pescador'} · ${i+1} de ${st.length}</p><h1>${ti}</h1><p style="font-size:19px">${tx}</p>
+ <div class="onbdots">${st.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
+ <button class="btn full" data-act="onbnext" style="height:60px;font-size:18px">${i<st.length-1?'Próximo':'Começar'}</button><button class="btn alt full" data-act="onbskip" style="margin-top:8px;background:#fff">Pular</button></div>`}
+const SPLASH=()=>`<div class="splash"><img src="icone.svg" alt="" width="96" height="96"><div class="sname">${esc(APP)}</div><div class="stag">Organize, divida e descubra pescarias</div></div>`;
+/* ---------- painéis e resumo do ano ---------- */
+let PAD=null,PDO=null;
+const evento=(lugar,tipo)=>{if(mode==='cloud'&&user)sb.rpc('registrar_evento',{p_lugar:lugar,p_tipo:tipo}).then(()=>{},()=>{})};
+const nomeLugar=id=>{const a=findAd(id);return a?a.nome:'Anúncio removido'};
+const num=n=>Number(n||0).toLocaleString('pt-BR');
+const kpi=(n,l,ex)=>`<div class="stat"><div class="n">${n}</div><div class="m">${l}</div>${ex?`<div class="m" style="font-size:15px;margin-top:2px">${ex}</div>`:''}</div>`;
+const barras=(vals,labels)=>{const mx=Math.max(1,...vals);return `<div class="bars">${vals.map((v,i)=>`<div class="bar"><span class="bv">${v}</span><i style="height:${Math.max(4,Math.round(v/mx*100))}%"></i><span class="bl">${labels?esc(labels[i]):''}</span></div>`).join('')}</div>`};
+function vResumoAno(feitas,diario){const ano=today().slice(0,4);const fs=feitas.filter(p=>p.inicio.slice(0,4)===ano);const ds=diario.filter(d=>String((d.dados||d).data||'').slice(0,4)===ano);
+ if(!fs.length&&!ds.length)return '';const dias=fs.reduce((s,p)=>s+diasDe(p),0);const gasto=fs.reduce((s,p)=>s+(p.gasto!=null?p.gasto:minhaParte(p)),0);
+ const cont={};ds.forEach(d=>{const e=(d.dados||d).especie;if(e)cont[e]=(cont[e]||0)+1});const top=Object.entries(cont).sort((a,b)=>b[1]-a[1])[0];
+ const maior=ds.reduce((m,d)=>{const x=d.dados||d;return Number(x.peso)>m.k?{k:Number(x.peso),e:x.especie}:m},{k:0});
+ const lug={};fs.forEach(p=>{const c=cidade(p.local);if(c)lug[c]=(lug[c]||0)+diasDe(p)});const fav=Object.entries(lug).sort((a,b)=>b[1]-a[1])[0];
+ return `<div class="saldo ano"><div class="lbl">Seu ${ano} na pesca</div><div class="big">${dias} ${dias===1?'dia':'dias'} de pesca</div>
+ <div class="anogrid"><div><b>${fs.length}</b> ${fs.length===1?'pescaria':'pescarias'}</div><div><b>${ds.length}</b> ${ds.length===1?'peixe registrado':'peixes registrados'}</div><div><b>${brl(gasto)}</b> gastos</div>${fav?`<div>Lugar favorito: <b>${esc(fav[0])}</b></div>`:''}${top?`<div>Mais pescado: <b>${esc(top[0])}</b></div>`:''}${maior.k?`<div>Maior peixe: <b>${esc(maior.e)} de ${esc(pesoTxt(maior.k))}</b></div>`:''}</div></div>`}
+async function loadPad(){const {data,error}=await sb.rpc('painel_admin');PAD=error?{erro:error.message}:data||{};render()}
+async function loadPdo(){const {data,error}=await sb.rpc('painel_dono');PDO=error?{erro:error.message}:{ads:data||[]};render()}
+function vAdmin(tab){const bk=tab?'<p class="eyebrow">Administrador</p>':`<button class="back" data-act="dback" aria-label="Voltar">${I.back}</button>`;if(!ADMIN)return bk+`<div class="box">Só administradores.</div>`;
+ if(!PAD){loadPad();return bk+`<h1>Painel do administrador</h1><div class="box">Carregando os números…</div>`}
+ const back=bk+`<h1>Painel do administrador</h1>`;
+ if(PAD.erro)return back+`<div class="warnbox">Falta ligar o painel: rode o texto <b>005_paineis.sql</b> no Supabase (depois do 004).</div>`;
+ const d=PAD,an=d.anuncios||{};const sem=d.semanas||[];
+ return back+`<p class="m" style="margin-top:-6px">Números de verdade do app, atualizados agora. <button class="btn sm alt" data-act="padre" style="margin-left:6px">Atualizar</button></p>
+<h2>Pessoas</h2><div class="stats">${kpi(num(d.usuarios),'cadastrados')}${kpi(num(d.novos7),'novos em 7 dias',num(d.novos30)+' em 30 dias')}${kpi(num(d.ativos7),'entraram nos últimos 7 dias')}${kpi(num(d.pescadores),'estão em alguma pescaria')}</div>
+<h3 class="h3">Novos cadastros por semana</h3>${barras(sem.map(x=>x.n),sem.map(x=>fmtD(String(x.s).slice(0,10)).replace(/ .*/,'')+'/'+String(x.s).slice(5,7)))}
+<h2>Pescarias</h2><div class="stats">${kpi(num(d.pescarias),'pescarias criadas',num(d.pescarias30)+' nos últimos 30 dias')}${kpi(brl(Number(d.dividido||0)),'divididos entre as turmas')}${kpi(num(d.diario),'peixes no diário',num(d.fotos)+' com foto')}${kpi(d.nota_media?String(d.nota_media).replace('.',',')+' ★':'–','nota média',num(d.avaliacoes)+' avaliações')}</div>
+<h2>Anúncios</h2><div class="stats">${kpi(num(an.aprovado),'no ar')}${kpi(num(an.pendente),'esperando você')}${kpi(num(d.visitas30),'visitas em 30 dias')}${kpi(num(d.whats30),'cliques no WhatsApp')}</div>
+${(an.pendente||0)?`<button class="btn full" data-act="fila">Aprovar anúncios (${an.pendente})</button>`:''}
+<h3 class="h3">Mais vistos (30 dias)</h3>${(d.mais_vistos||[]).length?`<div class="list">${d.mais_vistos.map((x,i)=>`<div class="li"><div class="ic">${i+1}º</div><div class="grow t" style="font-size:17px">${esc(nomeLugar(x.lugar))}</div><b>${num(x.n)}</b></div>`).join('')}</div>`:'<p class="m">Ainda sem visitas registradas.</p>'}
+<h3 class="h3">Mais bem avaliados</h3>${(d.mais_bem_avaliados||[]).length?`<div class="list">${d.mais_bem_avaliados.map((x,i)=>`<div class="li"><div class="ic">${i+1}º</div><div class="grow t" style="font-size:17px">${esc(nomeLugar(x.lugar))}</div><b>★ ${String(x.m).replace('.',',')}</b><span class="m">(${x.n})</span></div>`).join('')}</div>`:'<p class="m">Ainda sem avaliações.</p>'}
+<h2>Moderação</h2><p class="m" style="margin-top:-4px">Esconda o que for ofensivo ou mentiroso. Dá para mostrar de novo depois.</p>
+<h3 class="h3">Últimas avaliações</h3>${(d.ult_avaliacoes||[]).length?`<div class="list">${d.ult_avaliacoes.map(x=>`<div class="li" style="display:block;${x.oculto?'opacity:.55':''}"><div style="display:flex;gap:8px;align-items:center"><div class="grow"><b>${esc(x.autor_nome||'Pescador')}</b> em ${esc(nomeLugar(x.lugar))}</div>${estrelas(x.nota,16)}</div>${x.comentario?`<p style="margin:6px 0 0;font-size:17px">${esc(x.comentario)}</p>`:''}<button class="btn sm alt" data-act="modav" data-v="${esc(x.id)}" data-o="${x.oculto?0:1}" style="margin-top:8px">${x.oculto?'Mostrar de novo':'Esconder'}</button></div>`).join('')}</div>`:'<p class="m">Nenhuma avaliação ainda.</p>'}
+<h3 class="h3">Últimas fotos do diário</h3>${(d.ult_diario||[]).length?`<div class="fthumbs">${d.ult_diario.map(x=>`<div style="${x.oculto?'opacity:.45':''}">${x.dados&&x.dados.foto?`<img src="${esc(fotoUrl2(x.dados.foto))}" alt="${esc((x.dados||{}).especie||'')}" loading="lazy">`:`<span style="display:flex;height:100%;align-items:center;justify-content:center;font-size:15px;padding:6px;text-align:center">${esc((x.dados||{}).especie||'')}</span>`}<button data-act="moddi" data-v="${esc(x.id)}" data-o="${x.oculto?0:1}" aria-label="${x.oculto?'Mostrar':'Esconder'}" style="color:${x.oculto?'var(--brand)':'var(--warn)'}">${x.oculto?'↺':'×'}</button></div>`).join('')}</div>`:'<p class="m">Nenhum registro público ainda.</p>'}`}
+const EXDONO={nome:'Rancho Beira-Tietê',visitas:184,whats:23,nota:4.7,n:18,diario:9,dias:[6,9,7,12,15,22,18,8,10,11,14,19,26,21]};
+function cardDono(x,ex){const dias=x.dias||[];const conv=x.visitas30?Math.round(x.whats30/x.visitas30*100):0;
+ return `<div class="tr" style="margin-top:12px">${ex?'<span class="tag2">EXEMPLO</span>':stPill(x.status)}<div class="t" style="font-size:20px;margin-top:6px">${esc(x.nome||'Anúncio')}</div>
+ <div class="stats">${kpi(num(x.visitas30),'visitas em 30 dias')}${kpi(num(x.whats30),'chamaram no WhatsApp',x.visitas30?conv+'% de quem visitou':'')}${kpi(x.nota?String(x.nota).replace('.',',')+' ★':'–','nota média',num(x.n_aval)+' avaliações')}${kpi(num(x.n_diario),'peixes no diário','fotos de clientes')}</div>
+ <h3 class="h3">Visitas nos últimos 14 dias</h3>${barras(dias,dias.map((_,i)=>i===dias.length-1?'hoje':i===0?'-13':''))}</div>`}
+function vDono(tab){const back=(tab?'<p class="eyebrow">Anunciante</p>':`<button class="back" data-act="dback" aria-label="Voltar">${I.back}</button>`)+'<h1>Seu painel</h1>';
+ if(mode==='cloud'&&user&&!PDO)loadPdo();const ads=PDO&&PDO.ads||[];const ex=!ads.length;
+ const ini=n=>new Date(Date.now()+n*864e5).toISOString().slice(0,10);
+ const res=[['Turma do João','6 pessoas',ini(3),ini(5),1950],['Pescaria da firma','8 pessoas',ini(10),ini(12),2600],['Família Souza','4 pessoas',ini(17),ini(18),650]];
+ return back+`<p class="m" style="margin-top:-6px">Para donos de rancho, pousada, pesqueiro e piloteiros: quanto o anúncio aparece, quantos chamam no WhatsApp e o que os pescadores acham.</p>
+${PDO&&PDO.erro?'<div class="warnbox">Falta ligar o painel: rode o texto 005_paineis.sql no Supabase.</div>':''}
+${ex?`<div class="box"><b>Você ainda não tem anúncio.</b> Abaixo, um exemplo de como fica o painel de um rancho.<button class="btn full" data-act="anunciar2" style="margin-top:12px">${I.plus}Anunciar grátis</button></div>${cardDono({nome:EXDONO.nome,visitas30:EXDONO.visitas,whats30:EXDONO.whats,nota:EXDONO.nota,n_aval:EXDONO.n,n_diario:EXDONO.diario,dias:EXDONO.dias},true)}`:ads.map(x=>cardDono(x,false)).join('')}
+<h2>Reservas e faturamento <span class="tag2" style="vertical-align:middle;margin:0 0 0 6px">EM BREVE</span></h2>
+<p class="m" style="margin-top:-4px">Quando as reservas pelo app começarem, esta parte se enche sozinha. Por enquanto os números são de exemplo.</p>
+<div class="stats">${kpi('8','reservas em dezembro','EXEMPLO')}${kpi(brl(5200),'faturamento previsto','EXEMPLO')}${kpi('62%','ocupação do mês','EXEMPLO')}${kpi(brl(650),'valor médio por reserva','EXEMPLO')}</div>
+<h3 class="h3">Próximas reservas <span class="m" style="font-weight:600">· EXEMPLO</span></h3><div class="list">${res.map(r=>`<div class="li"><div class="ic" style="width:auto;padding:0 8px">${Number(r[2].slice(8))}/${r[2].slice(5,7)}</div><div class="grow"><div class="t" style="font-size:17px">${r[0]}</div><div class="m">${fmtD(r[2])} a ${fmtD(r[3])} · ${r[1]}</div></div><b>${brl(r[4])}</b></div>`).join('')}</div>`}
 function vRodape(){
 return `<div style="margin-top:34px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px">
 ${mode==='cloud'&&user?`<p class="m" style="margin:0;text-align:center">Entrou como ${esc(user.email||'')}</p><button class="btn alt full" data-act="sair">Sair</button>`:''}
@@ -651,22 +730,29 @@ ${mode==='cloud'&&user?`<p class="m" style="margin:0;text-align:center">Entrou c
 ${mode==='cloud'&&user?`<button class="btn alt full" data-act="apagarConta" style="color:var(--warn)">Apagar minha conta</button>`:''}</div>`}
 let pending=null;
 function render(){try{renderInner()}catch(e){console.error(e);const a=$('#app');if(a)a.removeAttribute('data-ok');window.__falhou&&window.__falhou(e.message)}}
+const onbAtivo=()=>mode==='cloud'&&!!user&&area()!=='admin'&&!ls.get('bp_onb_'+area(),false);
+function vAnuncios(){if(S.ex==='form')return vFormAd();return vMeus(true)}
+let LASTH='';window.__render=()=>render();window.__rerender=()=>{LASTH='';render()};
+function fixNav(){$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=AREAS[area()].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}"${S.tab===k?' aria-current="page"':''}><i>${I[i]}</i>${l}</a>`).join('');if(onbAtivo())$('#nav').style.display='none';}
 function renderInner(){
 const app=$('#app');if(!app)return;
 const fx=document.activeElement&&document.activeElement.id;
-let h=!authReady?'<h1>'+esc(APP)+'</h1><div class="box">Abrindo…</div>':(mode==='cloud'&&!user)?vLogin():S.tab==='explorar'?vExplorar():S.tab==='pescarias'?vPescarias():S.tab==='perfil'?vPerfil():vContas();
+let h=!authReady?SPLASH():(mode==='cloud'&&!user)?vLogin():onbAtivo()?vOnb(area()):S.tab==='explorar'?vExplorar():S.tab==='pescarias'?vPescarias():S.tab==='perfil'?vPerfil():S.tab==='painel'?vDono(true):S.tab==='anuncios'?vAnuncios():S.tab==='admin'?(S.av==='fila'?vFila():vAdmin(true)):vContas();
 if(flashMsg)h+=`<div class="warnbox" role="status" style="position:fixed;left:18px;right:18px;bottom:96px;max-width:484px;margin:0 auto;z-index:8">${esc(flashMsg)}</div>`;
 /* guarda o que a pessoa está digitando, para uma atualização da tela não apagar */
 const keep={};if(!window.__limpar)app.querySelectorAll('input[id]:not([type=file]),select[id]:not([data-act])').forEach(el=>{if(el.type!=='checkbox'&&el.value)keep[el.id]=el.value});
 const keepChk={};let hadChk=false;app.querySelectorAll('input.gpart').forEach(el=>{hadChk=true;keepChk[el.value]=el.checked});const keepIdChk={};app.querySelectorAll('input[type=checkbox][id]').forEach(el=>{keepIdChk[el.id]=el.checked});const keepTa={};app.querySelectorAll('textarea[id]:not([readonly])').forEach(el=>{if(el.value)keepTa[el.id]=el.value});
 const pos=fx&&document.activeElement&&document.activeElement.selectionStart;
+if(h===LASTH&&app.getAttribute('data-ok')){fixNav();return}LASTH=h;
+const galPos={};app.querySelectorAll('.gal[data-k]').forEach(g=>{if(g.scrollLeft)galPos[g.dataset.k]=g.scrollLeft});
 app.innerHTML=h;app.setAttribute('data-ok','1');
+app.querySelectorAll('.gal[data-k]').forEach(g=>{const x=galPos[g.dataset.k];if(x){g.style.scrollBehavior='auto';g.scrollLeft=x;g.style.scrollBehavior='';galSync(g)}});
 Object.entries(keep).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&el.closest('#app')&&!el.value)el.value=v});
 if(!window.__limpar){Object.entries(keepIdChk).forEach(([id,c])=>{const el=document.getElementById(id);if(el&&el.closest('#app'))el.checked=c});Object.entries(keepTa).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&el.closest('#app')&&!el.value)el.value=v})}
 [['d-tponto','d-pbox'],['fa-tempt','fa-pbox']].forEach(([c,b])=>{const x=document.getElementById(c),y=document.getElementById(b);if(x&&y)y.style.display=x.checked?'':'none'});
 if(hadChk)app.querySelectorAll('input.gpart').forEach(el=>{if(el.value in keepChk)el.checked=keepChk[el.value]});
 if(fx&&fx!=='q'){const el=document.getElementById(fx);if(el&&el.closest('#app')){el.focus();try{if(pos!=null)el.setSelectionRange(pos,pos)}catch(e){}}}
-$('#nav').style.display=(mode==='cloud'&&!user)?'none':'';$('#nav').innerHTML=[['pescarias','Pescarias',I.boat],['contas','Contas',I.cash],['explorar','Explorar',I.search],['perfil','Perfil',I.user]].map(([k,l,i])=>`<a href="#${k}" class="${S.tab===k?'on':''}"${S.tab===k?' aria-current="page"':''}><i>${i}</i>${l}</a>`).join('');
+fixNav();
 if(fx==='q'){const q=$('#q');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
 }
 const openModal=h=>{$('#modal').innerHTML=h;const i=$('#modal input');if(i)i.focus()};
@@ -684,7 +770,7 @@ if(e.target.id==='d-tponto'){$('#d-pbox').style.display=e.target.checked?'':'non
 if(e.target.id==='d-foto'){const f=e.target.files&&e.target.files[0];if(!f)return;prepFoto(f).then(b=>{if(!b){flash('Não deu para ler essa foto.');return}FOTO=b;if(FOTOURL)URL.revokeObjectURL(FOTOURL);FOTOURL=URL.createObjectURL(b);render()}).catch(()=>flash('Não deu para ler essa foto.'));return}
 if(e.target.id==='fa-tempt'){$('#fa-pbox').style.display=e.target.checked?'':'none';return}if(a==='eu'){setMe(S.pid,e.target.value)}else if(a==='reg'){S.reg=e.target.value;render()}else if(a==='quem'){const v=e.target.dataset.v;change(p=>{const it=p.itens.find(i=>i.id===v);if(it)it.quem=e.target.value})}else if(a==='cid'){S.cid=e.target.value;render()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#modal').innerHTML)closeModal()});
-document.addEventListener('scroll',e=>{const g=e.target;if(!g||!g.classList||!g.classList.contains('gal'))return;const i=Math.round(g.scrollLeft/Math.max(1,g.clientWidth));const n=g.parentElement.querySelector('.galn');if(n)n.textContent=(i+1)+' de '+g.dataset.n},true);
+document.addEventListener('scroll',e=>{const g=e.target;if(!g||!g.classList||!g.classList.contains('gal'))return;galSync(g)},true);
 document.addEventListener('click',async e=>{
 const el=e.target.closest('[data-act]');if(!el)return;
 if(el.dataset.stop&&!e.target.closest('[data-act]:not([data-stop])'))return;
@@ -693,14 +779,16 @@ if(['addp','addi','addr','addg','adddata','souNovo'].includes(a)){window.__limpa
 if(a==='mclose'){if(e.target===el||el.tagName==='BUTTON')closeModal();return}
 if(a==='cat'){S.cat=v;render()}
 else if(a==='pil'){S.pil=!S.pil;render()}
-else if(a==='ad'){S.ad=v;render();scrollTo(0,0)}
+else if(a==='ad'){S.ad=v;evento(v,'visita');render();scrollTo(0,0)}
 else if(a==='unad'){S.ad=null;render()}
 else if(a==='usead'){const ad=findAd(v);pending=ad;const fut=P.filter(p=>!p.inicio||daysTo(p.inicio)>=0);
 if(!fut.length){openModal(vNova({nome:ad.cat==='Roteiro'?ad.nome:'Pescaria em '+ad.local.split(',')[0],local:ad.cat==='Roteiro'?ad.local:ad.nome+' · '+ad.local}));return}
 openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">${ad.cat==='Roteiro'?'Usar este roteiro em qual pescaria?':'Pôr em qual pescaria?'}</h2>${fut.map(p=>`<button class="btn alt full" data-act="addad" data-v="${esc(p.id)}" style="margin-top:8px;justify-content:flex-start">${esc(p.nome)}</button>`).join('')}<button class="btn full" data-act="novaad" style="margin-top:14px">${I.plus}Criar pescaria nova</button></div></div>`)}
 else if(a==='anunciar'){if(mode==='cloud'&&!user)return;S.ex='form';S.edit=null;ADF=[];S.ad=null;render();scrollTo(0,0)}
 else if(a==='meus'){S.ex='meus';render();scrollTo(0,0)}
-else if(a==='fila'){S.ex='fila';render();scrollTo(0,0);loadAds()}
+else if(a==='fila'){if(S.tab==='admin')S.av='fila';else S.ex='fila';render();scrollTo(0,0);loadAds()}
+else if(a==='exback'&&S.tab==='admin'){S.av=null;PAD=null;render();scrollTo(0,0)}
+else if(a==='exback'&&S.tab==='anuncios'){S.ex=null;S.edit=null;render();scrollTo(0,0)}
 else if(a==='exback'){S.ex=S.ex==='form'&&S.edit?'meus':null;S.edit=null;render();scrollTo(0,0)}
 else if(a==='editad'){S.ex='form';S.edit=v;ADF=((MEUS.find(x=>x.id===v)||{}).fotos||[]).map(path=>({path}));render();scrollTo(0,0)}
 else if(a==='enviarad'){const g=id=>($('#'+id).value||'').trim();
@@ -759,6 +847,15 @@ else if(a==='responder'){openModal(`<div class="modal" data-act="mclose"><div cl
 else if(a==='salvaresp'){const {error}=await sb.rpc('responder_avaliacao',{p_id:v,p_resposta:($('#rsp').value||'').trim()});if(error){flash('Não deu agora.');return}closeModal();if(S.ad)lugarDados(S.ad,true)}
 else if(a==='gal'){const g=el.parentElement.querySelector('.gal');if(g)g.scrollBy({left:Number(v)*g.clientWidth,behavior:'smooth'})}
 else if(a==='rmfad'){ADF.splice(Number(v),1);render()}
+else if(a==='area'){setArea(v,true)}
+else if(a==='tipo'){ls.set('bp_area',v);render()}
+else if(a==='onbnext'){const st=ONB[area()]||[];if((S.onb||0)>=st.length-1){ls.set('bp_onb_'+area(),true);S.onb=0;const ks=AREAS[area()].map(x=>x[0]);if(!ks.includes(S.tab)){S.tab=ks[0];history.replaceState(null,'','#'+S.tab)}}else S.onb=(S.onb||0)+1;render();scrollTo(0,0)}
+else if(a==='onbskip'){ls.set('bp_onb_'+area(),true);S.onb=0;render();scrollTo(0,0)}
+else if(a==='painel'){S.pv=v;if(v==='admin')PAD=null;if(v==='dono')PDO=null;render();scrollTo(0,0)}
+else if(a==='padre'){PAD=null;render()}
+else if(a==='anunciar2'){S.pv=null;S.tab='anuncios';S.ex='form';S.edit=null;S.ad=null;ADF=[];history.replaceState(null,'','#anuncios');render();scrollTo(0,0)}
+else if(a==='modav'||a==='moddi'){const {error}=await sb.rpc(a==='modav'?'ocultar_avaliacao':'ocultar_diario',{p_id:v,p_oculto:el.dataset.o==='1'});if(error){flash('Não deu agora.');return}await loadPad();flash(el.dataset.o==='1'?'Escondido.':'Aparece de novo.')}
+else if(a==='waad'){evento(v,'whatsapp')}
 else if(a==='sair'){await sb.auth.signOut();P=[];S.pid=null;render()}
 else if(a==='apagarConta'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Apagar sua conta?</h2><p>Você sai de todas as pescarias. As pescarias que você criou são apagadas para toda a turma. Não dá para desfazer.</p><button class="btn full" data-act="apagarOk" style="background:var(--warn)">Apagar minha conta</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
 else if(a==='apagarOk'){const {error}=await sb.rpc('apagar_minha_conta');closeModal();if(error){flash('Não deu para apagar agora.');return}await sb.auth.signOut();P=[];render()}
@@ -802,7 +899,7 @@ else if(a==='delp'){openModal(`<div class="modal" data-act="mclose"><div class="
 else if(a==='delok'){store().del(S.pid);S.pid=null;closeModal()}
 });
 (()=>{const q=new URLSearchParams(location.search);const c=q.get('c');if(c){ls.set('bp_convite',c);history.replaceState(null,'',location.pathname+location.hash)}})();
-const route0=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=['explorar','pescarias','contas','perfil'].includes(h)?h:'pescarias';if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
+const route0=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=TABS.includes(h)?h:AREAS[area()][0][0];if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
 const route=()=>{route0();if(S.tab==='explorar'){S.ex=S.ex||null;loadAds()}};
 addEventListener('hashchange',route);route();
 }
