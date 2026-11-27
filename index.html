@@ -263,7 +263,7 @@ const exOcup=seed=>{const o=[];const t=new Date();for(let i=0;i<150;i++){const d
 ADS.forEach((a,i)=>{if(['Rancho','Pousada','Piloteiro'].includes(a.cat))a.ocupados=exOcup(i)});
 const REGS=['Todas',T,R,B];
 /* anúncios reais (aprovados no banco) + estado do anunciante e do administrador */
-let REAL=[],MEUS=[],FILA=[],ADMIN=false,PROMO=null,PENDN=null;const AGD={};
+let ADMCHK=false;let REAL=[],MEUS=[],FILA=[],ADMIN=false,PROMO=null,PENDN=null;const AGD={};
 /* aviso para o administrador: confere a fila a cada minuto enquanto o app está aberto */
 async function checaPend(){if(!ADMIN||!sb||!user)return;const r=await sb.rpc('contar_pendentes');if(r.error)return;const n=Number(r.data)||0;
  if(PENDN!==null&&n>PENDN){avisaAdmin(n);PENDN=n;loadAds()}else{PENDN=n;render()}}
@@ -277,8 +277,9 @@ const adIdx=a=>{const i=ADS.indexOf(a);return i>=0?i:idx(a.id)};
 async function loadAds(){if(mode!=='cloud'||!user)return;
  const [pub,me,adm,pr]=await Promise.all([sb.rpc('anuncios_publicos'),sb.rpc('meus_anuncios'),sb.rpc('sou_admin'),sb.rpc('ver_promo')]);
  PROMO=pr&&!pr.error&&pr.data&&pr.data.lugar?pr.data:null;
- if(!pub.error)REAL=(pub.data||[]).map(toAd);if(!me.error)MEUS=(me.data||[]).map(toAd);ADMIN=!adm.error&&adm.data===true;
- if(ADMIN&&!S.admAuto){S.admAuto=true;if(!ls.get('bp_area_manual',0)&&area()!=='admin'){ls.set('bp_area','admin');if(!S.pid)S.tab='admin';history.replaceState(null,'','#'+S.tab)}}
+ if(!pub.error)REAL=(pub.data||[]).map(toAd);if(!me.error)MEUS=(me.data||[]).map(toAd);ADMIN=!adm.error&&adm.data===true;ADMCHK=true;if(!adm.error)ls.set('bp_eh_admin',ADMIN?1:0);
+ if(ADMIN&&!S.admAuto){S.admAuto=true;if((S.querAdmin||!ls.get('bp_area_manual',0))&&ls.get('bp_area','')!=='admin')ls.set('bp_area','admin');
+  if(area()==='admin'&&S.tabPadrao&&!S.pid&&!S.ad&&S.tab!=='admin'){S.tab='admin';history.replaceState(null,'','#admin')}}
  if(ADMIN){const f=await sb.rpc('anuncios_para_aprovar');if(!f.error){FILA=(f.data||[]).map(toAd);PENDN=FILA.length}}
  render()}
 const temCoord=t=>/-?\d{1,3}[.,]\d{4,}/.test(t)||/\d{1,3} ?°/.test(t)||/(maps\.app\.goo\.gl|goo\.gl\/maps|google\.[a-z.]+\/maps|maps\.google|waze\.com|plus\.codes)/i.test(t);
@@ -369,7 +370,7 @@ async function afterLogin(){
  const pend=ls.get('bp_convite','');
  if(pend){ls.set('bp_convite','');const id=await cloud.join(pend);if(id){S.tab='pescarias';S.pid=id;S.sub='turma';history.replaceState(null,'','#pescarias')}}
  else await cloud.list();
- {const ks=AREAS[area()].map(x=>x[0]);if(!S.pid&&!ks.includes(S.tab)){S.tab=DEFTAB[area()];history.replaceState(null,'','#'+S.tab)}}
+ {const ks=AREAS[area()].map(x=>x[0]);if(!S.pid&&!ks.includes(S.tab)){if(S.tab==='admin')S.querAdmin=true;S.tabPadrao=true;S.tab=DEFTAB[area()];history.replaceState(null,'','#'+S.tab)}}
  loadAds();render()}
 
 /* ---------- estado da tela ---------- */
@@ -691,6 +692,8 @@ return `<div class="modal" data-act="mclose"><div class="sheet" role="dialog" ar
 <button class="btn full" data-act="criar" style="margin-top:16px">Criar pescaria</button>
 <button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`}
 
+/* a escolha pescador/dono só aparece para quem nunca entrou neste aparelho; o link do administrador (#admin) pula a escolha */
+const NOVO0=ls.get('bp_area',null)===null&&!ls.get('bp_eh_admin',0);const novoAqui=()=>location.hash!=='#admin'&&NOVO0;
 function vLogin(){
 const conv=S.convidado||ls.get('bp_convite','');
 return `<div style="padding-top:30px"><div class="pic" style="aspect-ratio:4/3">${scene(0,'Piloteiro')}<img class="foto" src="fotos/g/por-do-sol-represa.jpg" alt=""></div>
@@ -703,7 +706,7 @@ ${S.email?(CFG.codigo?`<h2>Agora olhe seu e-mail</h2><p style="margin-top:0">Man
 <div class="box" style="font-size:18px">1. Abra o e-mail <b>${esc(S.email)}</b> <b>neste mesmo celular</b>.<br>2. Procure o e-mail com o link de entrada (olhe também no lixo eletrônico).<br>3. Toque em <b>Entrar no app</b> (ou <b>Sign in</b>). O app abre já com você dentro.</div>
 <p class="m">O link vale por pouco tempo e só funciona uma vez. Se não chegar em 2 minutos, peça de novo.</p>`)+`<button class="btn alt full" data-act="outroEmail" style="margin-top:8px">Pedir de novo ou usar outro e-mail</button>`
 :`${CFG.google?`<button class="btn full" data-act="google" style="margin-top:10px;height:58px">Entrar com Google</button>
-<p class="m" style="text-align:center;margin:16px 0 6px">ou entre pelo e-mail</p>`:`<h2>Como você vai usar o app?</h2><div class="tipos">${[['pescador','fish','Sou pescador','Organizo pescarias com a turma'],['dono','store','Tenho rancho, pousada, pesqueiro ou sou piloteiro','Quero anunciar e receber pescadores']].map(([k,i,t,d])=>`<button class="tipo ${ls.get('bp_area','pescador')===k||(k==='pescador'&&ls.get('bp_area','pescador')==='admin')?'on':''}" data-act="tipo" data-v="${k}"><span class="ti">${I[i]}</span><span><b>${t}</b><span class="m">${d}</span></span></button>`).join('')}</div><h2>Entre com seu e-mail</h2><p class="m" style="margin-top:0">${CFG.codigo?'Vamos mandar um código de 6 números.':'Vamos mandar um link para você entrar, sem senha.'}</p>`}
+<p class="m" style="text-align:center;margin:16px 0 6px">ou entre pelo e-mail</p>`:`${novoAqui()?`<h2>Como você vai usar o app?</h2><div class="tipos">${[['pescador','fish','Sou pescador','Organizo pescarias com a turma'],['dono','store','Tenho rancho, pousada, pesqueiro ou sou piloteiro','Quero anunciar e receber pescadores']].map(([k,i,t,d])=>`<button class="tipo ${ls.get('bp_area','pescador')===k||(k==='pescador'&&ls.get('bp_area','pescador')==='admin')?'on':''}" data-act="tipo" data-v="${k}"><span class="ti">${I[i]}</span><span><b>${t}</b><span class="m">${d}</span></span></button>`).join('')}</div>`:location.hash==='#admin'?'<div class="box" style="margin-top:18px"><b>Área do administrador.</b> Entre com o seu e-mail de administrador.</div>':''}<h2>Entre com seu e-mail</h2><p class="m" style="margin-top:0">${CFG.codigo?'Vamos mandar um código de 6 números.':'Vamos mandar um link para você entrar, sem senha.'}</p>`}
 <input id="em" type="email" autocomplete="email" placeholder="seu@email.com"><button class="btn ${CFG.google?'alt':''} full" data-act="mandaCodigo" style="margin-top:10px">${CFG.codigo?'Mandar código':'Mandar link de entrada'}</button>`}
 <p class="note">Ao entrar, você concorda com a <a href="privacidade.html" style="color:var(--brand)">política de privacidade</a>. Organizar e dividir as contas é grátis.</p></div>`}
 /* ---------- perfil e histórico ---------- */
@@ -840,7 +843,7 @@ const AREAS={pescador:[['explorar','Explorar','search'],['favoritos','Favoritos'
  dono:[['painel','Painel','chart'],['anuncios','Anúncios','store'],['explorar','Explorar','search'],['perfil','Perfil','user']],
  admin:[['admin','Painel','shield'],['explorar','Explorar','search'],['pescarias','Pescarias','boat'],['perfil','Perfil','user']]};
 const TABS=['pescarias','contas','explorar','perfil','painel','anuncios','admin','favoritos'];const DEFTAB={pescador:'pescarias',dono:'painel',admin:'admin'};
-const area=()=>{const a=ls.get('bp_area','pescador');return a==='admin'&&!ADMIN?'pescador':AREAS[a]?a:'pescador'};
+const area=()=>{const a=ls.get('bp_area','pescador');return a==='admin'&&!ADMIN&&!ls.get('bp_eh_admin',0)?'pescador':AREAS[a]?a:'pescador'};
 const setArea=(a,manual)=>{PDO=null;PAD=null;ls.set('bp_area',a);if(manual)ls.set('bp_area_manual',1);S.tab=DEFTAB[a];S.pid=null;S.ad=null;S.ex=null;S.pv=null;S.av=null;history.replaceState(null,'','#'+S.tab);render();scrollTo(0,0)};
 function vTrocaArea(){const temAds=MEUS.length>0;const op=[['pescador','Pescador','fish'],['dono','Anunciante','store']].concat(ADMIN?[['admin','Administrador','shield']]:[]);
  return `<h2>Área do app</h2><p class="m" style="margin-top:-4px">Você pode trocar quando quiser.</p><div class="areas">${op.map(([k,l,i])=>`<button class="areab ${area()===k?'on':''}" data-act="area" data-v="${k}">${I[i]}<span>${l}</span></button>`).join('')}</div>`}
@@ -867,7 +870,7 @@ function vResumoAno(feitas,diario){const ano=today().slice(0,4);const fs=feitas.
  <div class="anogrid"><div><b>${fs.length}</b> ${fs.length===1?'pescaria':'pescarias'}</div><div><b>${ds.length}</b> ${ds.length===1?'peixe registrado':'peixes registrados'}</div><div><b>${brl(gasto)}</b> gastos</div>${fav?`<div>Lugar favorito: <b>${esc(fav[0])}</b></div>`:''}${top?`<div>Mais pescado: <b>${esc(top[0])}</b></div>`:''}${maior.k?`<div>Maior peixe: <b>${esc(maior.e)} de ${esc(pesoTxt(maior.k))}</b></div>`:''}</div></div>`}
 async function loadPad(){const {data,error}=await sb.rpc('painel_admin');PAD=error?{erro:error.message}:data||{};render()}
 async function loadPdo(){const {data,error}=await sb.rpc('painel_dono');PDO=error?{erro:error.message}:{ads:data||[]};render()}
-function vAdmin(tab){const bk=tab?'<p class="eyebrow">Administrador</p>':`<button class="back" data-act="dback" aria-label="Voltar">${I.back}</button>`;if(!ADMIN)return bk+`<div class="box">Só administradores.</div>`;
+function vAdmin(tab){const bk=tab?'<p class="eyebrow">Administrador</p>':`<button class="back" data-act="dback" aria-label="Voltar">${I.back}</button>`;if(!ADMIN)return bk+`<div class="box">${ADMCHK?'Só administradores.':'Carregando…'}</div>`;
  if(!PAD){loadPad();return bk+`<h1>Painel do administrador</h1><div class="box">Carregando os números…</div>`}
  const back=bk+`<h1>Painel do administrador</h1>`;
  if(PAD.erro)return back+`<div class="warnbox">Falta ligar o painel: rode o texto <b>005_paineis.sql</b> no Supabase (depois do 004).</div>`;
@@ -1062,7 +1065,7 @@ else if(a==='padre'){PAD=null;render()}
 else if(a==='anunciar2'){S.pv=null;S.tab='anuncios';S.ex='form';S.edit=null;S.ad=null;ADF=[];history.replaceState(null,'','#anuncios');render();scrollTo(0,0)}
 else if(a==='modav'||a==='moddi'){const {error}=await sb.rpc(a==='modav'?'ocultar_avaliacao':'ocultar_diario',{p_id:v,p_oculto:el.dataset.o==='1'});if(error){flash('Não deu agora.');return}await loadPad();flash(el.dataset.o==='1'?'Escondido.':'Aparece de novo.')}
 else if(a==='waad'){evento(v,'whatsapp')}
-else if(a==='sair'){await sb.auth.signOut();P=[];S.pid=null;render()}
+else if(a==='sair'){ls.set('bp_eh_admin',0);S.admAuto=false;ADMIN=false;await sb.auth.signOut();P=[];S.pid=null;render()}
 else if(a==='apagarConta'){openModal(`<div class="modal" data-act="mclose"><div class="sheet" data-stop="1"><h2 style="margin-top:0">Apagar sua conta?</h2><p>Você sai de todas as pescarias. As pescarias que você criou são apagadas para toda a turma. Não dá para desfazer.</p><button class="btn full" data-act="apagarOk" style="background:var(--warn)">Apagar minha conta</button><button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`)}
 else if(a==='apagarOk'){/* LGPD: apaga também as fotos da pessoa no armazenamento */try{const r=await sb.storage.from('diario').list(user.id,{limit:1000});const fs=(r.data||[]).map(x=>user.id+'/'+x.name);if(fs.length)await sb.storage.from('diario').remove(fs)}catch(e){}
  const {error}=await sb.rpc('apagar_minha_conta');closeModal();if(error){flash('Não deu para apagar agora.');return}await sb.auth.signOut();P=[];render()}
@@ -1111,7 +1114,7 @@ else if(a==='delok'){store().del(S.pid);S.pid=null;closeModal()}
  if(ad&&/^[a-z0-9_-]{1,60}$/i.test(ad)){S.ad=ad;S.ex=null}
  if(c||ad)history.replaceState(null,'',location.pathname+(ad?'#explorar':location.hash))})();
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
-const route0=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tab=TABS.includes(h)?h:DEFTAB[area()];if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
+const route0=()=>{const h=location.hash.slice(1);if(h.startsWith('c=')){const c=h.slice(2);history.replaceState(null,'','#pescarias');if(mode==='local'){flash('Convite só funciona com o app ligado na internet.')}else if(user){cloud.join(c).then(id=>{if(id){S.tab='pescarias';S.pid=id;S.sub='turma';render()}})}else{ls.set('bp_convite',c);S.convidado=true}}S.tabPadrao=!TABS.includes(h);S.tab=TABS.includes(h)?h:DEFTAB[area()];if(S.tab!=='explorar')S.ad=null;if(S.tab!=='pescarias')S.pid=null;render();scrollTo(0,0)};
 const route=()=>{route0();if(S.tab==='explorar'){S.ex=S.ex||null;loadAds()}};
 addEventListener('hashchange',route);route();
 }

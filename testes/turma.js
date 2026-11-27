@@ -270,6 +270,13 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
   await w.click('#nav a[href="#explorar"]');await w.waitForTimeout(400);ok((await t(w)).includes('Promoção da semana')&&(await t(w)).includes('10% de desconto em dezembro'),'Promoção aparece em destaque no Explorar');
   await w.screenshot({path:__dirname+'/saida/promo.png'});await w.click('#nav a[href="#admin"]');await w.waitForTimeout(400);
   const av0=DB.aval[0];if(av0){await w.click(`[data-act=modav][data-v="${av0.id}"]`);await w.waitForTimeout(400);ok(av0.oculto===true,'Administrador esconde uma avaliação')}
+  await w.goto(`http://localhost:${PORT}/`);await w.waitForTimeout(900);ok((await t(w)).includes('Painel do administrador')&&(await w.textContent('#nav')).includes('Painel'),'Administrador que abre o app de novo cai direto no painel');
+  await w.goto(`http://localhost:${PORT}/?v=10`);await w.waitForTimeout(150);ok(!(await t(w)).includes('Suas pescarias'),'Ao abrir, o administrador não vê a tela de pescador nem por um instante');
+  {const c3=await B.newContext({viewport:{width:390,height:844}});await c3.exposeFunction('__rpc',(u,nm,a)=>rpc(u,nm,a));await c3.route(/open-meteo\.com|images\.unsplash\.com|openstreetmap\.org/,r=>r.abort());
+   const n1=await c3.newPage();await n1.goto(`http://localhost:${PORT}/#admin`);await n1.waitForTimeout(400);{const tx=await t(n1);ok(!tx.includes('Como você vai usar o app?')&&tx.includes('Área do administrador'),'Link do administrador pula a escolha pescador/dono')}
+   await n1.evaluate(()=>localStorage.setItem('bp_area',JSON.stringify('pescador')));await n1.goto(`http://localhost:${PORT}/`);await n1.waitForTimeout(400);ok(!(await t(n1)).includes('Como você vai usar o app?'),'Quem já usou o app neste aparelho não vê a escolha de novo');
+   await n1.screenshot({path:__dirname+'/saida/entrada-volta.png'});
+   await n1.goto(`http://localhost:${PORT}/#admin`);await n1.fill('#em','vini@teste.local');await n1.click('[data-act=mandaCodigo]');await n1.fill('#cod','123456');await n1.click('[data-act=confereCodigo]');await n1.waitForTimeout(900);await n1.screenshot({path:__dirname+'/saida/admin-link.png'});ok((await t(n1)).includes('Painel do administrador'),'Pelo link do administrador, entra direto no painel');await c3.close()}
   await ctx2.close()}
  // 3g. filtros, agenda, mapa, compartilhar e instalar
  {const a=P[1].pg;await a.goto(`http://localhost:${PORT}/#explorar`);await a.waitForTimeout(500);
