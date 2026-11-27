@@ -204,7 +204,7 @@ window.__falhou=function(msg){var a=document.getElementById('app');if(!a||a.getA
 window.addEventListener('error',function(e){window.__falhou(e.message)});
 setTimeout(function(){var a=document.getElementById('app');if(a&&!a.innerHTML.trim())window.__falhou('tela vazia')},6000);
 </script>
-<script src="config.js"></script>
+<script src="config.js?v=13"></script>
 <script src="vendor/supabase-2.79.0.js"></script>
 <script>
 {
