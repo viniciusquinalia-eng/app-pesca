@@ -4,6 +4,6 @@ window.BORA_CONFIG = {
   nome: 'Turma da Pesca',
   supabaseUrl: 'https://dmumfsjmfwjndzgndsjp.supabase.co',
   supabaseAnonKey: 'sb_publishable_F-tCWy7W5x4_11w9i2OF8A_nkmskjzv',
-  google: false,  // true depois de configurar o login com Google no Supabase
+  google: true,   // login com Google ligado (Google Cloud + Supabase, 27/11/2026)
   codigo: true    // SMTP próprio (Brevo) ligado: e-mail traz código {{ .Token }} e link; false = só link
 };

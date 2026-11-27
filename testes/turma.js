@@ -277,6 +277,11 @@ const results=[];const ok=(c,m)=>{results.push((c?'PASSOU':'FALHOU')+' · '+m);i
    await n1.evaluate(()=>localStorage.setItem('bp_area',JSON.stringify('pescador')));await n1.goto(`http://localhost:${PORT}/`);await n1.waitForTimeout(400);ok(!(await t(n1)).includes('Como você vai usar o app?'),'Quem já usou o app neste aparelho não vê a escolha de novo');
    await n1.screenshot({path:__dirname+'/saida/entrada-volta.png'});
    await n1.goto(`http://localhost:${PORT}/#admin`);await n1.fill('#em','vini@teste.local');await n1.click('[data-act=mandaCodigo]');await n1.fill('#cod','123456');await n1.click('[data-act=confereCodigo]');await n1.waitForTimeout(900);await n1.screenshot({path:__dirname+'/saida/admin-link.png'});ok((await t(n1)).includes('Painel do administrador'),'Pelo link do administrador, entra direto no painel');await c3.close()}
+  {const c4=await B.newContext({viewport:{width:390,height:844},deviceScaleFactor:2});await c4.route(/\/config\.js/,r=>r.fulfill({contentType:'text/javascript',body:"window.BORA_CONFIG={nome:'Turma da Pesca',supabaseUrl:'http://fake',supabaseAnonKey:'fake',codigo:true,google:true}"}));await c4.route(/open-meteo\.com|images\.unsplash\.com|openstreetmap\.org/,r=>r.abort());
+   const g=await c4.newPage();g.on('pageerror',e=>errs.push('google: '+e.message));await g.goto(`http://localhost:${PORT}/`);await g.waitForTimeout(400);{const tx=await t(g);ok(tx.includes('Como você vai usar o app?')&&tx.includes('Entrar com Google')&&tx.includes('ou entre pelo e-mail'),'Com Google ligado: escolha do tipo, botão do Google e e-mail como segunda opção')}
+   await g.screenshot({path:__dirname+'/saida/login-google.png',fullPage:true});await g.click('[data-act=tipo][data-v=dono]');await g.click('[data-act=google]');await g.waitForTimeout(200);
+   {const o=await g.evaluate(()=>window.__oauth);const ar=await g.evaluate(()=>localStorage.getItem('bp_area'));ok(o&&o.provider==='google'&&/^http:\/\/localhost:\d+\/$/.test(o.options.redirectTo)&&ar==='"dono"','Botão do Google chama o login do Google e guarda o tipo escolhido')}
+   await c4.close()}
   await ctx2.close()}
  // 3g. filtros, agenda, mapa, compartilhar e instalar
  {const a=P[1].pg;await a.goto(`http://localhost:${PORT}/#explorar`);await a.waitForTimeout(500);
