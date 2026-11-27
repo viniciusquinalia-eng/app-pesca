@@ -152,19 +152,14 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:24px 0}
 .calleg{display:flex;gap:18px;margin-top:10px;font-size:16px}.calleg span{display:flex;align-items:center;gap:8px}.calleg .cd{width:22px;min-height:22px;height:22px;border-radius:6px;display:inline-block}
 .nav a i{position:relative}.nbadge{position:absolute;top:-4px;right:6px;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:var(--warn,#c0392b);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;font-style:normal}
 .gbtn{height:60px;font-size:18px;background:#fff;color:var(--ink);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;gap:12px}
-.lg-a,.lg-b,.lg-c{margin:0 -18px}.lg-logo{display:block;height:auto}
-.lg-hero{position:relative;min-height:min(64vh,560px);display:flex;flex-direction:column;justify-content:space-between;padding:26px 22px 64px;color:#fff;overflow:hidden}
-.lg-hero .lg-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%;z-index:-2}
-.lg-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(14,27,44,.65) 0,rgba(14,27,44,.05) 38%,rgba(14,27,44,.2) 55%,rgba(14,27,44,.92) 100%)}
-.lg-hero{isolation:isolate}.lg-a .lg-logo{width:210px}
-.lg-tit{font-size:32px;line-height:1.15;font-weight:800;letter-spacing:-.02em}.lg-sub{font-size:18px;margin:10px 0 0;opacity:.95}
-.lg-card{position:relative;margin-top:-34px;background:#fff;border-radius:28px 28px 0 0;padding:8px 18px 0}
-.lg-b{background:var(--brand);color:#fff;padding:26px 20px 30px;border-radius:0 0 32px 32px}.lg-b .lg-logo{width:210px;margin-bottom:22px}.lg-b em{font-style:normal;color:var(--sun)}
-.lg-mosaico{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:1fr 1fr;gap:8px;margin-top:20px;height:250px}.lg-mosaico img{width:100%;height:100%;object-fit:cover;border-radius:18px}.lg-mosaico img:first-child{grid-row:1/3;object-position:50% 30%}
-.lg-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.lg-chips span{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:8px 14px;font-weight:700;font-size:16px}.lg-chips svg{color:var(--sun);width:20px;height:20px}
-.lg-form{padding:4px 0 0}
-.lg-c{padding:24px 18px 0}.lg-c .lg-logo{width:230px;margin:0 auto 18px}.lg-fotos{display:flex;gap:8px;margin:0 -18px 22px;padding:0 18px}.lg-fotos img{flex:1;min-width:0;aspect-ratio:3/4;object-fit:cover;border-radius:18px}.lg-fotos img:nth-child(2){transform:translateY(14px)}
-.lg-c .lg-tit{color:var(--brand);text-align:center;margin-top:20px}.lg-ben{display:flex;flex-direction:column;gap:12px;margin-top:20px}.lg-ben>div{display:flex;gap:14px;align-items:center}.lg-ben i{flex:none;width:52px;height:52px;border-radius:16px;background:var(--sun);color:var(--brand);display:flex;align-items:center;justify-content:center}.lg-ben b{display:block;font-size:18px}.lg-ben span span{display:block;color:var(--mute);font-size:16px}
+.wel{position:fixed;inset:0;z-index:15;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px calc(28px + env(safe-area-inset-bottom));text-align:center;overflow:hidden}
+.wmarca{display:flex;flex-direction:column;align-items:center;gap:18px;position:relative}.wmarca img{border-radius:28px;box-shadow:0 12px 34px rgba(0,0,0,.28)}.wnome{font-size:36px;font-weight:800;letter-spacing:-.02em}
+.wfrase{font-size:19px;line-height:1.45;max-width:320px;margin:14px auto 0}.wbtns{position:absolute;left:0;right:0;bottom:0;padding:0 24px calc(26px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;max-width:520px;margin:0 auto}
+.wbtn{height:60px;font-size:19px;width:100%;border-radius:16px}.wb-am{background:var(--sun);color:#0E1B2C}.wb-br{background:#fff;color:#0E1B2C}.wb-lnk{background:transparent;color:inherit;text-decoration:underline;height:48px;font-size:18px}.wb-out{background:#fff;color:#0E1B2C;border:2px solid #0E1B2C}
+.wel1{background:#0E1B2C;color:#fff}.wel1 .wfrase{color:rgba(255,255,255,.85)}.wglow{position:absolute;width:420px;height:420px;left:50%;top:38%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(232,116,42,.38),rgba(232,116,42,0) 65%)}.wel1 .wmarca,.wel1 .wfrase{margin-top:-90px}.wel1 .wfrase{margin-top:14px}
+.wel2{background:#F2B035;color:#0E1B2C;justify-content:flex-start;padding-top:18vh}.wel2 .wbase{position:absolute;left:0;right:0;bottom:0;height:230px;color:#fff}.wel2 .wv{position:absolute;left:0;right:0;bottom:150px;width:100%;height:90px}.wel2 .wbase::after{content:"";position:absolute;left:0;right:0;bottom:0;height:151px;background:#0E1B2C;z-index:-1}.wel2 .wbase{z-index:0}.wel2 .wmarca img{box-shadow:0 10px 30px rgba(14,27,44,.3)}
+.wel3{background:#fff;color:#0E1B2C;justify-content:flex-start}.wtopo{width:100%;display:flex;justify-content:center}.wlogo{width:200px}.wmeio{margin-top:6vh;display:flex;flex-direction:column;align-items:center}.wbig{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#fdf1d6 0,#fdf1d6 60%,#fff 61%);display:flex;align-items:center;justify-content:center}.wbig img{width:150px;height:150px;border-radius:34px;box-shadow:0 14px 34px rgba(14,27,44,.22)}.wtit{font-size:32px;line-height:1.15;margin:26px 0 0;letter-spacing:-.02em}.wtit span{color:#E8742A}.wel3 .wfrase{color:var(--mute)}
+.lgtopo{display:flex;align-items:center;gap:12px;padding:18px 0 4px}.lgtopo img{height:46px;width:auto}
 .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
 .feat div{border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;font-size:15px;font-weight:600}
 .sticky{position:fixed;left:0;right:0;bottom:84px;background:var(--bg);border-top:1px solid var(--line)}
@@ -707,7 +702,7 @@ return `<div class="modal" data-act="mclose"><div class="sheet" role="dialog" ar
 <button class="btn alt full" data-act="mclose" style="margin-top:8px">Cancelar</button></div></div>`}
 
 /* a escolha pescador/dono só aparece para quem nunca entrou neste aparelho; o link do administrador (#admin) pula a escolha */
-const NOVO0=ls.get('bp_area',null)===null&&!ls.get('bp_eh_admin',0);const novoAqui=()=>location.hash!=='#admin'&&NOVO0;
+const NOVO0=ls.get('bp_area',null)===null&&!ls.get('bp_eh_admin',0);const novoAqui=()=>location.hash!=='#admin'&&NOVO0&&!S.lgVolta;
 /* tela de entrada: 3 modelos para escolher (?tela=1, 2 ou 3) */
 const TELA=(()=>{const t=new URLSearchParams(location.search).get('tela');return ['1','2','3'].includes(t)?t:'1'})();
 function vLogin(){
@@ -723,13 +718,15 @@ const form=`${S.email?(CFG.codigo?`<h2>Agora olhe seu e-mail</h2><p style="margi
 :`${novoAqui()?`<h2>Como você vai usar o app?</h2><div class="tipos">${[['pescador','fish','Sou pescador','Organizo pescarias com a turma'],['dono','store','Tenho rancho, pousada, pesqueiro ou sou piloteiro','Quero anunciar e receber pescadores']].map(([k,i,t,d])=>`<button class="tipo ${ls.get('bp_area','pescador')===k||(k==='pescador'&&ls.get('bp_area','pescador')==='admin')?'on':''}" data-act="tipo" data-v="${k}"><span class="ti">${I[i]}</span><span><b>${t}</b><span class="m">${d}</span></span></button>`).join('')}</div>`:location.hash==='#admin'?'<div class="box" style="margin-top:18px"><b>Área do administrador.</b> Entre com o seu e-mail de administrador.</div>':''}${CFG.google?`<h2>Entre no app</h2><button class="btn gbtn full" data-act="google"><svg width="22" height="22" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Entrar com Google</button><p class="m" style="text-align:center;margin:18px 0 6px">ou entre pelo e-mail</p>`:`<h2>Entre com seu e-mail</h2>`}<p class="m" style="margin-top:0">${CFG.codigo?'Vamos mandar um código de 6 números.':'Vamos mandar um link para você entrar, sem senha.'}</p>
 <input id="em" type="email" autocomplete="email" placeholder="seu@email.com"><button class="btn full" data-act="mandaCodigo" style="margin-top:10px">${CFG.codigo?'Mandar código':'Mandar link de entrada'}</button>`}
 <p class="note">Ao entrar, você concorda com a <a href="privacidade.html" style="color:var(--brand)">política de privacidade</a>. Organizar e dividir as contas é grátis.</p>`;
-const ben=[['chat','Chame a turma','O convite vai pelo WhatsApp'],['cash','Divida as contas','Cada um paga a sua parte no Pix'],['search','Ache o lugar','Ranchos, pousadas e piloteiros']];
-if(TELA==='2')return `<div class="lg-b"><img class="lg-logo" src="logo-horizontal-fundo-escuro.svg" alt="${esc(APP)}"><div class="lg-tit">${tit.replace('turma','<em>turma</em>')}</div><p class="lg-sub">${sub}</p>
-<div class="lg-mosaico"><img src="fotos/p/turma-acampamento.jpg" alt=""><img src="fotos/p/tucunares-piranhas.jpg" alt=""><img src="fotos/p/por-do-sol-represa.jpg" alt=""></div>
-<div class="lg-chips">${ben.map(([ic,t])=>`<span>${I[ic]}${t}</span>`).join('')}</div></div><div class="lg-form">${form}</div>`;
-if(TELA==='3')return `<div class="lg-c"><img class="lg-logo" src="logo-horizontal.svg" alt="${esc(APP)}"><div class="lg-fotos"><img src="fotos/p/turma-acampamento.jpg" alt=""><img src="fotos/p/tucunares-piranhas.jpg" alt=""><img src="fotos/p/por-do-sol-represa.jpg" alt=""></div>
-<div class="lg-tit">${tit}</div><div class="lg-ben">${ben.map(([ic,t,d])=>`<div><i>${I[ic]}</i><span><b>${t}</b><span>${d}</span></span></div>`).join('')}</div></div><div class="lg-form">${form}</div>`;
-return `<div class="lg-a"><div class="lg-hero"><img class="lg-bg" src="fotos/g/por-do-sol-represa.jpg" alt=""><img class="lg-logo" src="logo-horizontal-fundo-escuro.svg" alt="${esc(APP)}"><div><div class="lg-tit">${tit}</div><p class="lg-sub">${sub}</p></div></div><div class="lg-card">${form}</div></div>`}
+const ondas=(c1,c2)=>`<svg class="wv" viewBox="0 0 390 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C60 10 120 10 195 38 S330 70 390 34 V120 H0z" fill="${c1}"/><path d="M0 70 C70 46 140 50 205 72 S330 96 390 66 V120 H0z" fill="${c2}"/></svg>`;
+const marca=(cor,da)=>`<div class="wmarca"><img src="icone.svg" alt="" width="112" height="112"><div class="wnome" style="color:${cor}">Turma <span style="color:${da}">da</span> Pesca</div></div>`;
+const frase=conv?'Você foi convidado para uma pescaria. Entre para ver.':'Organize a pescaria da turma e divida as contas no Pix.';
+const btns=(cls1,cls2)=>`<button class="btn wbtn ${cls1}" data-act="lgstart">${conv?'Entrar e ver a pescaria':'Começar'}</button>${conv?'':`<button class="btn wbtn ${cls2}" data-act="lgvolta">Já tenho conta</button>`}`;
+if(!S.lgForm&&!S.email&&location.hash!=='#admin'){
+ if(TELA==='2')return `<div class="wel wel2">${marca('#0E1B2C','#0E1B2C')}<p class="wfrase">${frase}</p><div class="wbase">${ondas('#e8742a','#0E1B2C')}<div class="wbtns">${btns('wb-br','wb-lnk')}</div></div></div>`;
+ if(TELA==='3')return `<div class="wel wel3"><div class="wtopo"><img src="logo-horizontal.svg" alt="${esc(APP)}" class="wlogo"></div><div class="wmeio"><div class="wbig"><img src="icone.svg" alt=""></div><h1 class="wtit">Pescaria com a turma,<br><span>sem dor de cabeça.</span></h1><p class="wfrase">${frase}</p></div><div class="wbtns">${btns('','wb-out')}</div></div>`;
+ return `<div class="wel wel1"><div class="wglow"></div>${marca('#fff','#F2B035')}<p class="wfrase">${frase}</p><div class="wbtns">${btns('wb-am','wb-lnk')}</div></div>`}
+return `<div class="lgtopo">${location.hash==='#admin'||S.email?'':`<button class="back" data-act="lgback" aria-label="Voltar" style="margin:0">${I.back}</button>`}<img src="logo-horizontal.svg" alt="${esc(APP)}"></div><div class="lg-form">${form}</div>`}
 /* ---------- perfil e histórico ---------- */
 const fimDe=p=>p.fim||p.inicio;
 const feita=p=>!!p.inicio&&daysTo(fimDe(p))<0;
@@ -1057,6 +1054,9 @@ else if(a==='dest'){S.reg=v;S.cat='';render();scrollTo(0,0)}
 else if(a==='limpafiltro'){S.reg='Todas';S.cat='';S.q='';S.pil=false;S.esp=[];S.faixa='';S.barco=false;render();scrollTo(0,0)}
 else if(a==='exv'){S.pv='ex:'+v;render();scrollTo(0,0)}
 else if(a==='verad'){S.tab='explorar';S.ad=v;S.pv=null;history.replaceState(null,'','#explorar');evento(v,'visita');render();scrollTo(0,0)}
+else if(a==='lgstart'){S.lgForm=true;render();scrollTo(0,0)}
+else if(a==='lgvolta'){S.lgForm=true;S.lgVolta=true;render();scrollTo(0,0)}
+else if(a==='lgback'){S.lgForm=false;S.lgVolta=false;render()}
 else if(a==='instalar'){if(DEFER){const d=DEFER;DEFER=null;d.prompt();d.userChoice.then(c=>{if(c&&c.outcome==='accepted')ls.set('bp_pwa_off',1);render()}).catch(()=>{})}else openModal(passosInstalar())}
 else if(a==='instoff'){ls.set('bp_pwa_off',1);render()}
 else if(a==='sharead'){const x=findAd(v);if(x)waOpen(txtAd(x))}
